@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BikinPlan Enterprise — PRD & Task Generator untuk AI Coding Agent</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #09090b;
+      --card: #121215;
+      --card-muted: #18181b;
+      --border: #27272a;
+      --border-subtle: #1f1f23;
+      --text: #fafafa;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
+      --primary: #FF5C20;
+      --primary-hover: #ff723f;
+      --primary-subtle: rgba(255, 92, 32, 0.12);
+      --success: #10b981;
+      --success-subtle: rgba(16, 185, 129, 0.12);
+      --warning: #f59e0b;
+      --info: #3b82f6;
+      --info-subtle: rgba(59, 130, 246, 0.12);
+      --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--border);
+      background: rgba(9, 9, 11, 0.85);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .header-inner {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 0.875rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+    .logo-badge {
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.68rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 6px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .header-stats {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      font-size: 0.825rem;
+      color: var(--text-muted);
+    }
+    .stat-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .stat-number {
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      border: 1px solid transparent;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-outline {
+      background: var(--card);
+      color: var(--text);
+      border-color: var(--border);
+    }
+    .btn-outline:hover { background: var(--card-muted); border-color: var(--text-dim); }
+    .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.775rem; }
+
+    /* Main Container */
+    main {
+      flex: 1;
+      max-width: 1300px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem 1.25rem 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    /* Hero Form */
+    .hero-card {
+      background: linear-gradient(180deg, var(--card) 0%, rgba(18, 18, 21, 0.6) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, rgba(255, 92, 32, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-title {
+      font-size: 1.85rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+    }
+    .hero-title span { color: var(--primary); }
+    .hero-subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 750px;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Template Pills */
+    .template-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      align-items: center;
+    }
+    .pill-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-right: 0.25rem;
+    }
+    .pill {
+      background: var(--card-muted);
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.8rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .pill:hover {
+      border-color: var(--primary);
+      color: var(--text);
+      background: var(--primary-subtle);
+    }
+
+    /* Form Fields */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+    @media (min-width: 768px) {
+      .form-grid-2 { grid-template-columns: 1.4fr 1fr; }
+      .form-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+    }
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+    .field-label {
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .input-text, .textarea, .select {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.9rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 8px;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      width: 100%;
+    }
+    .input-text:focus, .textarea:focus, .select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-subtle);
+    }
+    .textarea { resize: vertical; min-height: 95px; }
+
+    /* Generator Progress */
+    .gen-progress {
+      display: none;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      animation: fadeIn 0.3s ease;
+    }
+    .progress-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .progress-step {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+    .progress-step.active { color: var(--primary); font-weight: 600; }
+    .progress-step.done { color: var(--success); }
+    .step-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid currentColor;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+    }
+    .progress-step.active .step-icon {
+      border-color: var(--primary);
+      border-top-color: transparent;
+      animation: spin 0.8s linear infinite;
+    }
+
+    /* Workspace Section */
+    .workspace-section {
+      display: none;
+      flex-direction: column;
+      gap: 1.5rem;
+      animation: fadeIn 0.4s ease;
+    }
+    .workspace-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .workspace-title-box h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+    .workspace-badges {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 0.3rem;
+    }
+    .badge {
+      font-size: 0.725rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .badge-primary { background: var(--primary-subtle); color: var(--primary); border: 1px solid rgba(255,92,32,0.3); }
+    .badge-info { background: var(--info-subtle); color: var(--info); border: 1px solid rgba(59,130,246,0.3); }
+    .badge-success { background: var(--success-subtle); color: var(--success); border: 1px solid rgba(16,185,129,0.3); }
+
+    /* Tabs Navigation */
+    .tabs-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      background: var(--card);
+      padding: 0.35rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      width: fit-content;
+    }
+    .tab-btn {
+      padding: 0.5rem 1rem;
+      border-radius: 7px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    /* Tab Panels */
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Task Board & Filters */
+    .task-controls {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      background: var(--card);
+      padding: 0.85rem 1.15rem;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .phase-block {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .phase-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .phase-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .phase-badge {
+      font-size: 0.72rem;
+      background: var(--card-muted);
+      color: var(--text-muted);
+      padding: 0.15rem 0.5rem;
+      border-radius: 9999px;
+      border: 1px solid var(--border);
+    }
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .task-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.15rem;
+      transition: border-color 0.15s ease, transform 0.15s ease;
+    }
+    .task-card:hover { border-color: var(--text-dim); }
+    .task-card.task-done {
+      opacity: 0.6;
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+    .task-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .task-ref-title {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .task-ref {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      background: var(--primary-subtle);
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+    }
+    .task-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+    .task-layer-badge {
+      font-size: 0.675rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-family: var(--font-mono);
+    }
+    .layer-frontend { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+    .layer-backend { background: rgba(168, 85, 247, 0.15); color: #c084fc; }
+    .layer-database { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+    .layer-integration, .layer-polish { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+
+    .task-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+    }
+    .task-checklist {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-bottom: 0.85rem;
+      padding-left: 0.25rem;
+    }
+    .task-checklist li {
+      font-size: 0.825rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .task-acceptance {
+      background: var(--card-muted);
+      border-left: 3px solid var(--primary);
+      padding: 0.5rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      color: #e4e4e7;
+      margin-bottom: 0.75rem;
+    }
+    .task-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .task-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    /* Document & Code Pre */
+    .doc-container {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2rem;
+    }
+    .doc-pre {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.825rem;
+      color: #e4e4e7;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* API Table */
+    .api-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .api-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .method-badge {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+    }
+    .method-get { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
+    .method-post { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .method-patch { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+    .method-delete { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      border-radius: 8px;
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.85rem;
+      color: var(--text);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 999;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="header-inner">
+      <a href="#" class="logo">
+        <svg viewBox="0 0 133 152" fill="#FF5C20" width="26" height="30">
+          <path d="M86.6806 14.2553L46.2527 45.6283V14.1253L62.9568 1.17002C64.9743 -0.390006 67.7884 -0.390006 69.8011 1.17002L86.6783 14.2577L86.6806 14.2553Z"></path>
+          <path d="M1.7804 85.6855L41.8621 54.5867V116.791L2.15496 85.9999C2.07198 85.929 1.989 85.8699 1.90602 85.799C1.86335 85.7635 1.82307 85.721 1.7804 85.6855Z"></path>
+          <path d="M41.8622 17.5265V49.0367L0 81.5183V52.7098C0 50.9938 0.791806 49.3747 2.14786 48.3228L22.1212 32.8313L41.8622 17.5242V17.5265Z"></path>
+          <path d="M66.3873 68.1115H68.8955C72.8238 68.1115 76.6904 69.3099 79.8103 71.6925C84.1298 76.0582 86.3203 80.4499 86.3203 82.8821V151.273L66.3944 135.819H66.3825L46.2551 120.205V51.1735L86.3179 20.0864V51.4406C86.3179 54.0406 85.4621 56.5674 83.8666 58.6285L80.0805 62.434C76.8635 64.9466 72.9281 66.197 68.924 66.197H66.3873V68.1115Z"></path>
+        </svg>
+        <span>BikinPlan</span>
+        <span class="logo-badge">Enterprise Enriched</span>
+      </a>
+
+      <div class="header-stats">
+        <div class="stat-item">
+          <span>⚡ Standar:</span>
+          <span class="stat-number">NgodingPakeAI 4-Phase</span>
+        </div>
+        <div class="stat-item">
+          <span>🎯 Target:</span>
+          <span class="stat-number">Claude / Hermes / Cursor</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Generator Hero Form -->
+    <section class="hero-card">
+      <h1 class="hero-title">Bikin PRD & Backlog <span>Level Produksi</span></h1>
+      <p class="hero-subtitle">Hasilkan Product Requirement Document lengkap (User Personas, DDL SQL PostgreSQL, Kontrak API JSON, UI State Matrix) dan 24 Micro-tasks berfase siap eksekusi coding agent.</p>
+
+      <!-- Template Presets -->
+      <div class="template-pills">
+        <span class="pill-label">Preset Cepat:</span>
+        <button class="pill" onclick="loadPreset('kosan')">🏠 Kosan Finder UNSIL</button>
+        <button class="pill" onclick="loadPreset('finance')">💰 Catat Duit SaaS</button>
+        <button class="pill" onclick="loadPreset('rental')">🏕️ Rental Outdoor Camping</button>
+        <button class="pill" onclick="loadPreset('community')">🎓 Forum Mahasiswa UNSIL</button>
+        <button class="pill" onclick="loadPreset('ai-tool')">🤖 AI Prompt Studio</button>
+      </div>
+
+      <form id="planForm" onsubmit="handleGenerate(event)">
+        <div class="form-grid form-grid-2">
+          <div class="field-group">
+            <label class="field-label" for="appName">Nama Proyek / Aplikasi</label>
+            <input type="text" id="appName" class="input-text" placeholder="Misal: KosHunt, CatatDuit, dsb." required>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="targetAudience">Target Pengguna</label>
+            <input type="text" id="targetAudience" class="input-text" placeholder="Misal: Mahasiswa UNSIL, Pemilik Kos, Pegawai" value="Mahasiswa & Pengguna Umum">
+          </div>
+        </div>
+
+        <div class="field-group" style="margin-top: 1rem;">
+          <label class="field-label" for="appIdea">Ceritakan Ide / Fitur yang Diinginkan</label>
+          <textarea id="appIdea" class="textarea" placeholder="Jelaskan alur aplikasi, masalah yang diselesaikan, dan fitur utama yang harus ada..." required></textarea>
+        </div>
+
+        <div class="form-grid form-grid-2" style="margin-top: 1rem;">
+          <div class="field-group">
+            <label class="field-label" for="techStack">Pilihan Tech Stack</label>
+            <select id="techStack" class="select">
+              <option value="tanstack">TanStack Start + Drizzle ORM + PostgreSQL (Rekomendasi NgodingPakeAI)</option>
+              <option value="nextjs">Next.js 15 (App Router) + Prisma + PostgreSQL</option>
+              <option value="vite-spa">Vite React SPA + Express REST API + SQLite/Postgres</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="authType">Sistem Autentikasi</label>
+            <select id="authType" class="select">
+              <option value="better-auth">Better Auth (Google OAuth + Email Password)</option>
+              <option value="supabase">Supabase Auth (Social + Magic Link)</option>
+              <option value="simple-jwt">JWT HTTP-Only Cookies (Custom)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
+          <button type="submit" class="btn btn-primary" id="btnSubmit">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+            Generate PRD Komprehensif (24 Tasks)
+          </button>
+        </div>
+      </form>
+
+      <!-- Progress Step Indicator -->
+      <div id="genProgress" class="gen-progress">
+        <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.85rem;">Menyusun Spesifikasi Rekayasa Sistem (Enrichment Mode)...</h3>
+        <div class="progress-steps">
+          <div class="progress-step" id="step1"><div class="step-icon">1</div><span>Menganalisis domain, personas, dan batasan sistem...</span></div>
+          <div class="progress-step" id="step2"><div class="step-icon">2</div><span>Merancang skema DDL PostgreSQL & tabel relasional...</span></div>
+          <div class="progress-step" id="step3"><div class="step-icon">3</div><span>Menyusun kontrak endpoint RESTful API & JSON payload...</span></div>
+          <div class="progress-step" id="step4"><div class="step-icon">4</div><span>Memetakan UI State Matrix & 24 micro-tasks berfase...</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Workspace Output Section -->
+    <section id="workspaceSection" class="workspace-section">
+      <div class="workspace-header">
+        <div class="workspace-title-box">
+          <h2 id="planResultTitle">Nama Aplikasi</h2>
+          <div class="workspace-badges">
+            <span class="badge badge-primary" id="planBadgeStack">TanStack Start</span>
+            <span class="badge badge-info" id="planBadgeCategory">SaaS</span>
+            <span class="badge badge-success">24 Tasks • Production Ready</span>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem;">
+          <button class="btn btn-outline btn-sm" onclick="downloadAllMarkdown()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Download PRD + Tasks (.md)
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="copyFullPrd()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            Salin PRD Lengkap
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabs Navigation -->
+      <div class="tabs-nav">
+        <button class="tab-btn active" onclick="switchTab('roadmap')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Roadmap & Task Board (24 Tasks)
+        </button>
+        <button class="tab-btn" onclick="switchTab('prd')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Dokumen PRD Enriched
+        </button>
+        <button class="tab-btn" onclick="switchTab('ddl')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+          Skema DDL Database
+        </button>
+        <button class="tab-btn" onclick="switchTab('api')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          Kontrak API
+        </button>
+        <button class="tab-btn" onclick="switchTab('agents')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path></svg>
+          Petunjuk Agent (AGENTS.md)
+        </button>
+      </div>
+
+      <!-- Tab 1: Roadmap & Task Board -->
+      <div id="tab-roadmap" class="tab-panel active">
+        <div class="task-controls">
+          <div class="filter-group">
+            <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Filter Layer:</span>
+            <button class="pill" onclick="filterTasks('all')">Semua</button>
+            <button class="pill" onclick="filterTasks('frontend')">Frontend</button>
+            <button class="pill" onclick="filterTasks('backend')">Backend</button>
+            <button class="pill" onclick="filterTasks('database')">Database</button>
+            <button class="pill" onclick="filterTasks('integration')">Integrasi</button>
+          </div>
+          <span id="taskProgressCount" style="font-size: 0.825rem; color: var(--text-muted); font-weight: 600;">0 / 24 Selesai</span>
+        </div>
+        <div id="taskBoardContainer"></div>
+      </div>
+
+      <!-- Tab 2: Dokumen PRD -->
+      <div id="tab-prd" class="tab-panel">
+        <div class="doc-container">
+          <div style="display: flex; justify-content: flex-end; margin-bottom: 0.75rem;">
+            <button class="btn btn-outline btn-sm" onclick="copyFullPrd()">Salin Teks PRD</button>
+          </div>
+          <pre id="prdContent" class="doc-pre"></pre>
+        </div>
+      </div>
+
+      <!-- Tab 3: Skema DDL Database -->
+      <div id="tab-ddl" class="tab-panel">
+        <div class="doc-container">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+            <span style="font-size: 0.9rem; font-weight: 700; color: var(--text);">PostgreSQL 16 Schema (Type-Safe Relations & Indexes)</span>
+            <button class="btn btn-outline btn-sm" onclick="copyDdl()">Salin SQL DDL</button>
+          </div>
+          <pre id="ddlContent" class="doc-pre"></pre>
+        </div>
+      </div>
+
+      <!-- Tab 4: Kontrak API -->
+      <div id="tab-api" class="tab-panel">
+        <div id="apiListContainer"></div>
+      </div>
+
+      <!-- Tab 5: Petunjuk Agent -->
+      <div id="tab-agents" class="tab-panel">
+        <div class="doc-container">
+          <div style="display: flex; justify-content: flex-end; margin-bottom: 0.75rem;">
+            <button class="btn btn-outline btn-sm" onclick="copyAgentsMd()">Salin AGENTS.md</button>
+          </div>
+          <pre id="agentsContent" class="doc-pre"></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+    <span id="toastText">Prompt task disalin ke clipboard!</span>
+  </div>
+
+  <script>
+    const presets = {
+      kosan: {
+        name: "KosHunt Tasikmalaya",
+        target: "Mahasiswa UNSIL & Perantau",
+        idea: "Aplikasi pencarian kosan mahasiswa dekat Universitas Siliwangi (UNSIL) dengan filter harga, fasilitas WiFi/Kamar Mandi Dalam, peta radius 10km dari kampus, dan kontak langsung WhatsApp pemilik kos."
+      },
+      finance: {
+        name: "DuitTrack SaaS",
+        target: "Freelancer & Mahasiswa",
+        idea: "SaaS pencatatan pemasukan dan pengeluaran harian cepat dengan auto-kategori cerdas, ringkasan grafik bulanan, dan ekspor laporan PDF/Excel."
+      },
+      rental: {
+        name: "CampRent Outdoor",
+        target: "Pecinta Alam & Mahasiswa",
+        idea: "Platform rental peralatan outdoor (tenda, carrier, nesting) dengan katalog ketersediaan real-time, tanggal booking sewa, dan integrasi pembayaran QRIS."
+      },
+      community: {
+        name: "RuangMahasiswa UNSIL",
+        target: "Mahasiswa Semua Fakultas",
+        idea: "Portal komunitas kampus untuk berbagi info beasiswa, sharing catatan kuliah, tanya-jawab tugas, dan forum diskusi anonim beretika."
+      },
+      "ai-tool": {
+        name: "PromptCraft AI",
+        target: "Developer & Content Creator",
+        idea: "Web app untuk mengelola, menguji, dan mengoptimalkan sistem prompt AI coding agent dengan fitur version control dan pengujian token."
+      }
+    };
+
+    function loadPreset(key) {
+      const p = presets[key];
+      if (!p) return;
+      document.getElementById('appName').value = p.name;
+      document.getElementById('targetAudience').value = p.target;
+      document.getElementById('appIdea').value = p.idea;
+    }
+
+    let currentPlan = null;
+    let completedTasks = new Set();
+    let activeFilter = 'all';
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toastText').innerText = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+
+    // Comprehensive Client Synthesizer Engine
+    function synthesize(name, idea, target, stack, auth) {
+      const lower = (idea + " " + name).toLowerCase();
+      const isEcommerce = /sewa|toko|jual|beli|rent|produk|booking|kos|kosan/.test(lower);
+      const isCommunity = /komunitas|forum|mahasiswa|kampus|chat|tanya|unsil/.test(lower);
+      const isSaas = /saas|track|duit|keuangan|analisis|catat|manajemen|finance/.test(lower);
+
+      const catKey = isSaas ? "saas" : (isEcommerce ? "ecommerce" : (isCommunity ? "community" : "general"));
+      const catTitle = {
+        saas: "SaaS & Financial Management",
+        ecommerce: "Marketplace, Rental & Booking Engine",
+        community: "Campus Community & Collaborative Network",
+        general: "Modern Cloud Web Application"
+      }[catKey];
+
+      // Personas
+      const personas = [
+        {
+          role: `Primary User (${target})`,
+          goal: `Menyelesaikan kebutuhan terkait ${name} dengan cepat tanpa hambatan teknis.`,
+          pain: [
+            "Antarmuka rumit dan lambat dimuat di koneksi seluler.",
+            "Kehilangan progres input saat browser di-refresh atau koneksi terputus.",
+            "Ketidakjelasan status proses/transaksi saat melakukan aksi."
+          ]
+        },
+        {
+          role: "System Administrator / Operator",
+          goal: "Memantau kesehatan aplikasi, mengaudit entri data, dan mengelola hak akses pengguna.",
+          pain: [
+            "Kesulitan melacak error log dan transaksi yang menggantung (orphaned records).",
+            "Ketiadaan sistem audit log untuk aksi-aksi sensitif."
+          ]
+        }
+      ];
+
+      // Features, DDL, APIs
+      let features = [];
+      let sqlDdl = "";
+      let apiContracts = [];
+
+      if (catKey === "ecommerce") {
+        features = [
+          {
+            id: "F-01", name: "Katalog Interaktif, Pencarian Fuzzy & Filtering Lanjutan",
+            desc: "Tampilan katalog produk/item dengan debounce search, filter kategori multi-pilihan, sorting harga/jarak, dan pagination responsif.",
+            story: `Sebagai ${target}, saya ingin mencari dan memfilter item berdasarkan harga, lokasi, dan ketersediaan agar menemukan opsi paling sesuai dalam hitungan detik.`,
+            acceptance: [
+              "Pencarian merespons real-time dengan debounce 300ms tanpa flicker UI.",
+              "Filter status dan kategori tersinkronisasi dua arah ke URL query params (nuqs).",
+              "Menampilkan skeleton loading placeholder saat fetching data dan empty state ilustratif jika hasil 0."
+            ]
+          },
+          {
+            id: "F-02", name: "Halaman Detail Item, Galeri Gambar & Kalender Ketersediaan",
+            desc: "Detail spesifikasi lengkap, carousel galeri gambar terkompresi, status stok aktual, dan picker rentang tanggal peminjaman/booking.",
+            story: `Sebagai ${target}, saya ingin melihat foto detail, fasilitas, dan ketersediaan jadwal agar dapat memutuskan pemesanan dengan yakin.`,
+            acceptance: [
+              "Gambar menggunakan lazy loading dengan placeholder blur hash.",
+              "Validasi rentang tanggal: tanggal mulai tidak boleh di masa lalu dan tanggal akhir >= tanggal mulai.",
+              "Kalkulator biaya otomatis menghitung subtotal durasi sewa, biaya admin, dan total deposit."
+            ]
+          },
+          {
+            id: "F-03", name: "Alur Checkout, Form Pemesan & Integrasi Payment Gateway",
+            desc: "Form pemesanan terstruktur dengan validasi ketat, pemilihan metode pembayaran (QRIS / Virtual Account), dan penanganan webhook status.",
+            story: `Sebagai ${target}, saya ingin melakukan checkout aman dan menerima instruksi pembayaran instan agar pesanan segera terkonfirmasi.`,
+            acceptance: [
+              "Validasi formulir kontak pemesan (nama minimal 3 karakter, nomor WhatsApp valid format Indonesia +62/08).",
+              "Idempotency key pada request pembuatan transaksi untuk mencegah double charging.",
+              "Menampilkan popup Snap / QRIS modal serta timer countdown kedaluwarsa pembayaran."
+            ]
+          },
+          {
+            id: "F-04", name: "Dashboard Pelacakan Pesanan & Riwayat Transaksi",
+            desc: "Halaman pemantauan pesanan pengguna dengan badge status real-time, nota digital yang dapat diunduh, dan kontak darurat WhatsApp pemilik.",
+            story: `Sebagai ${target}, saya ingin memantau status persetujuan pesanan dan mengunduh invoice digital sebagai bukti transaksi yang sah.`,
+            acceptance: [
+              "Status pesanan ter-update otomatis (Pending, Paid, Active, Completed, Cancelled).",
+              "Tombol sekali klik menuju chat WhatsApp pengelola dengan pesan template otomatis terisi nomor order.",
+              "Fitur ekspor invoice/bukti pemesanan format PDF atau cetak bersih."
+            ]
+          }
+        ];
+
+        sqlDdl = `-- DDL PostgreSQL Schema: Marketplace / Rental & Booking
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TYPE user_role AS ENUM ('customer', 'partner', 'admin');
+CREATE TYPE booking_status AS ENUM ('pending_payment', 'paid', 'confirmed', 'active', 'completed', 'cancelled', 'expired');
+CREATE TYPE payment_method AS ENUM ('qris', 'bank_transfer', 'e_wallet', 'cash');
+
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(120) NOT NULL,
+    phone VARCHAR(30),
+    role user_role DEFAULT 'customer' NOT NULL,
+    avatar_url TEXT,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE categories (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(80) UNIQUE NOT NULL,
+    slug VARCHAR(100) UNIQUE NOT NULL,
+    icon_name VARCHAR(50),
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE items (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    category_id UUID NOT NULL REFERENCES categories(id) ON DELETE RESTRICT,
+    owner_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(200) NOT NULL,
+    slug VARCHAR(250) UNIQUE NOT NULL,
+    description TEXT NOT NULL,
+    price_per_day NUMERIC(12, 2) NOT NULL CHECK (price_per_day >= 0),
+    deposit_amount NUMERIC(12, 2) DEFAULT 0.00 NOT NULL,
+    location_address TEXT NOT NULL,
+    location_latitude NUMERIC(10, 7),
+    location_longitude NUMERIC(10, 7),
+    total_stock INT DEFAULT 1 NOT NULL CHECK (total_stock >= 0),
+    available_stock INT DEFAULT 1 NOT NULL CHECK (available_stock >= 0),
+    images TEXT[] DEFAULT '{}' NOT NULL,
+    facilities TEXT[] DEFAULT '{}' NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE INDEX idx_items_category ON items(category_id);
+CREATE INDEX idx_items_price ON items(price_per_day);
+CREATE INDEX idx_items_is_active ON items(is_active);
+
+CREATE TABLE bookings (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    order_number VARCHAR(32) UNIQUE NOT NULL,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+    item_id UUID NOT NULL REFERENCES items(id) ON DELETE RESTRICT,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    duration_days INT NOT NULL CHECK (duration_days > 0),
+    quantity INT DEFAULT 1 NOT NULL CHECK (quantity > 0),
+    subtotal NUMERIC(12, 2) NOT NULL,
+    admin_fee NUMERIC(12, 2) DEFAULT 0.00 NOT NULL,
+    total_amount NUMERIC(12, 2) NOT NULL,
+    status booking_status DEFAULT 'pending_payment' NOT NULL,
+    payment_channel payment_method,
+    payment_token VARCHAR(255),
+    payment_expires_at TIMESTAMPTZ,
+    notes TEXT,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    CONSTRAINT check_booking_dates CHECK (end_date >= start_date)
+);
+
+CREATE INDEX idx_bookings_user ON bookings(user_id);
+CREATE INDEX idx_bookings_status ON bookings(status);`;
+
+        apiContracts = [
+          {
+            method: "GET", path: "/api/v1/items", auth: "Public",
+            desc: "Daftar item dengan pagination, search query, dan filter multi-kategori.",
+            params: "page=1&limit=12&search=kemah&category=outdoor",
+            res: { success: true, data: [{ id: "uuid-1", title: "Tenda Dome 4P", pricePerDay: 45000, availableStock: 3 }], pagination: { page: 1, total: 48 } }
+          },
+          {
+            method: "POST", path: "/api/v1/bookings", auth: "Session Cookie / Bearer",
+            desc: "Membuat pesanan booking baru dan menghasilkan token pembayaran gateway.",
+            body: { itemId: "uuid-1", startDate: "2026-11-05", endDate: "2026-11-08", quantity: 1, paymentChannel: "qris" },
+            res: { success: true, message: "Pesanan berhasil dibuat", data: { orderNumber: "ORD-9482", totalAmount: 140000, status: "pending_payment" } }
+          }
+        ];
+      } else if (catKey === "community") {
+        features = [
+          {
+            id: "F-01", name: "Feed Diskusi Interaktif & Filter Tagar/Fakultas",
+            desc: "Timeline feed real-time dengan tab Trending, Diskusi Terbaru, dan filter kategori mata kuliah atau fakultas.",
+            story: `Sebagai ${target}, saya ingin melihat topik pembicaraan terhangat dan memfilter materi sesuai fakultas saya.`,
+            acceptance: ["Feed infinite scroll virtualized 60 FPS.", "URL state sync.", "Badge waktu relatif & verified student."]
+          },
+          {
+            id: "F-02", name: "Editor Thread Markdown & Lampiran Dokumen/Gambar",
+            desc: "Rich text markdown editor dengan live preview split-view, upload lampiran aman, dan opsi posting anonim beretika.",
+            story: `Sebagai ${target}, saya ingin menulis pertanyaan atau catatan kuliah lengkap dengan cuplikan kode dan gambar.`,
+            acceptance: ["Sanitasi markdown DOMPurify.", "Kompresi WebP browser < 1.5MB.", "Auto-save draft 3 detik."]
+          },
+          {
+            id: "F-03", name: "Sistem Komentar Beranak (Threaded), Reaksi & Upvoting",
+            desc: "Komentar bersarang (max 3 kedalaman), sistem upvote dengan proteksi anti-spam, dan penandaan solusi terbaik oleh pembuat thread.",
+            story: `Sebagai ${target}, saya ingin berdiskusi di bawah komentar tertentu dan memberikan upvote pada jawaban yang benar.`,
+            acceptance: ["Optimistic UI upvote.", "Pin 'Jawaban Terbaik'.", "Notifikasi badge real-time."]
+          },
+          {
+            id: "F-04", name: "Manajemen Reputasi, Poin Kontributor & Moderasi Konten",
+            desc: "Perhitungan poin keaktifan, pelaporan konten bermasalah, dan dashboard audit moderasi untuk admin komunitas.",
+            story: `Sebagai ${target}, saya ingin mendapatkan pengakuan reputasi dan melaporkan konten yang melanggar norma komunitas.`,
+            acceptance: ["Poin reputasi Best Answer +15 pts.", "Fitur laporkan konten.", "Dashboard moderasi admin."]
+          }
+        ];
+
+        sqlDdl = `-- DDL PostgreSQL Schema: Community Platform
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    display_name VARCHAR(100) NOT NULL,
+    faculty VARCHAR(100),
+    reputation_score INT DEFAULT 0 NOT NULL,
+    role VARCHAR(20) DEFAULT 'member' NOT NULL,
+    avatar_url TEXT,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE threads (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    author_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    title VARCHAR(250) NOT NULL,
+    slug VARCHAR(300) UNIQUE NOT NULL,
+    content TEXT NOT NULL,
+    upvotes_count INT DEFAULT 0 NOT NULL,
+    comments_count INT DEFAULT 0 NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE comments (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    thread_id UUID NOT NULL REFERENCES threads(id) ON DELETE CASCADE,
+    author_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    is_solution BOOLEAN DEFAULT FALSE NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
+);`;
+
+        apiContracts = [
+          {
+            method: "GET", path: "/api/v1/threads", auth: "Public",
+            desc: "Feed thread diskusi dengan sorting trending/terbaru.",
+            params: "channel=informatika&sort=trending&page=1",
+            res: { success: true, data: [{ id: "th-1", title: "Tips Algoritma Pemrograman", upvotes: 42 }] }
+          }
+        ];
+      } else {
+        features = [
+          {
+            id: "F-01", name: "Dashboard Metrik Finansial & Grafik Analisis Tren",
+            desc: "Visualisasi metrik arus kas, ringkasan saldo neto, perbandingan pengeluaran bulanan, dan breakdown kategori via interactive chart.",
+            story: `Sebagai ${target}, saya ingin melihat ringkasan keuangan dalam satu layar agar mengetahui kondisi finansial tanpa kalkulasi manual.`,
+            acceptance: ["KPI Cards: Pemasukan, Pengeluaran, Saldo Neto.", "Grafik tren interaktif.", "Selector filter tanggal."]
+          },
+          {
+            id: "F-02", name: "Pencatatan Transaksi Cepat & Modal Input Cerdas",
+            desc: "Formulir pencatatan pemasukan/pengeluaran cepat dengan shortcut keyboard, auto-suggest kategori, dan tagar pengelompokan.",
+            story: `Sebagai ${target}, saya ingin mencatat pengeluaran dalam < 5 detik agar tidak menunda-nunda pencatatan harian.`,
+            acceptance: ["Shortcut Shift+N.", "Format IDR otomatis.", "Auto-kategori kata kunci."]
+          },
+          {
+            id: "F-03", name: "Manajemen Anggaran (Budgeting) & Notifikasi Limit",
+            desc: "Alokasi anggaran maksimal per kategori pengeluaran dengan progress bar warna (Aman/Peringatan/Overbudget) dan peringatan dini.",
+            story: `Sebagai ${target}, saya ingin menetapkan pagu anggaran bulanan per kategori agar tidak boros.`,
+            acceptance: ["Progress bar konsumsi budget.", "Toast limit overbudget.", "Daily burn rate counter."]
+          },
+          {
+            id: "F-04", name: "Laporan Rekapitulasi & Ekspor Dokumen Multi-Format",
+            desc: "Penyusunan laporan pembukuan formal dengan filter rentang waktu dan ekspor bersih ke format PDF cetak, Excel XLSX, atau CSV.",
+            story: `Sebagai ${target}, saya ingin mengekspor rekapan transaksi ke PDF dan Excel untuk keperluan pembukuan pribadi atau klaim reimburse.`,
+            acceptance: ["Ekspor PDF tabel formal.", "Ekspor CSV UTF-8.", "Proses unduh background."]
+          }
+        ];
+
+        sqlDdl = `-- DDL PostgreSQL Schema: SaaS & Financial Tracking
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TYPE transaction_type AS ENUM ('income', 'expense', 'transfer');
+
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(120) NOT NULL,
+    currency VARCHAR(10) DEFAULT 'IDR' NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE categories (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(80) NOT NULL,
+    type transaction_type NOT NULL,
+    color_hex VARCHAR(20) DEFAULT '#FF5C20',
+    monthly_budget NUMERIC(14, 2) DEFAULT 0.00,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE transactions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    category_id UUID REFERENCES categories(id) ON DELETE SET NULL,
+    type transaction_type NOT NULL,
+    amount NUMERIC(14, 2) NOT NULL CHECK (amount > 0),
+    title VARCHAR(200) NOT NULL,
+    transaction_date DATE NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
+);`;
+
+        apiContracts = [
+          {
+            method: "GET", path: "/api/v1/analytics/summary", auth: "Session Cookie / Bearer",
+            desc: "Agregasi total pemasukan, pengeluaran, saldo bersih, dan budget konsumsi.",
+            params: "startDate=2026-10-01&endDate=2026-10-31",
+            res: { success: true, data: { totalIncome: 8500000, totalExpense: 4250000, netSavings: 4250000 } }
+          }
+        ];
+      }
+
+      // 24 Detailed Layered Micro-Tasks
+      const tasks = [
+        { ref: "T-01", phase: 1, layer: "frontend", title: "Setup Repo, TypeScript Ketat & Token Tema Tailwind", desc: "Inisialisasi project sesuai tech stack dengan palet warna dan font 'Plus Jakarta Sans'.", checklist: ["Inisialisasi repo", "Setup tailwind.config.ts", "Skrip linter & type-check"], acceptance: "npm run build & lint lolos 100%." },
+        { ref: "T-02", phase: 1, layer: "frontend", title: "Layout Shell Responsif: Navbar, Mobile Drawer & Dark Mode", desc: "Navigasi desktop & mobile serta toggle tema tersimpan di localStorage.", checklist: ["Header logo & menu", "Mobile drawer", "Dark mode switcher"], acceptance: "Tampilan responsif di mobile & desktop, tema tersimpan saat reload." },
+        { ref: "T-03", phase: 1, layer: "frontend", title: `Pembuatan Fixture Mock Data & State Tiruan untuk ${features[0].name}`, desc: "Fixture data tiruan terisolasi untuk representasi entitas utama tanpa backend.", checklist: ["Definisi interface TS", "8 baris mock data variatif", "Helper filter lokal"], acceptance: "Fixture tervalidasi tipe TypeScript tanpa error." },
+        { ref: "T-04", phase: 1, layer: "frontend", title: `Tampilan Halaman Utama ${features[0].name} (Mock Data)`, desc: "Kartu presentasi dengan input search debounce dan filter pill kategori visual.", checklist: ["Card/Grid responsif", "Debounce search 300ms", "Shimmer skeleton placeholder"], acceptance: "Item muncul instan dan search bar memfilter tanpa network fetch." },
+        { ref: "T-05", phase: 1, layer: "frontend", title: `Tampilan Halaman Rincian untuk ${features[1].name} (Detail View)`, desc: "Halaman detail spesifikasi, galeri foto, dan ringkasan harga.", checklist: ["Routing slug dinamis", "Spesifikasi fasilitas", "Card kalkulator biaya"], acceptance: "Klik kartu berpindah ke detail dengan data yang tepat." },
+        { ref: "T-06", phase: 1, layer: "frontend", title: "Modal Dialog & Formulir Input Interaktif (Validasi Zod)", desc: "Modal form responsif dengan validasi client-side dan pesan error inline.", checklist: ["Modal Radix UI", "Skema Zod", "Toast feedback"], acceptance: "Submit kosong memunculkan pesan error, submit valid memunculkan toast." },
+
+        { ref: "T-07", phase: 2, layer: "frontend", title: "Sinkronisasi State URL Query Parameters (nuqs / searchParams)", desc: "URL search params sebagai sumber kebenaran filter dan pagination yang shareable.", checklist: ["Integrasi nuqs hook", "Sync filter & search ke URL", "Dukungan tombol browser Back/Forward"], acceptance: "Copy URL dengan filter, buka di tab baru: filter yang sama langsung terbuka." },
+        { ref: "T-08", phase: 2, layer: "frontend", title: "Local Store Management & CRUD Client-Side di Memori", desc: "State store lokal (Zustand/Context) agar aksi CRUD langsung terlihat di UI.", checklist: ["Inisialisasi app store", "Fungsi Create, Update, Delete", "Persistensi localStorage"], acceptance: "Tambah data baru lewat form -> langsung muncul di list & awet setelah refresh." },
+        { ref: "T-09", phase: 2, layer: "frontend", title: "Komponen Empty State, Error Boundary & Toast System", desc: "Sistem toast notifikasi, kartu empty state terarah, dan penangkap error crash.", checklist: ["Toast provider", "Empty state CTA", "React ErrorBoundary"], acceptance: "Filter data kosong memunculkan kartu ilustrasi dan tombol reset filter." },
+        { ref: "T-10", phase: 2, layer: "frontend", title: "Checkpoint Verifikasi Fase 1 & 2 (Frontend Review)", desc: "Audit visual dan interaktivitas menyeluruh sebelum lanjut ke backend & database.", checklist: ["Uji alur navigasi", "Uji mobile 360px", "Bebas error console JS"], acceptance: "Semua fungsionalitas UI dapat diuji interaktif tanpa backend." },
+
+        { ref: "T-11", phase: 3, layer: "database", title: "Skema Database Drizzle/Prisma & Konfigurasi Koneksi Pool", desc: "Tabel database resmi lengkap dengan foreign key, index pencarian, dan migration.", checklist: ["File skema DB", "Koneksi pool PostgreSQL", "Setup script db:push / migrate"], acceptance: "Migrasi sukses dan tabel database terbuat sempurna." },
+        { ref: "T-12", phase: 3, layer: "database", title: "Script Seeding Database Awal untuk Lingkungan Dev", desc: "Seed otomatis untuk mengisi database dengan record kategori dan entri pengujian.", checklist: ["Script seed.ts idempotent", "Data kategori dasar", "Verifikasi SELECT query"], acceptance: "Jalankan seed: database terisi record uji coba yang siap dipakai." },
+        { ref: "T-13", phase: 3, layer: "backend", title: "Setup Autentikasi Pengguna & Session Cookie Handler", desc: "Autentikasi session/OAuth dengan proteksi HttpOnly SameSite cookie.", checklist: ["Auth provider setup", "Endpoint sign-in, sign-up, sign-out", "Auto-create user di DB"], acceptance: "Login berhasil, session terbaca di cookie dan profil user tersimpan." },
+        { ref: "T-14", phase: 3, layer: "backend", title: "Middleware Auth Guard & Verifikasi Role Hak Akses", desc: "Proteksi rute API privat dari akses tanpa token/session yang sah.", checklist: ["Guard session check", "Tolak 401 Unauthorized", "Guard role admin 403 Forbidden"], acceptance: "Akses tanpa login tertolak 401, akses dengan session valid diteruskan." },
+        { ref: "T-15", phase: 3, layer: "backend", title: "REST API: Endpoint GET List dengan Pagination & Filter", desc: "Endpoint GET list dengan validasi query Zod, offset/limit, dan SQL index query.", checklist: ["Validasi Zod query params", "Query kalkulasi pagination", "Response JSON terstandarisasi"], acceptance: "GET /api/v1/items?limit=5 mengembalikan tepat 5 record dan metadata total." },
+        { ref: "T-16", phase: 3, layer: "backend", title: "REST API: Endpoint GET Detail Berdasarkan ID / Slug", desc: "Endpoint rincian satu entitas dengan penanganan 404 jika record tidak ada.", checklist: ["Validasi parameter UUID/slug", "Query join relasi", "Return 404 Not Found jika kosong"], acceptance: "ID valid mengembalikan detail objek, ID acak mengembalikan 404." },
+        { ref: "T-17", phase: 3, layer: "backend", title: "REST API: Endpoint POST Pembuatan Data & Validasi Payload", desc: "Endpoint POST dengan validasi skema body Zod ketat dan transaksi database.", checklist: ["Validasi body skema Zod", "Kaitkan ke userID session", "Return HTTP 201 Created"], acceptance: "Payload tidak lengkap ditolak 422, payload valid tersimpan di database." },
+        { ref: "T-18", phase: 3, layer: "backend", title: "REST API: Endpoint PATCH Update dan DELETE Soft-Delete", desc: "Pembaruan data dan penghapusan dengan verifikasi hak milik record.", checklist: ["Verifikasi pemilik record", "Implementasi PATCH parsial", "Soft-delete flag"], acceptance: "User mengubah data orang lain tertolak 403, mengubah data sendiri sukses 200." },
+
+        { ref: "T-19", phase: 4, layer: "integration", title: "Setup API Client & TanStack Query Provider di Frontend", desc: "HTTP client terpusat dengan penanganan kredensial cookie otomatis.", checklist: ["Base URL & default headers", "Interceptor 401 global", "Setup QueryClient retry policy"], acceptance: "QueryClient terpasang di root tanpa re-render berlebih." },
+        { ref: "T-20", phase: 4, layer: "integration", title: "Wiring Frontend: Gantikan Mock Data dengan Query API Riil", desc: "Sambungkan komponen katalog dan detail view ke custom useQuery database.", checklist: ["Hook useItemsQuery", "Ganti sumber data mock ke API", "Shimmer skeleton saat fetch"], acceptance: "Tab Network memunculkan request GET /api/v1/items dan data DB ter-render di UI." },
+        { ref: "T-21", phase: 4, layer: "integration", title: "Wiring Mutasi: Form Submit & Optimistic UI Update", desc: "Sambungkan form modal ke useMutation dengan invalidasi cache otomatis.", checklist: ["Hook useCreateItemMutation", "Ganti mock submit ke API", "Invalidate queries setelah mutasi"], acceptance: "Submit form baru -> baris baru tersimpan di DB dan langsung muncul di list." },
+        { ref: "T-22", phase: 4, layer: "polish", title: "Audit Keamanan Trust Boundary, Sanitasi Input & Rate Limit", desc: "Audit keamanan aplikasi: periksa celah XSS, header Helmet, dan rate limiting.", checklist: ["Security headers Helmet/CSP", "Sanitasi XSS input string", "Rate limiting 100 req/menit"], acceptance: "Spam request > 100x berturut-turut mengembalikan HTTP 429 Too Many Requests." },
+        { ref: "T-23", phase: 4, layer: "polish", title: "Optimasi SEO, OpenGraph Meta Tags & PWA Manifest", desc: "Metadata sosial media, gambar preview OG image, dan Web App Manifest.", checklist: ["OpenGraph og:title & og:image", "manifest.json favicon lengkap", "Canonical URL per rute"], acceptance: "Pratinjau sosial media memunculkan thumbnail dan deskripsi situs yang rapi." },
+        { ref: "T-24", phase: 4, layer: "polish", title: "Verifikasi Akhir Build Production & Smoke Test Mandiri", desc: "Build produksi akhir, cek bundle size budget (< 150KB), dan smoke test seluruh alur.", checklist: ["npm run build lolos", "Bundle size audit", "Smoke test login -> create -> search"], acceptance: "Production build lolos 100% tanpa error type. Aplikasi siap dideploy." }
+      ];
+
+      return {
+        name, idea, target, stack, auth,
+        categoryKey: catKey, categoryTitle: catTitle,
+        personas, features, sqlDdl, apiContracts, tasks
+      };
+    }
+
+    function renderPlan(plan) {
+      currentPlan = plan;
+      completedTasks.clear();
+
+      document.getElementById('planResultTitle').innerText = plan.name;
+      document.getElementById('planBadgeStack').innerText = plan.stack.toUpperCase();
+      document.getElementById('planBadgeCategory').innerText = plan.categoryTitle;
+
+      renderTaskBoard(plan.tasks);
+
+      // Render Dokumen PRD
+      document.getElementById('prdContent').innerText = generatePrdMarkdown(plan);
+
+      // Render DDL SQL
+      document.getElementById('ddlContent').innerText = plan.sqlDdl;
+
+      // Render API Contracts
+      const apiContainer = document.getElementById('apiListContainer');
+      apiContainer.innerHTML = '';
+      plan.apiContracts.forEach(api => {
+        const card = document.createElement('div');
+        card.className = 'api-card';
+        const mClass = `method-${api.method.toLowerCase()}`;
+        card.innerHTML = `
+          <div class="api-head">
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="method-badge ${mClass}">${api.method}</span>
+              <code style="font-family: var(--font-mono); font-size: 0.9rem; font-weight: 700;">${api.path}</code>
+            </div>
+            <span style="font-size: 0.75rem; color: var(--text-dim); background: var(--card-muted); padding: 2px 6px; border-radius: 4px;">Auth: ${api.auth}</span>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">${api.desc}</p>
+          <div style="display: grid; grid-template-columns: 1fr; gap: 0.75rem;">
+            ${api.params ? `<div><span style="font-size: 0.75rem; color: var(--text-dim); font-weight: 600;">Query Parameters:</span><pre class="doc-pre" style="padding: 0.5rem; margin-top: 4px;">${api.params}</pre></div>` : ''}
+            ${api.body ? `<div><span style="font-size: 0.75rem; color: var(--text-dim); font-weight: 600;">Request Body (JSON):</span><pre class="doc-pre" style="padding: 0.5rem; margin-top: 4px;">${JSON.stringify(api.body, null, 2)}</pre></div>` : ''}
+            <div><span style="font-size: 0.75rem; color: var(--text-dim); font-weight: 600;">Response 200 OK:</span><pre class="doc-pre" style="padding: 0.5rem; margin-top: 4px;">${JSON.stringify(api.res, null, 2)}</pre></div>
+          </div>
+        `;
+        apiContainer.appendChild(card);
+      });
+
+      // Render AGENTS.md
+      document.getElementById('agentsContent').innerText = generateAgentsMarkdown(plan);
+    }
+
+    function renderTaskBoard(tasks) {
+      const container = document.getElementById('taskBoardContainer');
+      container.innerHTML = '';
+
+      const phases = [
+        { num: 1, title: "Fase 1 — Fondasi & Mockup UI Statis", badge: "Layer: Frontend (Mock First)" },
+        { num: 2, title: "Fase 2 — State Management & Interaksi Klien", badge: "Layer: Frontend (Interactive)" },
+        { num: 3, title: "Fase 3 — Skema Database, Auth & Backend API", badge: "Layer: Database & Backend" },
+        { num: 4, title: "Fase 4 — Integrasi End-to-End, Hardening & Polish", badge: "Layer: Integration & Polish" }
+      ];
+
+      let visibleCount = 0;
+
+      phases.forEach(ph => {
+        let phTasks = tasks.filter(t => t.phase === ph.num);
+        if (activeFilter !== 'all') {
+          phTasks = phTasks.filter(t => t.layer === activeFilter);
+        }
+        if (!phTasks.length) return;
+
+        visibleCount += phTasks.length;
+
+        const block = document.createElement('div');
+        block.className = 'phase-block';
+        block.innerHTML = `
+          <div class="phase-header">
+            <div class="phase-title">
+              <span>${ph.title}</span>
+              <span class="phase-badge">${ph.badge}</span>
+            </div>
+            <span style="font-size: 0.8rem; color: var(--text-dim);">${phTasks.length} Micro-Tasks</span>
+          </div>
+          <div class="task-list" id="phase-list-${ph.num}"></div>
+        `;
+        container.appendChild(block);
+
+        const list = block.querySelector(`#phase-list-${ph.num}`);
+        phTasks.forEach(task => {
+          const card = document.createElement('div');
+          card.className = `task-card ${completedTasks.has(task.ref) ? 'task-done' : ''}`;
+          card.id = `task-card-${task.ref}`;
+
+          const checklistHtml = task.checklist.map(c => `<li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> ${c}</li>`).join('');
+
+          card.innerHTML = `
+            <div class="task-top">
+              <div class="task-ref-title">
+                <span class="task-ref">${task.ref}</span>
+                <span class="task-title">${task.title}</span>
+              </div>
+              <span class="task-layer-badge layer-${task.layer}">${task.layer}</span>
+            </div>
+            <p class="task-desc">${task.desc}</p>
+            <ul class="task-checklist">${checklistHtml}</ul>
+            <div class="task-acceptance">
+              <strong>Verifikasi:</strong> ${task.acceptance}
+            </div>
+            <div class="task-actions">
+              <label class="task-toggle">
+                <input type="checkbox" ${completedTasks.has(task.ref) ? 'checked' : ''} onchange="toggleTaskDone('${task.ref}', this.checked)">
+                <span>Tandai Selesai</span>
+              </label>
+              <button class="btn btn-primary btn-sm" onclick="copyTaskPrompt('${task.ref}')">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                Copy Prompt Agent
+              </button>
+            </div>
+          `;
+          list.appendChild(card);
+        });
+      });
+
+      updateProgressCount();
+    }
+
+    function filterTasks(layer) {
+      activeFilter = layer;
+      if (currentPlan) {
+        renderTaskBoard(currentPlan.tasks);
+      }
+    }
+
+    function toggleTaskDone(ref, isDone) {
+      const card = document.getElementById(`task-card-${ref}`);
+      if (isDone) {
+        completedTasks.add(ref);
+        if (card) card.classList.add('task-done');
+        showToast(`Task ${ref} ditandai selesai! 🎉`);
+      } else {
+        completedTasks.delete(ref);
+        if (card) card.classList.remove('task-done');
+      }
+      updateProgressCount();
+    }
+
+    function updateProgressCount() {
+      const total = currentPlan ? currentPlan.tasks.length : 24;
+      document.getElementById('taskProgressCount').innerText = `${completedTasks.size} / ${total} Selesai`;
+    }
+
+    function copyTaskPrompt(ref) {
+      if (!currentPlan) return;
+      const t = currentPlan.tasks.find(x => x.ref === ref);
+      if (!t) return;
+
+      const checklistStr = t.checklist.map(c => "- " + c).join("\n");
+      const prompt = `Kamu akan mengerjakan task ${t.ref} (${t.title}) untuk proyek ${currentPlan.name}.
+Layer: ${t.layer} | Fase: ${t.phase}
+
+Objektif:
+${t.desc}
+
+Checklist Pengerjaan:
+${checklistStr}
+
+Kriteria Pengujian (Verifikasi Ini Sebelum Melapor Selesai):
+${t.acceptance}
+
+Aturan Eksekusi:
+1. Kerjakan HANYA checklist di atas. Jangan memodifikasi file di luar cakupan task ini.
+2. Tulis kode sesedikit mungkin yang bekerja dengan benar (Ponytail principle).
+3. Setelah verifikasi berhasil, lapor hasilnya ke user secara ringkas sebelum lanjut.`;
+
+      navigator.clipboard.writeText(prompt);
+      showToast(`Prompt untuk ${t.ref} siap di-paste ke Agent! 📋`);
+    }
+
+    function generatePrdMarkdown(p) {
+      const personasMd = p.personas.map((per, idx) => `#### Persona ${idx+1}: ${per.role}\n- Tujuan: ${per.goal}\n- Kendala: ${per.pain.join("; ")}`).join("\n\n");
+      const featuresMd = p.features.map(f => `### [${f.id}] ${f.name}\n- Deskripsi: ${f.desc}\n- User Story: ${f.story}\n- Acceptance Criteria:\n${f.acceptance.map(a => "  - [ ] " + a).join("\n")}`).join("\n\n");
+
+      return `# Product Requirement Document (PRD)\n## ${p.name} — Spesifikasi Rekayasa Sistem\n\n> Versi: 1.0.0 (Production Enriched)\n> Target Pengguna: ${p.target}\n> Kategori: ${p.categoryTitle}\n> Tech Stack: ${p.stack.toUpperCase()}\n\n---\n\n## 1. Ringkasan Eksekutif & Problem Statement\n"${p.idea}"\n\n### Tujuan Utama:\n1. First Contentful Paint < 1.2 detik dan alur kerja utama selesai dalam < 3 klik.\n2. Zero Data Loss: Validasi form Zod batas ganda dan proteksi draf lokal.\n3. Modularitas irit token untuk coding agent (Claude Code, Hermes, Cursor).\n\n---\n\n## 2. Profil Pengguna & Personas\n\n${personasMd}\n\n---\n\n## 3. Spesifikasi Rinci Modul & Fitur\n\n${featuresMd}\n\n---\n\n## 4. Skema Database DDL PostgreSQL\n\`\`\`sql\n${p.sqlDdl}\n\`\`\`\n\n---\n\n## 5. Aturan Pengerjaan AI Coding Agent\n1. Selesaikan Fase 1 & 2 dengan mock data terlebih dahulu.\n2. Kerjakan satu task per putaran prompt.\n3. Ponytail principle: Tulis kode seminimal mungkin yang bekerja dengan benar.`;
+    }
+
+    function generateAgentsMarkdown(p) {
+      return `# AGENTS.md — Instruksi Kerja AI Coding Agent\nProyek: ${p.name}\nKategori: ${p.categoryTitle}\n\n## Aturan Emas Pengerjaan:\n1. Kerjakan SATU task pada satu waktu dari TASKS.md.\n2. Selesaikan lapisan UI (Fase 1) dengan data tiruan terlebih dahulu sebelum membuat database.\n3. Berhenti dan lapor ke user tiap kali berganti fase atau layer.\n4. Tulis kode sesedikit mungkin yang bekerja dengan benar (Ponytail principle).`;
+    }
+
+    function copyFullPrd() {
+      if (!currentPlan) return;
+      navigator.clipboard.writeText(generatePrdMarkdown(currentPlan));
+      showToast("Seluruh isi PRD disalin ke clipboard! 📄");
+    }
+
+    function copyDdl() {
+      if (!currentPlan) return;
+      navigator.clipboard.writeText(currentPlan.sqlDdl);
+      showToast("Skema SQL DDL disalin ke clipboard! 💾");
+    }
+
+    function copyAgentsMd() {
+      if (!currentPlan) return;
+      navigator.clipboard.writeText(generateAgentsMarkdown(currentPlan));
+      showToast("AGENTS.md disalin ke clipboard! 🤖");
+    }
+
+    function downloadAllMarkdown() {
+      if (!currentPlan) return;
+      const prdText = generatePrdMarkdown(currentPlan);
+      const blob = new Blob([prdText], { type: 'text/markdown;charset=utf-8;' });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${currentPlan.name.toLowerCase().replace(/\\s+/g, '-')}-PRD.md`;
+      link.click();
+      showToast("File PRD.md berhasil diunduh! 📥");
+    }
+
+    function switchTab(name) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+
+      event.currentTarget.classList.add('active');
+      document.getElementById(`tab-${name}`).classList.add('active');
+    }
+
+    function handleGenerate(e) {
+      e.preventDefault();
+      const name = document.getElementById('appName').value;
+      const target = document.getElementById('targetAudience').value;
+      const idea = document.getElementById('appIdea').value;
+      const stack = document.getElementById('techStack').value;
+      const auth = document.getElementById('authType').value;
+
+      const progress = document.getElementById('genProgress');
+      const ws = document.getElementById('workspaceSection');
+      const submitBtn = document.getElementById('btnSubmit');
+
+      progress.style.display = 'block';
+      ws.style.display = 'none';
+      submitBtn.disabled = true;
+      submitBtn.style.opacity = '0.5';
+
+      const steps = [
+        document.getElementById('step1'),
+        document.getElementById('step2'),
+        document.getElementById('step3'),
+        document.getElementById('step4')
+      ];
+
+      steps.forEach(s => { s.className = 'progress-step'; });
+
+      let currentStep = 0;
+      function nextStep() {
+        if (currentStep > 0) {
+          steps[currentStep - 1].className = 'progress-step done';
+        }
+        if (currentStep < steps.length) {
+          steps[currentStep].className = 'progress-step active';
+          currentStep++;
+          setTimeout(nextStep, 350);
+        } else {
+          setTimeout(() => {
+            progress.style.display = 'none';
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            const plan = synthesize(name, idea, target, stack, auth);
+            renderPlan(plan);
+            ws.style.display = 'flex';
+            ws.scrollIntoView({ behavior: 'smooth' });
+            showToast("PRD Enriched & 24 Tasks berhasil digenerate! 🎉");
+          }, 250);
+        }
+      }
+
+      nextStep();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      loadPreset('kosan');
+    });
+  </script>
+</body>
+</html>

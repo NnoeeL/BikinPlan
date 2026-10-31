@@ -1,0 +1,157 @@
+<div id="bikinplan-widget" style="width: 100%; max-width: 760px; font-family: var(--font, inherit); color: var(--foreground); display: flex; flex-direction: column; gap: 14px;">
+  <!-- Header Bar -->
+  <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid var(--border);">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <svg viewBox="0 0 133 152" fill="#FF5C20" width="22" height="25">
+        <path d="M86.6806 14.2553L46.2527 45.6283V14.1253L62.9568 1.17002C64.9743 -0.390006 67.7884 -0.390006 69.8011 1.17002L86.6783 14.2577L86.6806 14.2553Z"></path>
+        <path d="M1.7804 85.6855L41.8621 54.5867V116.791L2.15496 85.9999C2.07198 85.929 1.989 85.8699 1.90602 85.799C1.86335 85.7635 1.82307 85.721 1.7804 85.6855Z"></path>
+        <path d="M41.8622 17.5265V49.0367L0 81.5183V52.7098C0 50.9938 0.791806 49.3747 2.14786 48.3228L22.1212 32.8313L41.8622 17.5242V17.5265Z"></path>
+        <path d="M66.3873 68.1115H68.8955C72.8238 68.1115 76.6904 69.3099 79.8103 71.6925C84.1298 76.0582 86.3203 80.4499 86.3203 82.8821V151.273L66.3944 135.819H66.3825L46.2551 120.205V51.1735L86.3179 20.0864V51.4406C86.3179 54.0406 85.4621 56.5674 83.8666 58.6285L80.0805 62.434C76.8635 64.9466 72.9281 66.197 68.924 66.197H66.3873V68.1115Z"></path>
+      </svg>
+      <span style="font-weight: 800; font-size: 1rem; letter-spacing: -0.02em;">BikinPlan Enterprise</span>
+      <span style="background: #FF5C20; color: #fff; font-size: 0.65rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; text-transform: uppercase;">24 Micro-Tasks</span>
+    </div>
+    <span style="font-size: 0.75rem; color: var(--muted-foreground);">Alur NgodingPakeAI • 4 Fase • DDL & API Ready</span>
+  </div>
+
+  <!-- Quick Presets -->
+  <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
+    <span style="font-size: 0.75rem; color: var(--muted-foreground); font-weight: 600;">Preset:</span>
+    <button type="button" onclick="pFill('kosan')" style="background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">🏠 Kosan UNSIL</button>
+    <button type="button" onclick="pFill('finance')" style="background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">💰 Catat Duit SaaS</button>
+    <button type="button" onclick="pFill('rental')" style="background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">🏕️ Rental Outdoor</button>
+    <button type="button" onclick="pFill('community')" style="background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">🎓 Forum Mahasiswa</button>
+  </div>
+
+  <!-- Form Mini -->
+  <div style="display: flex; flex-direction: column; gap: 8px;">
+    <div style="display: flex; gap: 8px;">
+      <input id="wName" type="text" placeholder="Nama Aplikasi" value="KosHunt Tasik" style="flex: 1; background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 6px 10px; border-radius: 6px; font-size: 0.85rem; outline: none;">
+      <select id="wStack" style="background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 6px 10px; border-radius: 6px; font-size: 0.85rem; outline: none;">
+        <option value="tanstack">TanStack Start + Drizzle</option>
+        <option value="nextjs">Next.js 15 + Prisma</option>
+        <option value="vite-spa">Vite React + Express</option>
+      </select>
+    </div>
+    <textarea id="wIdea" rows="2" placeholder="Ceritakan ide aplikasi..." style="background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 6px 10px; border-radius: 6px; font-size: 0.85rem; outline: none; resize: vertical;">Aplikasi pencarian kosan mahasiswa dekat UNSIL dengan filter harga, radius 10km, dan kontak WhatsApp pemilik kos.</textarea>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span id="wStatus" style="font-size: 0.75rem; color: var(--muted-foreground);">Siap generate PRD enriched & 24 micro-tasks</span>
+      <button type="button" onclick="wGenerate()" style="background: #FF5C20; color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.825rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+        <span>⚡ Generate PRD Enriched</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Result Container -->
+  <div id="wResult" style="display: none; flex-direction: column; gap: 10px; margin-top: 6px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: var(--card); border: 1px solid var(--border); border-radius: 6px;">
+      <span id="wResultTitle" style="font-weight: 700; font-size: 0.875rem;">KosHunt — 24 Task Siap Eksekusi</span>
+      <div style="display: flex; gap: 6px;">
+        <button type="button" onclick="wCopyAll()" style="background: transparent; border: 1px solid var(--border); color: var(--foreground); padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; cursor: pointer;">Salin Ringkasan PRD</button>
+      </div>
+    </div>
+
+    <!-- Task List Preview -->
+    <div id="wTaskList" style="display: flex; flex-direction: column; gap: 6px; max-height: 290px; overflow-y: auto; padding-right: 4px;"></div>
+  </div>
+</div>
+
+<script>
+  const wPresets = {
+    kosan: { name: "KosHunt Tasik", idea: "Aplikasi pencarian kosan mahasiswa dekat UNSIL dengan filter harga, radius 10km, dan kontak WhatsApp pemilik kos." },
+    finance: { name: "DuitTrack SaaS", idea: "SaaS pencatatan keuangan harian untuk freelancer dengan grafik bulanan dan ekspor PDF." },
+    rental: { name: "CampRent Outdoor", idea: "Platform rental peralatan outdoor camping dengan sistem booking tanggal dan pembayaran QRIS." },
+    community: { name: "RuangMahasiswa UNSIL", idea: "Portal forum diskusi mahasiswa kampus dengan thread kategori mata kuliah dan tanya jawab." }
+  };
+
+  function pFill(k) {
+    const p = wPresets[k];
+    if (!p) return;
+    document.getElementById('wName').value = p.name;
+    document.getElementById('wIdea').value = p.idea;
+  }
+
+  let wCurrentTasks = [];
+  let wPlanName = "";
+
+  function wGenerate() {
+    const name = document.getElementById('wName').value || "Aplikasi";
+    const idea = document.getElementById('wIdea').value;
+    const stack = document.getElementById('wStack').value;
+    const status = document.getElementById('wStatus');
+    status.innerText = "Menyusun PRD & 24 micro-tasks...";
+
+    setTimeout(() => {
+      wPlanName = name;
+      wCurrentTasks = [
+        { ref: "T-01", phase: 1, layer: "frontend", title: "Setup Repo, TypeScript Ketat & Token Tema Tailwind", desc: "Inisialisasi repo dengan palet warna dan font 'Plus Jakarta Sans'." },
+        { ref: "T-02", phase: 1, layer: "frontend", title: "Layout Shell Responsif: Navbar, Mobile Drawer & Dark Mode", desc: "Navigasi desktop & mobile serta toggle tema tersimpan di localStorage." },
+        { ref: "T-03", phase: 1, layer: "frontend", title: "Pembuatan Fixture Mock Data & State Tiruan Entitas", desc: "Fixture data tiruan terisolasi untuk representasi entitas utama tanpa backend." },
+        { ref: "T-04", phase: 1, layer: "frontend", title: "Tampilan Halaman Utama Katalog (Data Mock/Stub)", desc: "Kartu presentasi dengan input search debounce dan filter pill kategori visual." },
+        { ref: "T-05", phase: 1, layer: "frontend", title: "Tampilan Halaman Rincian Item (Detail View)", desc: "Halaman detail spesifikasi, galeri foto, dan ringkasan harga." },
+        { ref: "T-06", phase: 1, layer: "frontend", title: "Modal Dialog & Formulir Input Interaktif (Validasi Zod)", desc: "Modal form responsif dengan validasi client-side dan pesan error inline." },
+        { ref: "T-07", phase: 2, layer: "frontend", title: "Sinkronisasi State URL Query Parameters (nuqs)", desc: "URL search params sebagai sumber kebenaran filter dan pagination yang shareable." },
+        { ref: "T-08", phase: 2, layer: "frontend", title: "Local Store Management & CRUD Client-Side di Memori", desc: "State store lokal (Zustand/Context) agar aksi CRUD langsung terlihat di UI." },
+        { ref: "T-09", phase: 2, layer: "frontend", title: "Komponen Empty State, Error Boundary & Toast System", desc: "Sistem toast notifikasi, kartu empty state terarah, dan penangkap error crash." },
+        { ref: "T-10", phase: 2, layer: "frontend", title: "Checkpoint Verifikasi Fase 1 & 2 (Frontend Review)", desc: "Audit visual dan interaktivitas menyeluruh sebelum lanjut ke backend & database." },
+        { ref: "T-11", phase: 3, layer: "database", title: "Skema Database Drizzle/Prisma & Konfigurasi Koneksi Pool", desc: "Tabel database resmi lengkap dengan foreign key, index pencarian, dan migration." },
+        { ref: "T-12", phase: 3, layer: "database", title: "Script Seeding Database Awal untuk Lingkungan Dev", desc: "Seed otomatis untuk mengisi database dengan record kategori dan entri pengujian." },
+        { ref: "T-13", phase: 3, layer: "backend", title: "Setup Autentikasi Pengguna & Session Cookie Handler", desc: "Autentikasi session/OAuth dengan proteksi HttpOnly SameSite cookie." },
+        { ref: "T-14", phase: 3, layer: "backend", title: "Middleware Auth Guard & Verifikasi Role Hak Akses", desc: "Proteksi rute API privat dari akses tanpa token/session yang sah." },
+        { ref: "T-15", phase: 3, layer: "backend", title: "REST API: Endpoint GET List dengan Pagination & Filter", desc: "Endpoint GET list dengan validasi query Zod, offset/limit, dan SQL index query." },
+        { ref: "T-16", phase: 3, layer: "backend", title: "REST API: Endpoint GET Detail Berdasarkan ID / Slug", desc: "Endpoint rincian satu entitas dengan penanganan 404 jika record tidak ada." },
+        { ref: "T-17", phase: 3, layer: "backend", title: "REST API: Endpoint POST Pembuatan Data & Validasi Payload", desc: "Endpoint POST dengan validasi skema body Zod ketat dan transaksi database." },
+        { ref: "T-18", phase: 3, layer: "backend", title: "REST API: Endpoint PATCH Update dan DELETE Soft-Delete", desc: "Pembaruan data dan penghapusan dengan verifikasi hak milik record." },
+        { ref: "T-19", phase: 4, layer: "integration", title: "Setup API Client & TanStack Query Provider di Frontend", desc: "HTTP client terpusat dengan penanganan kredensial cookie otomatis." },
+        { ref: "T-20", phase: 4, layer: "integration", title: "Wiring Frontend: Gantikan Mock Data dengan Query API Riil", desc: "Sambungkan komponen katalog dan detail view ke custom useQuery database." },
+        { ref: "T-21", phase: 4, layer: "integration", title: "Wiring Mutasi: Form Submit & Optimistic UI Update", desc: "Sambungkan form modal ke useMutation dengan invalidasi cache otomatis." },
+        { ref: "T-22", phase: 4, layer: "polish", title: "Audit Keamanan Trust Boundary, Sanitasi Input & Rate Limit", desc: "Audit keamanan aplikasi: periksa celah XSS, header Helmet, dan rate limiting." },
+        { ref: "T-23", phase: 4, layer: "polish", title: "Optimasi SEO, OpenGraph Meta Tags & PWA Manifest", desc: "Metadata sosial media, gambar preview OG image, dan Web App Manifest." },
+        { ref: "T-24", phase: 4, layer: "polish", title: "Verifikasi Akhir Build Production & Smoke Test Mandiri", desc: "Build produksi akhir, cek bundle size budget (< 150KB), dan smoke test seluruh alur." }
+      ];
+
+      const list = document.getElementById('wTaskList');
+      list.innerHTML = '';
+      wCurrentTasks.forEach(t => {
+        const item = document.createElement('div');
+        item.style.cssText = "display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; font-size: 0.8rem;";
+        item.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 6px; overflow: hidden;">
+            <span style="font-family: monospace; font-weight: 700; color: #FF5C20;">${t.ref}</span>
+            <span style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden; font-weight: 600;">${t.title}</span>
+            <span style="font-size: 0.65rem; background: var(--border); padding: 1px 4px; border-radius: 3px; text-transform: uppercase;">Fase ${t.phase}</span>
+          </div>
+          <button type="button" onclick="wCopyTaskPrompt('${t.ref}')" style="background: transparent; border: 1px solid var(--border); color: var(--foreground); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; white-space: nowrap;">Copy Prompt</button>
+        `;
+        list.appendChild(item);
+      });
+
+      document.getElementById('wResultTitle').innerText = `${name} — 24 Task Siap Eksekusi`;
+      document.getElementById('wResult').style.display = 'flex';
+      status.innerText = "✅ Selesai! PRD Enriched & 24 Tasks siap dieksekusi coding agent.";
+    }, 350);
+  }
+
+  function wCopyTaskPrompt(ref) {
+    const t = wCurrentTasks.find(x => x.ref === ref);
+    if (!t) return;
+    const prompt = `Kamu akan mengerjakan task ${t.ref} (${t.title}) untuk proyek ${wPlanName}.
+Layer: ${t.layer} | Fase: ${t.phase}
+Objektif: ${t.desc}
+
+Petunjuk Eksekusi:
+1. Selesaikan HANYA task ini. Dilarang memodifikasi modul lain di luar cakupan ini.
+2. Gunakan kode minimal yang bekerja dengan benar (Ponytail principle).
+3. Setelah selesai, uji verifikasi lokal, lalu lapor hasilnya sebelum lanjut ke task berikutnya.`;
+
+    navigator.clipboard.writeText(prompt);
+    alert(`Prompt untuk task ${t.ref} disalin ke clipboard! Siap dipaste ke AI coding agent.`);
+  }
+
+  function wCopyAll() {
+    const md = `# PRD: ${wPlanName}\n\nIde: ${document.getElementById('wIdea').value}\n\n## 24 Micro-Tasks Backlog:\n` +
+      wCurrentTasks.map(t => `- [${t.ref}] [Fase ${t.phase}] [${t.layer}] ${t.title}: ${t.desc}`).join("\n");
+    navigator.clipboard.writeText(md);
+    alert("Ringkasan PRD & 24 Task disalin ke clipboard!");
+  }
+</script>
