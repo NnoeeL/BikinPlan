@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-BikinPlan CLI - Enterprise-Grade PRD & Layered Task Breakdown Generator
+NgodingYuk CLI - Enterprise-Grade PRD & Layered Task Breakdown Generator
 Mengadopsi standar komprehensif NgodingPakeAI (Skeleton -> PRD -> DDL -> API Contracts -> Layered Tasks)
 Prinsip: Ponytail (minimal code, zero-slop, type-safe, runnable verification)
 """
@@ -1124,7 +1124,7 @@ Tech Stack: **{p['stack']['name']}**
 """
 
 def main():
-    parser = argparse.ArgumentParser(description="BikinPlan CLI - Enterprise PRD & Tasks Generator untuk AI Coding Agent")
+    parser = argparse.ArgumentParser(description="NgodingYuk CLI - Enterprise PRD & Tasks Generator untuk AI Coding Agent")
     parser.add_argument("name", nargs="?", default="Aplikasi Web Keren", help="Nama proyek atau aplikasi")
     parser.add_argument("--idea", default="", help="Deskripsi lengkap ide aplikasi")
     parser.add_argument("--stack", default="tanstack", choices=["tanstack", "nextjs", "vite-spa"], help="Pilihan tech stack")
