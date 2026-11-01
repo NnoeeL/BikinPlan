@@ -21,8 +21,8 @@
     <!-- Quick Presets -->
     <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
       <span style="font-size: 0.75rem; color: var(--muted-foreground); font-weight: 600;">Pilihan Preset:</span>
-      <button type="button" onclick="pFill('toko')" style="background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">🛍️ Katalog Toko Online</button>
-      <button type="button" onclick="pFill('portfolio')" style="background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">💼 Portofolio Pribadi</button>
+      <button type="button" id="wpill-toko" onclick="pFill('toko')" style="background: rgba(255, 92, 32, 0.15); border: 1px solid #FF5C20; color: #fff; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">🛍️ Katalog Toko Online</button>
+      <button type="button" id="wpill-portfolio" onclick="pFill('portfolio')" style="background: var(--card); border: 1px solid var(--border); color: var(--muted-foreground); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">💼 Portofolio Pribadi</button>
     </div>
 
     <div style="display: flex; gap: 8px;">
@@ -130,12 +130,24 @@
     toko: {
       name: "TokoOnline Store",
       target: "Pelanggan & Pembeli Umum",
-      idea: "Website katalog toko online modern dan responsif untuk memamerkan produk, filter kategori & harga, pencarian barang cepat, rincian detail spesifikasi produk, status stok, dan tombol checkout pemesanan langsung terhubung ke WhatsApp penjual."
+      idea: `Website katalog toko online modern dan responsif untuk memamerkan produk dan memproses pesanan belanja.
+
+Fitur Utama:
+1. Katalog Produk & Pencarian Real-time: Filter multi-kategori, sortir harga, dan status stok ketersediaan.
+2. Rincian Detail Produk: Galeri foto produk, deskripsi spesifikasi lengkap, dan pemilihan varian.
+3. Keranjang Belanja & Checkout WhatsApp: Form kontak pembeli dengan rincian order otomatis terkirim rapi ke WhatsApp penjual.
+4. Panel Manajemen Produk: Pembaruan katalog, stok, dan riwayat pesanan.`
     },
     portfolio: {
       name: "Portofolio Profesional",
       target: "Klien, Recruiter & Kolaborator",
-      idea: "Website portofolio pribadi modern dan interaktif untuk menampilkan profil diri, showcase proyek unggulan dengan filter tech stack, rincian keahlian teknis (skills), sertifikasi, formulir kontak pesan langsung, dan tautan sosial media."
+      idea: `Website portofolio pribadi modern dan interaktif untuk personal branding dan rekam jejak profesional.
+
+Fitur Utama:
+1. Hero Profile & Bio: Foto profil beranimasi, headline keahlian, status ketersediaan kerja (Open to Work), tombol Download CV (PDF), dan tautan sosial media (GitHub, LinkedIn).
+2. Showcase Galeri Proyek: Kartu proyek dengan filter kategori tech stack, screenshot preview, tombol Live Demo, dan link Source Code GitHub.
+3. Matriks Keahlian (Skills) & Pengalaman: Visualisasi tingkat penguasaan tools/bahasa pemrograman dan timeline riwayat kerja/organisasi.
+4. Formulir Kontak Langsung: Form kirim pesan cepat dengan validasi email Zod dan notifikasi langsung.`
     }
   };
 
@@ -145,6 +157,21 @@
     document.getElementById('wName').value = p.name;
     document.getElementById('wTarget').value = p.target;
     document.getElementById('wIdea').value = p.idea;
+
+    ['toko', 'portfolio'].forEach(id => {
+      const b = document.getElementById('wpill-' + id);
+      if (b) {
+        if (id === k) {
+          b.style.borderColor = '#FF5C20';
+          b.style.background = 'rgba(255, 92, 32, 0.15)';
+          b.style.color = '#fff';
+        } else {
+          b.style.borderColor = 'var(--border)';
+          b.style.background = 'var(--card)';
+          b.style.color = 'var(--muted-foreground)';
+        }
+      }
+    });
   }
 
   let wStack = 'tanstack';
