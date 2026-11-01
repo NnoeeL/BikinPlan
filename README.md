@@ -1,4 +1,4 @@
-# ⚡ NgodingYuk — Enterprise PRD & Layered Task Generator
+# ⚡ BikinPlan — Enterprise PRD & Layered Task Generator
 
 <p align="center">
   <b>Generator Dokumen PRD dan Backlog Task Berfase untuk AI Coding Agent</b><br>
@@ -15,14 +15,14 @@
 
 ---
 
-## 📌 Mengapa NgodingYuk?
+## 📌 Mengapa BikinPlan?
 
 AI coding agent (seperti **Claude Code**, **Hermes Agent**, **Antigravity**, atau **Cursor**) sering kali mengalami masalah saat diberi instruksi umum:
 1. **Halusinasi Skema:** Membuat tabel database dan endpoint tanpa kontrak yang jelas.
 2. **Melompati Arsitektur:** Langsung mencoba membuat backend rumit sebelum tampilan layar divalidasi.
 3. **Context Overflow & Regresi:** Kehilangan fokus karena memproses backlog ratusan baris sekaligus.
 
-**NgodingYuk** menyelesaikan masalah ini dengan mengadopsi formula **4-Fase & Layered Checkpoint**:
+**BikinPlan** menyelesaikan masalah ini dengan mengadopsi formula **4-Fase & Layered Checkpoint**:
 - **Fase 1 (Frontend Stubs):** Membangun UI dan layout dengan *data mock/tiruan* terlebih dahulu. Developer bisa langsung klik-klik tampilan di browser sebelum menyentuh database.
 - **Fase 2 (Client State):** Menghubungkan formulir, validasi Zod, dan manajemen state lokal di browser.
 - **Fase 3 (Database & API):** Menyusun skema DDL SQL PostgreSQL resmi, migrasi ORM, autentikasi session, dan endpoint RESTful.
@@ -125,7 +125,7 @@ Sebelum membuka AI Agent apa pun, buat folder kosong baru di komputermu:
 ```bash
 mkdir toko-online && cd toko-online
 ```
-Setelah men-generate dokumen di NgodingYuk (lewat Web App atau CLI), pindahkan 3 file hasil generate ke dalam root folder proyek tersebut:
+Setelah men-generate dokumen di BikinPlan (lewat Web App atau CLI), pindahkan 3 file hasil generate ke dalam root folder proyek tersebut:
 - `PRD.md` — Spesifikasi lengkap arsitektur, DDL database, dan kontrak API.
 - `TASKS.md` — Daftar 24 micro-tasks berfase yang memandu pengerjaan harian.
 - `AGENTS.md` — Instruksi dan aturan main agar agent tidak membuat kode berantakan (*anti-slop*).
@@ -148,7 +148,7 @@ Apakah kamu sudah membaca dan paham arsitekturnya?
 
 ### 3. Kapan & Bagaimana Mengirim Task? (Satu per Satu)
 Setelah AI Agent menjawab *"Paham"*, mulailah siklus pengerjaan bertahap:
-1. Buka tab **"Roadmap & 24 Tasks Board"** di NgodingYuk (atau buka file `TASKS.md`).
+1. Buka tab **"Roadmap & 24 Tasks Board"** di BikinPlan (atau buka file `TASKS.md`).
 2. Mulai dari task pertama yang belum selesai (`T-01`: Setup Repo & Layout Shell).
 3. Klik tombol **"Copy Prompt Agent"** pada task tersebut, lalu tempelkan ke terminal agent:
    ```markdown
@@ -170,7 +170,7 @@ Sesuai formula *Frontend Mock First*, Fase 1 (T-01 s/d T-06) sengaja menggunakan
 4. **Keuntungan:** Kamu tidak membuang kuota/token untuk backend yang salah arah, dan tampilan UI sudah terbukti berfungsi sejak awal!
 
 ### 5. Cara Instan: Master Prompt (Sekali Paste Langsung Jadi!)
-Jika kamu **tidak ingin repot mengirim file AGENTS.md atau memecah file terpisah**, NgodingYuk menyediakan **Master Prompt**:
+Jika kamu **tidak ingin repot mengirim file AGENTS.md atau memecah file terpisah**, BikinPlan menyediakan **Master Prompt**:
 1. Setelah dokumen selesai digenerate, klik tombol **"Salin Master Prompt Sekarang"**.
 2. Buka AI Coding Agent kamu di folder proyek baru.
 3. Tempelkan Master Prompt tersebut. Agent akan langsung memahami konteks arsitektur dan langsung mengeksekusi langkah awal secara mandiri!

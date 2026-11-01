@@ -15,7 +15,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 def run():
     os.chdir(DIRECTORY)
     url = f"http://localhost:{PORT}/index.html"
-    print(f"\n🚀 NgodingYuk Web Server berjalan di: {url}")
+    print(f"\n🚀 BikinPlan Web Server berjalan di: {url}")
     print("Tekan Ctrl+C untuk menghentikan server.\n")
     
     # Auto open browser

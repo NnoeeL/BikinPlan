@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-NgodingYuk CLI - Enterprise-Grade PRD & Layered Task Breakdown Generator
+BikinPlan CLI - Enterprise-Grade PRD & Layered Task Breakdown Generator
 Mengadopsi standar komprehensif NgodingPakeAI (Skeleton -> PRD -> DDL -> API Contracts -> Layered Tasks)
 Prinsip: Ponytail (minimal code, zero-slop, type-safe, runnable verification)
 """
@@ -222,11 +222,11 @@ CREATE INDEX idx_projects_category ON projects(category_id);
                     "data": [
                         {
                             "id": "proj-1234-5678-90ab",
-                            "title": "NgodingYuk Platform",
-                            "slug": "ngodingyuk-platform",
+                            "title": "BikinPlan Platform",
+                            "slug": "bikinplan-platform",
                             "summary": "Generator PRD & Task Backlog untuk AI coding agents",
                             "techStack": ["TanStack Start", "TypeScript", "Tailwind CSS", "PostgreSQL"],
-                            "demoUrl": "https://ngodingyuk.com",
+                            "demoUrl": "https://bikinplan.com",
                             "githubUrl": "https://github.com/NnoeeL/ngodingyuk"
                         }
                     ]
@@ -1289,7 +1289,7 @@ Tech Stack: **{p['stack']['name']}**
 """
 
 def main():
-    parser = argparse.ArgumentParser(description="NgodingYuk CLI - Enterprise PRD & Tasks Generator untuk AI Coding Agent")
+    parser = argparse.ArgumentParser(description="BikinPlan CLI - Enterprise PRD & Tasks Generator untuk AI Coding Agent")
     parser.add_argument("name", nargs="?", default="Aplikasi Web Keren", help="Nama proyek atau aplikasi")
     parser.add_argument("--idea", default="", help="Deskripsi lengkap ide aplikasi")
     parser.add_argument("--stack", default="tanstack", choices=["tanstack", "nextjs", "vite-spa"], help="Pilihan tech stack")
