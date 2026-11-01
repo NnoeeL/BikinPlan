@@ -115,23 +115,58 @@ output_dir/
 
 ---
 
-## 🤖 Cara Kerja Bersama AI Coding Agent
+## 🧭 Tutorial Langkah Awal: Cara & Kapan Mengirim File ke AI Agent
 
-Berikut cara terbaik memanfaatkan hasil generate **NgodingYuk** bersama agent (**Claude Code**, **Hermes**, **Antigravity**, atau **Cursor**):
+Banyak pemula bingung: *kapan harus mengirim PRD? Kapan harus menyuruh agent coding?* Ikuti 4 langkah terstruktur ini agar coding agent bekerja rapi tanpa merusak arsitektur kodemu:
 
-1. **Letakkan Dokumen di Root Proyek:**
-   Simpan `PRD.md`, `TASKS.md`, dan `AGENTS.md` di folder repository yang sedang kamu kembangkan.
-2. **Instruksikan Agen Mengikuti AGENTS.md:**
-   Agen diwajibkan membaca `AGENTS.md` untuk memahami protokol pengerjaan satu per satu dan larangan regresi.
-3. **Eksekusi Bertahap (One Task at a Time):**
-   Salin prompt task dari `TASKS.md` (misalnya `T-01` untuk inisialisasi layout). Minta agen mengerjakan hanya task tersebut:
+### 1. Langkah Paling Awal: Siapkan Folder Proyek
+Sebelum membuka AI Agent apa pun, buat folder kosong baru di komputermu:
+```bash
+mkdir toko-online && cd toko-online
+```
+Setelah men-generate dokumen di NgodingYuk (lewat Web App atau CLI), pindahkan 3 file hasil generate ke dalam root folder proyek tersebut:
+- `PRD.md` — Spesifikasi lengkap arsitektur, DDL database, dan kontrak API.
+- `TASKS.md` — Daftar 24 micro-tasks berfase yang memandu pengerjaan harian.
+- `AGENTS.md` — Instruksi dan aturan main agar agent tidak membuat kode berantakan (*anti-slop*).
+
+---
+
+### 2. Kapan Mengirim File PRD dan AGENTS.md? (First Handshake)
+> ⏱️ **Kapan?** **DI PERCAKAPAN PERTAMA KALI**, tepat saat kamu baru membuka Claude Code, Hermes Agent, Antigravity, atau Cursor di terminal folder tersebut.
+
+**PENTING:** Jangan langsung menyuruh agent membuat kode atau database! Kirimkan prompt pembuka (*handshake*) berikut:
+```markdown
+Baca PRD.md dan AGENTS.md di folder ini sebagai acuan arsitektur dan batasan pengerjaan.
+Pahami alur 4 fase (Fase 1 Frontend Mockup -> Fase 2 State -> Fase 3 Database & API -> Fase 4 Integrasi).
+DILARANG membuat tabel database, API rumit, atau menulis kode fitur sebelum saya memberikan nomor task spesifik.
+Apakah kamu sudah membaca dan paham arsitekturnya?
+```
+💡 *Tujuan:* Membangun peta arsitektur di memori AI terlebih dahulu sebelum ia mulai menyentuh kode.
+
+---
+
+### 3. Kapan & Bagaimana Mengirim Task? (Satu per Satu)
+Setelah AI Agent menjawab *"Paham"*, mulailah siklus pengerjaan bertahap:
+1. Buka tab **"Roadmap & 24 Tasks Board"** di NgodingYuk (atau buka file `TASKS.md`).
+2. Mulai dari task pertama yang belum selesai (`T-01`: Setup Repo & Layout Shell).
+3. Klik tombol **"Copy Prompt Agent"** pada task tersebut, lalu tempelkan ke terminal agent:
    ```markdown
-   Kamu akan mengerjakan task T-01 (Setup Repository & Layout Shell) untuk proyek ini.
+   Kamu akan mengerjakan task T-01 (Inisialisasi Project, Layout Shell, dan Token Tema) untuk proyek ini.
    Layer: frontend | Fase: 1
    Selesaikan HANYA task ini dan lakukan verifikasi pengujian sebelum melapor selesai.
    ```
-4. **Verifikasi Manusia di Akhir Tiap Fase:**
-   Setelah Fase 1 selesai, buka browser dan coba navigasi aplikasinya. Jika tampilan sudah memuaskan, baru perintahkan agen lanjut ke Fase 2 dan Fase 3.
+4. Agent akan fokus mengerjakan checklist task tersebut dan melakukan tes verifikasi sebelum melapor selesai.
+
+---
+
+### 4. Checkpoint Verifikasi Manusia (Wajib Uji Tampilan di Browser!)
+> ⛔ **Kapan harus berhenti?** **Setiap kali berganti fase atau layer!**
+
+Sesuai formula *Frontend Mock First*, Fase 1 (T-01 s/d T-06) sengaja menggunakan data tiruan (*mock*):
+1. Setelah Fase 1 selesai, jalankan dev server (`npm run dev`) dan **buka browser**.
+2. Klik-klik tombol, navigasi, dan filter tampilan di browser.
+3. **Jika tampilan sudah disetujui**, barulah perintahkan agent untuk lanjut ke Fase 2 (state) dan Fase 3 (database).
+4. **Keuntungan:** Kamu tidak membuang kuota/token untuk backend yang salah arah, dan tampilan UI sudah terbukti berfungsi sejak awal!
 
 ---
 

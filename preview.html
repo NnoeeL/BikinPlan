@@ -14,6 +14,29 @@
     <span style="font-size: 0.75rem; color: var(--muted-foreground);" id="wStepIndicator">Langkah 1: Ide & Fitur</span>
   </div>
 
+  <!-- Quick Agent Guide Accordion -->
+  <div style="background: rgba(255, 92, 32, 0.06); border: 1px solid rgba(255, 92, 32, 0.25); border-radius: 8px; padding: 10px 12px;">
+    <div style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;" onclick="toggleWGuide()">
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <span style="font-size: 0.95rem;">🧭</span>
+        <span style="font-size: 0.8rem; font-weight: 700; color: #FF5C20;">Kapan & Bagaimana Kirim File ke AI Agent? (Klik di Sini)</span>
+      </div>
+      <span id="wGuideIcon" style="font-size: 0.75rem; color: #FF5C20; font-weight: 700;">[ + Lihat Panduan ]</span>
+    </div>
+    <div id="wGuideBody" style="display: none; flex-direction: column; gap: 8px; margin-top: 8px; font-size: 0.775rem; color: var(--foreground); line-height: 1.45; border-top: 1px solid rgba(255, 92, 32, 0.15); padding-top: 8px;">
+      <div><strong>1. Langkah Awal:</strong> Buat folder proyek (<code>mkdir my-app && cd my-app</code>), lalu taruh <code>PRD.md</code>, <code>TASKS.md</code>, dan <code>AGENTS.md</code> di folder tersebut.</div>
+      <div><strong>2. Kapan Kirim ke Agent?</strong> Di <em>percakapan pertama kali</em> saat membuka Claude Code / Hermes / Cursor di terminal folder itu. Jangan langsung suruh coding! Kirim prompt handshake:
+        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; margin: 4px 0; font-family: monospace; font-size: 0.725rem;">
+          Baca PRD.md dan AGENTS.md di folder ini. Pahami arsitekturnya. DILARANG membuat kode sebelum saya berikan task pertama. Paham?
+        </div>
+        <button type="button" onclick="copyWHandshake()" style="background: #FF5C20; color: #fff; border: none; padding: 2px 8px; border-radius: 4px; font-size: 0.68rem; font-weight: 700; cursor: pointer;">📋 Salin Handshake Prompt</button>
+      </div>
+      <div><strong>3. Eksekusi Satu-per-Satu:</strong> Buka <em>TASKS.md</em>, klik tombol <em>Copy Prompt</em> pada task T-01, paste ke agent. Selesaikan satu-satu.</div>
+      <div><strong>4. Verifikasi di Browser:</strong> Setelah Fase 1 (UI Mockup) beres, buka browser dan tes klik tampilan dulu. Pastikan UI pas sebelum lanjut ke database!</div>
+    </div>
+  </div>
+
+
   <!-- ======================== -->
   <!-- LANGKAH 1: INPUT IDE     -->
   <!-- ======================== -->
@@ -327,4 +350,23 @@ Petunjuk Eksekusi:
     navigator.clipboard.writeText(md);
     alert("Ringkasan PRD & 24 Task disalin ke clipboard!");
   }
+
+  function toggleWGuide() {
+    const b = document.getElementById('wGuideBody');
+    const icon = document.getElementById('wGuideIcon');
+    if (b.style.display === 'none') {
+      b.style.display = 'flex';
+      icon.innerText = '[ - Tutup ]';
+    } else {
+      b.style.display = 'none';
+      icon.innerText = '[ + Lihat Panduan ]';
+    }
+  }
+
+  function copyWHandshake() {
+    const t = "Baca PRD.md dan AGENTS.md di folder ini. Pahami arsitekturnya. DILARANG membuat kode sebelum saya berikan task pertama. Paham?";
+    navigator.clipboard.writeText(t);
+    alert("Prompt handshake pertama disalin! Siap dipaste ke AI agent di awal percakapan.");
+  }
+
 </script>
