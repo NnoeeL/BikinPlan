@@ -1101,7 +1101,7 @@ def generate_prd_markdown(plan: Dict[str, Any]) -> str:
     return f"""# Product Requirement Document (PRD)
 ## {p['name']} — Spesifikasi Rekayasa Sistem
 
-> **Versi:** 1.0.0 (Production-Grade Enriched)  
+> **Versi:** 1.1.0 (Production-Grade Enriched)  
 > **Status Dokumen:** Approved for Autonomous Agent Implementation  
 > **Kategori:** {p['categoryTitle']}  
 > **Target Pengguna:** {p['targetAudience']}  
