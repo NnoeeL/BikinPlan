@@ -77,12 +77,10 @@ python serve.py
 
 > **Tips:** Kamu juga bisa langsung membuka file `index.html` dengan klik ganda di File Explorer tanpa server.
 
-**Langkah di Web App:**
-1. Pilih salah satu **Preset Ide** (Kosan Finder, SaaS Finansial, Rental Outdoor, Forum Kampus) atau ketik ide aplikasimu sendiri.
-2. Tentukan **Tech Stack** pilihan (TanStack Start + Drizzle, Next.js 15 + Prisma, atau Vite React + Express).
-3. Klik tombol **"Generate PRD Komprehensif (24 Tasks)"**.
-4. Buka tab **Roadmap & Task Board**, klik **"Copy Prompt Agent"** pada task yang ingin dikerjakan, dan tempelkan ke terminal AI coding agent kamu!
-5. Unduh bundel dokumen lengkap dengan tombol **"Download PRD + Tasks (.md)"**.
+**Alur 2 Langkah Cerdas di Web App:**
+1. **Langkah 1 (Ide & Fitur):** Tulis nama proyek, target pengguna, dan deskripsi fitur bebas (tanpa pusing memilih stack/auth di awal). Kamu juga bisa memilih preset cepat. Klik *Lanjut: Analisis Stack & Rekomendasi*.
+2. **Langkah 2 (Rekomendasi Arsitektur):** Sistem otomatis menganalisis ide dan menampilkan rekomendasi **Tech Stack** & **Sistem Autentikasi** terbaik lengkap dengan kotak penjelasan teknis (*"Mengapa ini direkomendasikan untuk idemu?"*). Kamu dapat menyetujui rekomendasi atau memilih opsi alternatif.
+3. **Hasil (PRD & 24 Tasks Board):** Klik *Setuju & Generate* — seluruh dokumen PRD, DDL SQL, kontrak API, dan 24 micro-tasks siap disalin/diunduh.
 
 ---
 

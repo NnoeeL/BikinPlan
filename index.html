@@ -12,6 +12,7 @@
       --bg: #09090b;
       --card: #121215;
       --card-muted: #18181b;
+      --card-highlight: #1f1f24;
       --border: #27272a;
       --border-subtle: #1f1f23;
       --text: #fafafa;
@@ -100,9 +101,9 @@
       align-items: center;
       justify-content: center;
       gap: 0.5rem;
-      padding: 0.5rem 1rem;
+      padding: 0.6rem 1.2rem;
       border-radius: 8px;
-      font-size: 0.85rem;
+      font-size: 0.875rem;
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
@@ -115,7 +116,7 @@
       color: #fff;
       border-color: var(--primary);
     }
-    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
     .btn-outline {
       background: var(--card);
       color: var(--text);
@@ -136,7 +137,48 @@
       gap: 2rem;
     }
 
-    /* Hero Form */
+    /* Wizard Steps Header */
+    .wizard-steps {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+    .wizard-step-node {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      transition: all 0.2s ease;
+    }
+    .wizard-step-node.active {
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .wizard-step-node.completed {
+      color: var(--success);
+    }
+    .wizard-step-number {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid currentColor;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+    }
+    .wizard-divider {
+      width: 32px;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* Hero Form Card */
     .hero-card {
       background: linear-gradient(180deg, var(--card) 0%, rgba(18, 18, 21, 0.6) 100%);
       border: 1px solid var(--border);
@@ -166,7 +208,7 @@
     .hero-subtitle {
       color: var(--text-muted);
       font-size: 0.95rem;
-      max-width: 750px;
+      max-width: 780px;
       margin-bottom: 1.5rem;
     }
 
@@ -210,7 +252,6 @@
     }
     @media (min-width: 768px) {
       .form-grid-2 { grid-template-columns: 1.4fr 1fr; }
-      .form-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
     }
     .field-group {
       display: flex;
@@ -222,23 +263,154 @@
       font-weight: 600;
       color: var(--text-muted);
     }
-    .input-text, .textarea, .select {
+    .input-text, .textarea {
       background: var(--bg);
       border: 1px solid var(--border);
       color: var(--text);
       font-family: inherit;
       font-size: 0.9rem;
-      padding: 0.65rem 0.85rem;
+      padding: 0.7rem 0.9rem;
       border-radius: 8px;
       outline: none;
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
       width: 100%;
     }
-    .input-text:focus, .textarea:focus, .select:focus {
+    .input-text:focus, .textarea:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 2px var(--primary-subtle);
     }
-    .textarea { resize: vertical; min-height: 95px; }
+    .textarea { resize: vertical; min-height: 110px; }
+
+    /* Halaman 2: Recommendations View */
+    #step2-container {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    .analysis-banner {
+      background: rgba(255, 92, 32, 0.08);
+      border: 1px solid rgba(255, 92, 32, 0.25);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .analysis-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .analysis-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .recommend-section {
+      margin-bottom: 2rem;
+    }
+    .recommend-section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .recommend-section-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+    }
+
+    /* Option Cards Grid */
+    .option-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    @media (min-width: 900px) {
+      .option-cards-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .option-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .option-card:hover {
+      border-color: var(--text-dim);
+      transform: translateY(-2px);
+    }
+    .option-card.selected {
+      border-color: var(--primary);
+      background: linear-gradient(180deg, rgba(255, 92, 32, 0.06) 0%, var(--bg) 100%);
+      box-shadow: 0 0 0 2px var(--primary-subtle);
+    }
+    .card-rec-badge {
+      position: absolute;
+      top: -10px;
+      right: 12px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .option-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .option-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      line-height: 1.45;
+    }
+    .option-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+    .opt-tag {
+      font-size: 0.68rem;
+      background: var(--card-muted);
+      color: var(--text-dim);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+    }
+
+    /* Explanation Box */
+    .reason-box {
+      background: var(--card-highlight);
+      border-left: 3px solid var(--primary);
+      border-radius: 0 8px 8px 0;
+      padding: 1rem 1.25rem;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+      color: #e4e4e7;
+      line-height: 1.55;
+    }
+    .reason-box strong { color: var(--primary); }
 
     /* Generator Progress */
     .gen-progress {
@@ -355,7 +527,7 @@
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
 
-    /* Task Board & Filters */
+    /* Task Board & Controls */
     .task-controls {
       display: flex;
       flex-wrap: wrap;
@@ -526,7 +698,7 @@
       word-break: break-word;
     }
 
-    /* API Table */
+    /* API Card */
     .api-card {
       background: var(--bg);
       border: 1px solid var(--border);
@@ -550,8 +722,6 @@
     }
     .method-get { background: rgba(59, 130, 246, 0.2); color: #60a5fa; }
     .method-post { background: rgba(16, 185, 129, 0.2); color: #34d399; }
-    .method-patch { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
-    .method-delete { background: rgba(239, 68, 68, 0.2); color: #f87171; }
 
     /* Toast */
     .toast {
@@ -609,68 +779,241 @@
   </header>
 
   <main>
-    <!-- Generator Hero Form -->
-    <section class="hero-card">
-      <h1 class="hero-title">NgodingYuk <span>— Generator PRD & Tasks</span></h1>
-      <p class="hero-subtitle">Hasilkan Product Requirement Document lengkap (User Personas, DDL SQL PostgreSQL, Kontrak API JSON, UI State Matrix) dan 24 Micro-tasks berfase siap eksekusi coding agent.</p>
+    <!-- Wizard Progress Indicator -->
+    <div class="wizard-steps">
+      <div class="wizard-step-node active" id="node-step1">
+        <span class="wizard-step-number">1</span>
+        <span>Ide & Spesifikasi Fitur</span>
+      </div>
+      <div class="wizard-divider"></div>
+      <div class="wizard-step-node" id="node-step2">
+        <span class="wizard-step-number">2</span>
+        <span>Analisis & Rekomendasi Stack</span>
+      </div>
+      <div class="wizard-divider"></div>
+      <div class="wizard-step-node" id="node-step3">
+        <span class="wizard-step-number">3</span>
+        <span>PRD & 24 Tasks Board</span>
+      </div>
+    </div>
 
-      <!-- Template Presets -->
-      <div class="template-pills">
-        <span class="pill-label">Preset Cepat:</span>
-        <button class="pill" onclick="loadPreset('kosan')">🏠 Kosan Finder UNSIL</button>
-        <button class="pill" onclick="loadPreset('finance')">💰 Catat Duit SaaS</button>
-        <button class="pill" onclick="loadPreset('rental')">🏕️ Rental Outdoor Camping</button>
-        <button class="pill" onclick="loadPreset('community')">🎓 Forum Mahasiswa UNSIL</button>
-        <button class="pill" onclick="loadPreset('ai-tool')">🤖 AI Prompt Studio</button>
+    <!-- Hero Card containing Step 1, Step 2, and Progress -->
+    <section class="hero-card">
+      
+      <!-- ========================================== -->
+      <!-- HALAMAN 1: BRAINSTORMING IDE & FITUR       -->
+      <!-- ========================================== -->
+      <div id="step1-container">
+        <h1 class="hero-title">Langkah 1: <span>Deskripsikan Ide & Fitur</span></h1>
+        <p class="hero-subtitle">Mulai dari masalah nyata yang ingin kamu selesaikan. Tentukan nama proyek dan fitur utama — sistem cerdas NgodingYuk akan menganalisis kebutuhan arsitektur dan merekomendasikan stack yang paling ideal di langkah berikutnya.</p>
+
+        <!-- Template Presets -->
+        <div class="template-pills">
+          <span class="pill-label">Preset Cepat:</span>
+          <button class="pill" type="button" onclick="loadPreset('kosan')">🏠 Kosan Finder UNSIL</button>
+          <button class="pill" type="button" onclick="loadPreset('finance')">💰 Catat Duit SaaS</button>
+          <button class="pill" type="button" onclick="loadPreset('rental')">🏕️ Rental Outdoor Camping</button>
+          <button class="pill" type="button" onclick="loadPreset('community')">🎓 Forum Mahasiswa UNSIL</button>
+          <button class="pill" type="button" onclick="loadPreset('ai-tool')">🤖 AI Prompt Studio</button>
+        </div>
+
+        <form id="planFormStep1" onsubmit="goToStep2(event)">
+          <div class="form-grid form-grid-2">
+            <div class="field-group">
+              <label class="field-label" for="appName">Nama Proyek / Aplikasi</label>
+              <input type="text" id="appName" class="input-text" placeholder="Misal: KosHunt, DuitTrack, RuangUNSIL" required>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label" for="targetAudience">Target Pengguna</label>
+              <input type="text" id="targetAudience" class="input-text" placeholder="Misal: Mahasiswa UNSIL, Pemilik Kos, Freelancer" value="Mahasiswa & Pengguna Umum" required>
+            </div>
+          </div>
+
+          <div class="field-group" style="margin-top: 1.25rem;">
+            <label class="field-label" for="appIdea">Ceritakan Ide / Fitur-Fitur yang Ingin Dibuat</label>
+            <textarea id="appIdea" class="textarea" placeholder="Jelaskan alur aplikasi secara bebas, masalah apa yang ingin diatasi, apa saja fitur pentingnya, dan bagaimana pengguna memakainya..." required></textarea>
+          </div>
+
+          <div style="margin-top: 1.75rem; display: flex; justify-content: flex-end;">
+            <button type="submit" class="btn btn-primary">
+              <span>Lanjut: Analisis Stack & Rekomendasi</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </form>
       </div>
 
-      <form id="planForm" onsubmit="handleGenerate(event)">
-        <div class="form-grid form-grid-2">
-          <div class="field-group">
-            <label class="field-label" for="appName">Nama Proyek / Aplikasi</label>
-            <input type="text" id="appName" class="input-text" placeholder="Misal: KosHunt, CatatDuit, dsb." required>
+      <!-- ========================================== -->
+      <!-- HALAMAN 2: REKOMENDASI STACK & AUTH         -->
+      <!-- ========================================== -->
+      <div id="step2-container">
+        <h1 class="hero-title">Langkah 2: <span>Rekomendasi Arsitektur Stack</span></h1>
+        <p class="hero-subtitle">Berdasarkan analisis ide dan fitur yang kamu masukkan di Langkah 1, berikut rekomendasi tech stack & sistem autentikasi yang paling efisien, aman, dan ramah token untuk AI coding agent.</p>
+
+        <!-- Analysis Meta Banner -->
+        <div class="analysis-banner">
+          <div class="analysis-meta">
+            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">Kategori Terdeteksi:</span>
+            <span class="analysis-badge badge-primary" id="recCategoryBadge">Marketplace & Rental</span>
+            <span style="font-size: 0.8rem; color: var(--text-dim); margin-left: auto;" id="recAppTitle">Proyek: KosHunt</span>
+          </div>
+          <p style="font-size: 0.85rem; color: var(--text); font-style: italic;" id="recIdeaSnippet">"..."</p>
+        </div>
+
+        <!-- Section 1: Tech Stack Recommendation -->
+        <div class="recommend-section">
+          <div class="recommend-section-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+            <span>Pilihan Tech Stack Utama</span>
+          </div>
+          <p class="recommend-section-desc">Pilih kerangka kerja yang akan menjadi pondasi kode. Kami menandai opsi yang paling optimal untuk ide ini:</p>
+
+          <div class="option-cards-grid" id="stackOptionsGrid">
+            <!-- Card 1: TanStack -->
+            <div class="option-card selected" id="opt-stack-tanstack" onclick="selectStack('tanstack')">
+              <span class="card-rec-badge" id="badge-rec-tanstack">⭐ Rekomendasi Utama</span>
+              <div>
+                <div class="option-title">
+                  <input type="radio" name="radioStack" value="tanstack" checked>
+                  <span>TanStack Start</span>
+                </div>
+                <p class="option-desc">Fullstack SSR instan (Vite + Nitro Engine) dipadukan Drizzle ORM & PostgreSQL. Standar resmi NgodingPakeAI.</p>
+              </div>
+              <div class="option-tags">
+                <span class="opt-tag">Type-Safe End-to-End</span>
+                <span class="opt-tag">Hemat Token AI</span>
+                <span class="opt-tag">Low Latency SSR</span>
+              </div>
+            </div>
+
+            <!-- Card 2: Next.js -->
+            <div class="option-card" id="opt-stack-nextjs" onclick="selectStack('nextjs')">
+              <span class="card-rec-badge" id="badge-rec-nextjs" style="display:none;">⭐ Rekomendasi</span>
+              <div>
+                <div class="option-title">
+                  <input type="radio" name="radioStack" value="nextjs">
+                  <span>Next.js 15 (App Router)</span>
+                </div>
+                <p class="option-desc">React 19 Server Components, Prisma ORM, Server Actions, dan ekosistem library Shadcn UI yang sangat luas.</p>
+              </div>
+              <div class="option-tags">
+                <span class="opt-tag">Shadcn Ecosystem</span>
+                <span class="opt-tag">Server Actions</span>
+                <span class="opt-tag">Prisma ORM</span>
+              </div>
+            </div>
+
+            <!-- Card 3: Vite SPA -->
+            <div class="option-card" id="opt-stack-vite-spa" onclick="selectStack('vite-spa')">
+              <span class="card-rec-badge" id="badge-rec-vite-spa" style="display:none;">⭐ Rekomendasi</span>
+              <div>
+                <div class="option-title">
+                  <input type="radio" name="radioStack" value="vite-spa">
+                  <span>Vite React SPA + Express</span>
+                </div>
+                <p class="option-desc">Arsitektur terpisah klasik: React SPA cepat di frontend dan REST API mandiri Express.js di backend.</p>
+              </div>
+              <div class="option-tags">
+                <span class="opt-tag">Classic Architecture</span>
+                <span class="opt-tag">Zustand State</span>
+                <span class="opt-tag">Express API</span>
+              </div>
+            </div>
           </div>
 
-          <div class="field-group">
-            <label class="field-label" for="targetAudience">Target Pengguna</label>
-            <input type="text" id="targetAudience" class="input-text" placeholder="Misal: Mahasiswa UNSIL, Pemilik Kos, Pegawai" value="Mahasiswa & Pengguna Umum">
+          <!-- Dynamic Reason Box for Stack -->
+          <div class="reason-box" id="stackReasonBox">
+            <strong>💡 Mengapa ini direkomendasikan untuk idemu?</strong><br>
+            <span id="stackReasonText">Memuat analisis teknis...</span>
           </div>
         </div>
 
-        <div class="field-group" style="margin-top: 1rem;">
-          <label class="field-label" for="appIdea">Ceritakan Ide / Fitur yang Diinginkan</label>
-          <textarea id="appIdea" class="textarea" placeholder="Jelaskan alur aplikasi, masalah yang diselesaikan, dan fitur utama yang harus ada..." required></textarea>
-        </div>
+        <!-- Section 2: Auth System Recommendation -->
+        <div class="recommend-section">
+          <div class="recommend-section-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span>Pilihan Sistem Autentikasi</span>
+          </div>
+          <p class="recommend-section-desc">Pilih mekanisme login & session management yang sesuai dengan kenyamanan target pengguna:</p>
 
-        <div class="form-grid form-grid-2" style="margin-top: 1rem;">
-          <div class="field-group">
-            <label class="field-label" for="techStack">Pilihan Tech Stack</label>
-            <select id="techStack" class="select">
-              <option value="tanstack">TanStack Start + Drizzle ORM + PostgreSQL (Rekomendasi NgodingPakeAI)</option>
-              <option value="nextjs">Next.js 15 (App Router) + Prisma + PostgreSQL</option>
-              <option value="vite-spa">Vite React SPA + Express REST API + SQLite/Postgres</option>
-            </select>
+          <div class="option-cards-grid" id="authOptionsGrid">
+            <!-- Card 1: Better Auth -->
+            <div class="option-card selected" id="opt-auth-better-auth" onclick="selectAuth('better-auth')">
+              <span class="card-rec-badge" id="badge-rec-better-auth">⭐ Rekomendasi Utama</span>
+              <div>
+                <div class="option-title">
+                  <input type="radio" name="radioAuth" value="better-auth" checked>
+                  <span>Better Auth</span>
+                </div>
+                <p class="option-desc">Google OAuth 2.0 + Email Password modern. Session tersimpan di HTTP-Only SameSite Cookie tanpa risiko kebocoran XSS.</p>
+              </div>
+              <div class="option-tags">
+                <span class="opt-tag">Google 1-Click</span>
+                <span class="opt-tag">HttpOnly Cookie</span>
+                <span class="opt-tag">Zero Leak</span>
+              </div>
+            </div>
+
+            <!-- Card 2: Supabase Auth -->
+            <div class="option-card" id="opt-auth-supabase" onclick="selectAuth('supabase')">
+              <span class="card-rec-badge" id="badge-rec-supabase" style="display:none;">⭐ Rekomendasi</span>
+              <div>
+                <div class="option-title">
+                  <input type="radio" name="radioAuth" value="supabase">
+                  <span>Supabase Auth</span>
+                </div>
+                <p class="option-desc">Managed Auth dari Supabase dengan fitur Magic Link email, Social Auth, dan Row Level Security (RLS) PostgreSQL.</p>
+              </div>
+              <div class="option-tags">
+                <span class="opt-tag">Magic Link</span>
+                <span class="opt-tag">PostgreSQL RLS</span>
+                <span class="opt-tag">Managed Cloud</span>
+              </div>
+            </div>
+
+            <!-- Card 3: Custom JWT -->
+            <div class="option-card" id="opt-auth-simple-jwt" onclick="selectAuth('simple-jwt')">
+              <span class="card-rec-badge" id="badge-rec-simple-jwt" style="display:none;">⭐ Rekomendasi</span>
+              <div>
+                <div class="option-title">
+                  <input type="radio" name="radioAuth" value="simple-jwt">
+                  <span>Custom JWT Session</span>
+                </div>
+                <p class="option-desc">Mekanisme JWT mandiri (Access Token 15 menit + Refresh Token 7 hari) yang ringan dan cocok untuk REST API mandiri.</p>
+              </div>
+              <div class="option-tags">
+                <span class="opt-tag">Custom Middleware</span>
+                <span class="opt-tag">Stateless</span>
+                <span class="opt-tag">Pure Standard</span>
+              </div>
+            </div>
           </div>
 
-          <div class="field-group">
-            <label class="field-label" for="authType">Sistem Autentikasi</label>
-            <select id="authType" class="select">
-              <option value="better-auth">Better Auth (Google OAuth + Email Password)</option>
-              <option value="supabase">Supabase Auth (Social + Magic Link)</option>
-              <option value="simple-jwt">JWT HTTP-Only Cookies (Custom)</option>
-            </select>
+          <!-- Dynamic Reason Box for Auth -->
+          <div class="reason-box" id="authReasonBox">
+            <strong>💡 Mengapa metode ini direkomendasikan untuk target audiensmu?</strong><br>
+            <span id="authReasonText">Memuat analisis autentikasi...</span>
           </div>
         </div>
 
-        <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
-          <button type="submit" class="btn btn-primary" id="btnSubmit">
+        <!-- Action Buttons for Step 2 -->
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+          <button type="button" class="btn btn-outline" onclick="goToStep1()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            <span>Kembali Ubah Ide</span>
+          </button>
+
+          <button type="button" class="btn btn-primary" id="btnConfirmGenerate" onclick="handleGenerate()">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
-            Generate PRD Komprehensif (24 Tasks)
+            <span>Setuju & Generate PRD Komprehensif (24 Tasks)</span>
           </button>
         </div>
-      </form>
+      </div>
 
-      <!-- Progress Step Indicator -->
+      <!-- ========================================== -->
+      <!-- PROGRESS BAR GENERATOR                      -->
+      <!-- ========================================== -->
       <div id="genProgress" class="gen-progress">
         <h3 style="font-size: 0.95rem; font-weight: 700; margin-bottom: 0.85rem;">Menyusun Spesifikasi Rekayasa Sistem (Enrichment Mode)...</h3>
         <div class="progress-steps">
@@ -682,7 +1025,9 @@
       </div>
     </section>
 
-    <!-- Workspace Output Section -->
+    <!-- ========================================== -->
+    <!-- HALAMAN 3: OUTPUT WORKSPACE 5-TAB          -->
+    <!-- ========================================== -->
     <section id="workspaceSection" class="workspace-section">
       <div class="workspace-header">
         <div class="workspace-title-box">
@@ -826,6 +1171,8 @@
       document.getElementById('appIdea').value = p.idea;
     }
 
+    let selectedStack = 'tanstack';
+    let selectedAuth = 'better-auth';
     let currentPlan = null;
     let completedTasks = new Set();
     let activeFilter = 'all';
@@ -837,7 +1184,108 @@
       setTimeout(() => t.classList.remove('show'), 2200);
     }
 
-    // Comprehensive Client Synthesizer Engine
+    // Navigasi Wizard
+    function goToStep2(e) {
+      if (e) e.preventDefault();
+      const name = document.getElementById('appName').value.trim();
+      const idea = document.getElementById('appIdea').value.trim();
+      const target = document.getElementById('targetAudience').value.trim();
+
+      if (!name || !idea) {
+        alert("Harap isi Nama Proyek dan Cerita Ide terlebih dahulu!");
+        return;
+      }
+
+      // Analisis Kategori & Karakteristik Ide
+      const lower = (idea + " " + name).lower ? (idea + " " + name).toLowerCase() : (idea + " " + name);
+      const isEcommerce = /sewa|toko|jual|beli|rent|produk|booking|kos|kosan/.test(lower);
+      const isCommunity = /komunitas|forum|mahasiswa|kampus|chat|tanya|unsil/.test(lower);
+      const isSaas = /saas|track|duit|keuangan|analisis|catat|manajemen|finance/.test(lower);
+
+      let catTitle = isSaas ? "SaaS & Financial Management" : (isEcommerce ? "Marketplace, Rental & Booking" : (isCommunity ? "Campus Community & Forum" : "Modern Web Application"));
+      let recommendedStack = "tanstack";
+      let recommendedAuth = "better-auth";
+
+      let stackReason = "";
+      let authReason = "";
+
+      if (isEcommerce) {
+        recommendedStack = "tanstack";
+        recommendedAuth = "better-auth";
+        stackReason = `Aplikasi rental & booking seperti <strong>${name}</strong> sangat bergantung pada filter pencarian real-time dan katalog gambar yang responsif. <strong>TanStack Start + Drizzle ORM</strong> memberikan SSR instan untuk SEO listing, query database PostgreSQL tercepat dengan skema relasional ketat, dan bundle JS 70% lebih hemat token bagi coding agent dibanding monolit Next.js.`;
+        authReason = `Target audiens adalah <strong>${target}</strong>. Pendaftaran manual dengan password sering kali menimbulkan hambatan (drop-off). <strong>Better Auth (Google OAuth 2.0)</strong> memangkas friksi pendaftaran hingga 70% (login 1-klik via akun Google) dan melindungi session di HTTP-Only SameSite Cookie tanpa risiko kebocoran di localStorage.`;
+      } else if (isCommunity) {
+        recommendedStack = "tanstack";
+        recommendedAuth = "better-auth";
+        stackReason = `Portal komunitas kampus membutuhkan sinkronisasi state URL yang dinamis (filter tagar, sorting trending) serta infinite scrolling list. <strong>TanStack Start</strong> memiliki integrasi bawaan terbaik dengan TanStack Query dan nuqs URL parameter manager, serta performa virtualized rendering yang sangat lancar.`;
+        authReason = `Menggunakan <strong>Better Auth</strong> dengan opsi login Google Akun Kampus (.ac.id) atau email pribadi memudahkan validasi identitas mahasiswa, sekaligus menyediakan session terenkripsi tanpa perlu setup server auth pihak ketiga yang mahal.`;
+      } else if (isSaas) {
+        recommendedStack = "tanstack";
+        recommendedAuth = "better-auth";
+        stackReason = `Platform SaaS produktivitas & finansial membutuhkan mutasi data berlatensi rendah (< 50ms) dan integritas transaksi database ACID yang ketat. <strong>TanStack Start + Drizzle ORM</strong> memberikan skema type-safe penuh dari database hingga komponen grafik client-side tanpa boilerplate berat.`;
+        authReason = `Data keuangan dan workspace SaaS membutuhkan standar keamanan tinggi. <strong>Better Auth</strong> mencegah celah XSS dengan menyimpan access session di secure HttpOnly cookies, serta siap diekspansi untuk multi-session dan workspace sharing.`;
+      } else {
+        recommendedStack = "tanstack";
+        recommendedAuth = "better-auth";
+        stackReason = `Untuk web modern berkinerja tinggi, <strong>TanStack Start + Drizzle ORM</strong> adalah pilihan paling modular, type-safe, dan memiliki waktu cold-start terpendek pada deployment serverless.`;
+        authReason = `<strong>Better Auth</strong> memberikan keseimbangan terbaik antara kemudahan integrasi developer dan keamanan session cookie terstandarisasi.`;
+      }
+
+      // Update UI Halaman 2
+      document.getElementById('recCategoryBadge').innerText = catTitle;
+      document.getElementById('recAppTitle').innerText = `Proyek: ${name}`;
+      document.getElementById('recIdeaSnippet').innerText = `"${idea.length > 140 ? idea.substring(0, 140) + '...' : idea}"`;
+
+      document.getElementById('stackReasonText').innerHTML = stackReason;
+      document.getElementById('authReasonText').innerHTML = authReason;
+
+      // Pilih default stack & auth
+      selectStack(recommendedStack);
+      selectAuth(recommendedAuth);
+
+      // Transisi Halaman
+      document.getElementById('step1-container').style.display = 'none';
+      document.getElementById('step2-container').style.display = 'block';
+
+      document.getElementById('node-step1').className = 'wizard-step-node completed';
+      document.getElementById('node-step2').className = 'wizard-step-node active';
+
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+      showToast("Rekomendasi arsitektur siap di Langkah 2! 💡");
+    }
+
+    function goToStep1() {
+      document.getElementById('step2-container').style.display = 'none';
+      document.getElementById('step1-container').style.display = 'block';
+
+      document.getElementById('node-step1').className = 'wizard-step-node active';
+      document.getElementById('node-step2').className = 'wizard-step-node';
+      window.scrollTo({ top: 120, behavior: 'smooth' });
+    }
+
+    function selectStack(stackKey) {
+      selectedStack = stackKey;
+      document.querySelectorAll('#stackOptionsGrid .option-card').forEach(c => c.classList.remove('selected'));
+      const activeCard = document.getElementById(`opt-stack-${stackKey}`);
+      if (activeCard) {
+        activeCard.classList.add('selected');
+        const radio = activeCard.querySelector('input[type="radio"]');
+        if (radio) radio.checked = true;
+      }
+    }
+
+    function selectAuth(authKey) {
+      selectedAuth = authKey;
+      document.querySelectorAll('#authOptionsGrid .option-card').forEach(c => c.classList.remove('selected'));
+      const activeCard = document.getElementById(`opt-auth-${authKey}`);
+      if (activeCard) {
+        activeCard.classList.add('selected');
+        const radio = activeCard.querySelector('input[type="radio"]');
+        if (radio) radio.checked = true;
+      }
+    }
+
+    // Generator Synthesizer Engine
     function synthesize(name, idea, target, stack, auth) {
       const lower = (idea + " " + name).toLowerCase();
       const isEcommerce = /sewa|toko|jual|beli|rent|produk|booking|kos|kosan/.test(lower);
@@ -852,7 +1300,6 @@
         general: "Modern Cloud Web Application"
       }[catKey];
 
-      // Personas
       const personas = [
         {
           role: `Primary User (${target})`,
@@ -873,7 +1320,6 @@
         }
       ];
 
-      // Features, DDL, APIs
       let features = [];
       let sqlDdl = "";
       let apiContracts = [];
@@ -1155,7 +1601,7 @@ CREATE TABLE transactions (
 
       // 24 Detailed Layered Micro-Tasks
       const tasks = [
-        { ref: "T-01", phase: 1, layer: "frontend", title: "Setup Repo, TypeScript Ketat & Token Tema Tailwind", desc: "Inisialisasi project sesuai tech stack dengan palet warna dan font 'Plus Jakarta Sans'.", checklist: ["Inisialisasi repo", "Setup tailwind.config.ts", "Skrip linter & type-check"], acceptance: "npm run build & lint lolos 100%." },
+        { ref: "T-01", phase: 1, layer: "frontend", title: "Setup Repo, TypeScript Ketat & Token Tema Tailwind", desc: "Inisialisasi repo sesuai tech stack dengan palet warna dan font 'Plus Jakarta Sans'.", checklist: ["Inisialisasi repo", "Setup tailwind.config.ts", "Skrip linter & type-check"], acceptance: "npm run build & lint lolos 100%." },
         { ref: "T-02", phase: 1, layer: "frontend", title: "Layout Shell Responsif: Navbar, Mobile Drawer & Dark Mode", desc: "Navigasi desktop & mobile serta toggle tema tersimpan di localStorage.", checklist: ["Header logo & menu", "Mobile drawer", "Dark mode switcher"], acceptance: "Tampilan responsif di mobile & desktop, tema tersimpan saat reload." },
         { ref: "T-03", phase: 1, layer: "frontend", title: `Pembuatan Fixture Mock Data & State Tiruan untuk ${features[0].name}`, desc: "Fixture data tiruan terisolasi untuk representasi entitas utama tanpa backend.", checklist: ["Definisi interface TS", "8 baris mock data variatif", "Helper filter lokal"], acceptance: "Fixture tervalidasi tipe TypeScript tanpa error." },
         { ref: "T-04", phase: 1, layer: "frontend", title: `Tampilan Halaman Utama ${features[0].name} (Mock Data)`, desc: "Kartu presentasi dengan input search debounce dan filter pill kategori visual.", checklist: ["Card/Grid responsif", "Debounce search 300ms", "Shimmer skeleton placeholder"], acceptance: "Item muncul instan dan search bar memfilter tanpa network fetch." },
@@ -1411,22 +1857,22 @@ Aturan Eksekusi:
       document.getElementById(`tab-${name}`).classList.add('active');
     }
 
-    function handleGenerate(e) {
-      e.preventDefault();
-      const name = document.getElementById('appName').value;
-      const target = document.getElementById('targetAudience').value;
-      const idea = document.getElementById('appIdea').value;
-      const stack = document.getElementById('techStack').value;
-      const auth = document.getElementById('authType').value;
+    // Trigger Final Generation
+    function handleGenerate() {
+      const name = document.getElementById('appName').value.trim();
+      const target = document.getElementById('targetAudience').value.trim();
+      const idea = document.getElementById('appIdea').value.trim();
+      const stack = selectedStack;
+      const auth = selectedAuth;
 
       const progress = document.getElementById('genProgress');
       const ws = document.getElementById('workspaceSection');
-      const submitBtn = document.getElementById('btnSubmit');
+      const confirmBtn = document.getElementById('btnConfirmGenerate');
 
       progress.style.display = 'block';
       ws.style.display = 'none';
-      submitBtn.disabled = true;
-      submitBtn.style.opacity = '0.5';
+      confirmBtn.disabled = true;
+      confirmBtn.style.opacity = '0.5';
 
       const steps = [
         document.getElementById('step1'),
@@ -1449,10 +1895,15 @@ Aturan Eksekusi:
         } else {
           setTimeout(() => {
             progress.style.display = 'none';
-            submitBtn.disabled = false;
-            submitBtn.style.opacity = '1';
+            confirmBtn.disabled = false;
+            confirmBtn.style.opacity = '1';
+
             const plan = synthesize(name, idea, target, stack, auth);
             renderPlan(plan);
+
+            document.getElementById('node-step2').className = 'wizard-step-node completed';
+            document.getElementById('node-step3').className = 'wizard-step-node active';
+
             ws.style.display = 'flex';
             ws.scrollIntoView({ behavior: 'smooth' });
             showToast("PRD Enriched & 24 Tasks berhasil digenerate! 🎉");
