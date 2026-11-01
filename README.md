@@ -81,7 +81,7 @@ python serve.py
 **Alur 2 Langkah Cerdas di Web App:**
 1. **Langkah 1 (Ide & Fitur):** Tulis nama proyek, target pengguna, dan deskripsi fitur bebas (tanpa pusing memilih stack/auth di awal). Kamu juga bisa memilih preset cepat. Klik *Lanjut: Analisis Stack & Rekomendasi*.
 2. **Langkah 2 (Rekomendasi Arsitektur):** Sistem otomatis menganalisis ide dan menampilkan rekomendasi **Tech Stack** & **Sistem Autentikasi** terbaik lengkap dengan kotak penjelasan teknis (*"Mengapa ini direkomendasikan untuk idemu?"*). Kamu dapat menyetujui rekomendasi atau memilih opsi alternatif.
-3. **Hasil (PRD & 24 Tasks Board):** Klik *Setuju & Generate* — seluruh dokumen PRD, DDL SQL, kontrak API, dan 24 micro-tasks siap disalin/diunduh.
+3. **Hasil (PRD & 24 Tasks Board):** Klik *Setuju & Generate* — seluruh dokumen siap disalin atau diunduh dalam format **Bundle .ZIP** (otomatis memuat `PRD.md`, `AGENTS.md`, `TASKS.md`, dan `plan.json`).
 
 ---
 
@@ -110,7 +110,8 @@ output_dir/
 ├── PRD.md         # Dokumen spesifikasi rekayasa sistem (~300 baris)
 ├── TASKS.md       # 24 Micro-tasks berfase lengkap dengan prompt (~820 baris)
 ├── AGENTS.md      # Pedoman instruksi kerja untuk AI coding agent
-└── plan.json      # Struktur skema data mentah JSON
+├── plan.json      # Struktur skema data mentah JSON
+└── <proyek>-specs.zip # Bundle ZIP siap pakai berisi PRD.md & AGENTS.md
 ```
 
 ---

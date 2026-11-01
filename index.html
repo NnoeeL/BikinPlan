@@ -1400,9 +1400,9 @@
         </div>
 
         <div style="display: flex; gap: 0.5rem;">
-          <button class="btn btn-outline btn-sm" onclick="downloadAllMarkdown()">
+          <button class="btn btn-outline btn-sm" onclick="downloadZipBundle()" style="border-color: var(--primary); color: #fff; font-weight: 700;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-            Download PRD + Tasks (.md)
+            Download Bundle (.zip) 📦
           </button>
           <button class="btn btn-primary btn-sm" onclick="copyFullPrd()">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
@@ -2334,16 +2334,141 @@ Aturan Eksekusi:
       showToast("AGENTS.md disalin ke clipboard! 🤖");
     }
 
-    function downloadAllMarkdown() {
-      if (!currentPlan) return;
-      const prdText = generatePrdMarkdown(currentPlan);
-      const blob = new Blob([prdText], { type: 'text/markdown;charset=utf-8;' });
-      const link = document.createElement("a");
-      link.href = URL.createObjectURL(blob);
-      link.download = `${currentPlan.name.toLowerCase().replace(/\\s+/g, '-')}-PRD.md`;
-      link.click();
-      showToast("File PRD.md berhasil diunduh! 📥");
+    // Pure Client-side Zero-Dependency Standard ZIP Generator
+    function createZip(files) {
+      const textEncoder = new TextEncoder();
+      const crcTable = new Uint32Array(256);
+      for (let i = 0; i < 256; i++) {
+        let c = i;
+        for (let k = 0; k < 8; k++) {
+          c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+        }
+        crcTable[i] = c;
+      }
+      function crc32(bytes) {
+        let crc = 0xFFFFFFFF;
+        for (let i = 0; i < bytes.length; i++) {
+          crc = (crc >>> 8) ^ crcTable[(crc ^ bytes[i]) & 0xFF];
+        }
+        return (crc ^ 0xFFFFFFFF) >>> 0;
+      }
+
+      const fileEntries = [];
+      let offset = 0;
+
+      for (const f of files) {
+        const nameBytes = textEncoder.encode(f.name);
+        const contentBytes = typeof f.content === 'string' ? textEncoder.encode(f.content) : f.content;
+        const fileCrc = crc32(contentBytes);
+        const size = contentBytes.length;
+
+        const localHeader = new Uint8Array(30 + nameBytes.length);
+        const view = new DataView(localHeader.buffer);
+        view.setUint32(0, 0x04034b50, true);
+        view.setUint16(4, 20, true);
+        view.setUint16(6, 0x0800, true); // UTF-8
+        view.setUint16(8, 0, true);      // Store
+        view.setUint16(10, 0, true);
+        view.setUint16(12, 0, true);
+        view.setUint32(14, fileCrc, true);
+        view.setUint32(18, size, true);
+        view.setUint32(22, size, true);
+        view.setUint16(26, nameBytes.length, true);
+        view.setUint16(28, 0, true);
+        localHeader.set(nameBytes, 30);
+
+        fileEntries.push({ nameBytes, contentBytes, fileCrc, size, offset, localHeader });
+        offset += localHeader.length + contentBytes.length;
+      }
+
+      const centralDirEntries = [];
+      let centralDirSize = 0;
+
+      for (const f of fileEntries) {
+        const cdEntry = new Uint8Array(46 + f.nameBytes.length);
+        const view = new DataView(cdEntry.buffer);
+        view.setUint32(0, 0x02014b50, true);
+        view.setUint16(4, 20, true);
+        view.setUint16(6, 20, true);
+        view.setUint16(8, 0x0800, true);
+        view.setUint16(10, 0, true);
+        view.setUint16(12, 0, true);
+        view.setUint14 = 0;
+        view.setUint32(16, f.fileCrc, true);
+        view.setUint32(20, f.size, true);
+        view.setUint32(24, f.size, true);
+        view.setUint16(28, f.nameBytes.length, true);
+        view.setUint16(30, 0, true);
+        view.setUint16(32, 0, true);
+        view.setUint16(34, 0, true);
+        view.setUint16(36, 0, true);
+        view.setUint32(38, 0, true);
+        view.setUint32(42, f.offset, true);
+        cdEntry.set(f.nameBytes, 46);
+
+        centralDirEntries.push(cdEntry);
+        centralDirSize += cdEntry.length;
+      }
+
+      const eocd = new Uint8Array(22);
+      const eocdView = new DataView(eocd.buffer);
+      eocdView.setUint32(0, 0x06054b50, true);
+      eocdView.setUint16(4, 0, true);
+      eocdView.setUint16(6, 0, true);
+      eocdView.setUint16(8, fileEntries.length, true);
+      eocdView.setUint16(10, fileEntries.length, true);
+      eocdView.setUint32(12, centralDirSize, true);
+      eocdView.setUint32(16, offset, true);
+      eocdView.setUint16(20, 0, true);
+
+      const totalLength = offset + centralDirSize + eocd.length;
+      const zipBuffer = new Uint8Array(totalLength);
+      let pos = 0;
+
+      for (const f of fileEntries) {
+        zipBuffer.set(f.localHeader, pos);
+        pos += f.localHeader.length;
+        zipBuffer.set(f.contentBytes, pos);
+        pos += f.contentBytes.length;
+      }
+
+      for (const cd of centralDirEntries) {
+        zipBuffer.set(cd, pos);
+        pos += cd.length;
+      }
+
+      zipBuffer.set(eocd, pos);
+      return zipBuffer;
     }
+
+    function downloadZipBundle() {
+      if (!currentPlan) return;
+      const p = currentPlan;
+      const prdText = generatePrdMarkdown(p);
+      const agentsText = generateAgentsMarkdown(p);
+      const tasksText = generateTasksMarkdown(p);
+      const planJsonText = JSON.stringify(p, null, 2);
+
+      const files = [
+        { name: "PRD.md", content: prdText },
+        { name: "AGENTS.md", content: agentsText },
+        { name: "TASKS.md", content: tasksText },
+        { name: "plan.json", content: planJsonText }
+      ];
+
+      const zipBytes = createZip(files);
+      const blob = new Blob([zipBytes], { type: "application/zip" });
+      const link = document.createElement("a");
+      const cleanSlug = (p.name || "proyek").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+      const zipFileName = `${cleanSlug}-spec.zip`;
+
+      link.href = URL.createObjectURL(blob);
+      link.download = zipFileName;
+      link.click();
+      showToast(`File ${zipFileName} berhasil diunduh (berisi PRD.md & AGENTS.md)! 📦`);
+    }
+
+    const downloadAllMarkdown = downloadZipBundle;
 
     function switchTab(name) {
       document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));

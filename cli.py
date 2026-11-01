@@ -1323,11 +1323,20 @@ def main():
     with open(plan_json_path, "w", encoding="utf-8") as f:
         json.dump(plan, f, indent=2)
 
+    import zipfile
+    zip_path = os.path.join(out_dir, f"{plan['slug']}-specs.zip")
+    with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+        zf.write(prd_path, arcname="PRD.md")
+        zf.write(agents_path, arcname="AGENTS.md")
+        zf.write(tasks_path, arcname="TASKS.md")
+        zf.write(plan_json_path, arcname="plan.json")
+
     print(f"✅ Selesai! Dokumen komprehensif berhasil dibuat di {out_dir}:")
     print(f"  📄 {prd_path} ({len(prd_content.splitlines())} baris)")
     print(f"  📋 {tasks_path} ({len(tasks_content.splitlines())} baris - {len(plan['tasks'])} Tasks)")
     print(f"  🤖 {agents_path}")
-    print(f"  📦 {plan_json_path}\n")
+    print(f"  📦 {plan_json_path}")
+    print(f"  🗜️  {zip_path} (Bundle ZIP: PRD.md & AGENTS.md)\n")
 
     print("=" * 74)
     print("🧭 PANDUAN PENGGUNAAN KE AI AGENT (Claude Code / Hermes / Cursor):")

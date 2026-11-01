@@ -183,7 +183,8 @@
       <span id="wResultTitle" style="font-weight: 700; font-size: 0.8rem;">24 Micro-Tasks Rinci:</span>
       <div style="display: flex; gap: 6px;">
         <button type="button" onclick="wGoToStep1()" style="background: transparent; border: 1px solid var(--border); color: var(--foreground); padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; cursor: pointer;">Ulangi</button>
-        <button type="button" onclick="wCopyAll()" style="background: transparent; border: 1px solid var(--border); color: var(--foreground); padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; cursor: pointer;">Salin Ringkasan PRD</button>
+        <button type="button" onclick="wDownloadZip()" style="background: rgba(255, 92, 32, 0.15); border: 1px solid #FF5C20; color: #fff; padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; cursor: pointer;">Download .zip 📦</button>
+        <button type="button" onclick="wCopyAll()" style="background: transparent; border: 1px solid var(--border); color: var(--foreground); padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; cursor: pointer;">Salin PRD</button>
       </div>
     </div>
 
@@ -412,6 +413,98 @@ Sekarang, konfirmasi bahwa kamu memahami arsitektur ini dan LANGSUNG MULAI kerja
 
     navigator.clipboard.writeText(prompt);
     alert("Master Prompt disalin ke clipboard! Buka AI Agent kamu di folder proyek kosong, lalu paste prompt ini untuk langsung dibikinin.");
+  }
+
+  
+  // Minimal ZIP Generator
+  function wCreateZip(files) {
+    const textEncoder = new TextEncoder();
+    const crcTable = new Uint32Array(256);
+    for (let i = 0; i < 256; i++) {
+      let c = i;
+      for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      crcTable[i] = c;
+    }
+    function crc32(bytes) {
+      let crc = 0xFFFFFFFF;
+      for (let i = 0; i < bytes.length; i++) crc = (crc >>> 8) ^ crcTable[(crc ^ bytes[i]) & 0xFF];
+      return (crc ^ 0xFFFFFFFF) >>> 0;
+    }
+    const entries = [];
+    let offset = 0;
+    for (const f of files) {
+      const nameBytes = textEncoder.encode(f.name);
+      const contentBytes = textEncoder.encode(f.content);
+      const fileCrc = crc32(contentBytes);
+      const size = contentBytes.length;
+      const lh = new Uint8Array(30 + nameBytes.length);
+      const v = new DataView(lh.buffer);
+      v.setUint32(0, 0x04034b50, true);
+      v.setUint16(4, 20, true);
+      v.setUint16(6, 0x0800, true);
+      v.setUint32(14, fileCrc, true);
+      v.setUint32(18, size, true);
+      v.setUint32(22, size, true);
+      v.setUint16(26, nameBytes.length, true);
+      lh.set(nameBytes, 30);
+      entries.push({ nameBytes, contentBytes, fileCrc, size, offset, lh });
+      offset += lh.length + size;
+    }
+    const cdEntries = [];
+    let cdSize = 0;
+    for (const f of entries) {
+      const cd = new Uint8Array(46 + f.nameBytes.length);
+      const v = new DataView(cd.buffer);
+      v.setUint32(0, 0x02014b50, true);
+      v.setUint16(4, 20, true);
+      v.setUint16(6, 20, true);
+      v.setUint16(8, 0x0800, true);
+      v.setUint32(16, f.fileCrc, true);
+      v.setUint32(20, f.size, true);
+      v.setUint32(24, f.size, true);
+      v.setUint16(28, f.nameBytes.length, true);
+      v.setUint32(42, f.offset, true);
+      cd.set(f.nameBytes, 46);
+      cdEntries.push(cd);
+      cdSize += cd.length;
+    }
+    const eocd = new Uint8Array(22);
+    const ev = new DataView(eocd.buffer);
+    ev.setUint32(0, 0x06054b50, true);
+    ev.setUint16(8, entries.length, true);
+    ev.setUint16(10, entries.length, true);
+    ev.setUint32(12, cdSize, true);
+    ev.setUint32(16, offset, true);
+
+    const buf = new Uint8Array(offset + cdSize + 22);
+    let p = 0;
+    for (const f of entries) {
+      buf.set(f.lh, p); p += f.lh.length;
+      buf.set(f.contentBytes, p); p += f.contentBytes.length;
+    }
+    for (const cd of cdEntries) {
+      buf.set(cd, p); p += cd.length;
+    }
+    buf.set(eocd, p);
+    return buf;
+  }
+
+  function wDownloadZip() {
+    const prdMd = `# Product Requirement Document (PRD)\n## ${wPlanName}\n\n> Stack: ${wStack.toUpperCase()} | Auth: ${wAuth.toUpperCase()}\n\nIde & Fitur:\n"${document.getElementById('wIdea').value}"\n\n## Task Backlog:\n` + wCurrentTasks.map(t => `- [${t.ref}] [Fase ${t.phase}] [${t.layer}] ${t.title}: ${t.desc}`).join('\n');
+    const agentsMd = `# AGENTS.md — Instruksi Kerja AI Coding Agent\nProyek: ${wPlanName}\n\n1. Selesaikan Fase 1 (Frontend Mockup) terlebih dahulu sebelum membuat database.\n2. Jalankan acceptance test di setiap task sebelum melapor selesai.\n3. Tulis kode sesedikit mungkin yang bekerja dengan benar (Ponytail principle).`;
+
+    const zipBytes = wCreateZip([
+      { name: "PRD.md", content: prdMd },
+      { name: "AGENTS.md", content: agentsMd }
+    ]);
+
+    const blob = new Blob([zipBytes], { type: "application/zip" });
+    const link = document.createElement("a");
+    const name = (wPlanName || "proyek").toLowerCase().replace(/[^a-z0-9]+/g, "-") + "-spec.zip";
+    link.href = URL.createObjectURL(blob);
+    link.download = name;
+    link.click();
+    alert(`File ${name} berhasil diunduh dalam format .zip (berisi PRD.md dan AGENTS.md)!`);
   }
 
   function wCopyAll() {
