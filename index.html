@@ -913,6 +913,76 @@
       position: relative;
     }
 
+  
+    /* Master Prompt & Execution Roadmap */
+    .master-prompt-card {
+      background: linear-gradient(180deg, rgba(255, 92, 32, 0.12) 0%, rgba(18, 18, 21, 0.8) 100%);
+      border: 1px solid rgba(255, 92, 32, 0.35);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-shadow: 0 10px 25px rgba(255, 92, 32, 0.08);
+    }
+    .master-prompt-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .roadmap-timeline-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .roadmap-timeline-steps {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-top: 1.25rem;
+    }
+    @media (min-width: 900px) {
+      .roadmap-timeline-steps { grid-template-columns: repeat(5, 1fr); }
+    }
+    .timeline-step-col {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      position: relative;
+    }
+    .timeline-step-num {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+    }
+    .timeline-step-col strong {
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+    .timeline-step-col p {
+      font-size: 0.775rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+      margin: 0;
+    }
+
   </style>
 </head>
 <body>
@@ -1192,39 +1262,65 @@
     <!-- HALAMAN 3: OUTPUT WORKSPACE 5-TAB          -->
     <!-- ========================================== -->
     <section id="workspaceSection" class="workspace-section">
-      <!-- Agent Workflow Quick Guide Banner -->
-      <div class="agent-workflow-banner">
-        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem;">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="background: var(--primary-subtle); color: var(--primary); width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.15rem;">🧭</div>
-            <div>
-              <h3 style="font-size: 0.95rem; font-weight: 700; margin: 0;">Kapan & Bagaimana Mengirim File Ini ke AI Coding Agent?</h3>
-              <p style="font-size: 0.785rem; color: var(--text-muted); margin: 0;">Ikuti 4 langkah ini agar Claude Code, Hermes, Antigravity, atau Cursor bekerja rapi tanpa merusak kode.</p>
+      <!-- Master Prompt Instant Action & Roadmap -->
+      <div class="master-prompt-card">
+        <div class="master-prompt-header">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+              <span class="badge badge-primary">⚡ CARA PALING MUDAH (SEPERTI NGODINGPAKEAI)</span>
+              <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Cukup 1 Kali Paste!</span>
             </div>
+            <h3 style="font-size: 1.15rem; font-weight: 800; margin: 0;">Master Prompt — Langsung Jadi dalam Sekali Kirim</h3>
           </div>
-          <button type="button" class="btn btn-outline btn-sm" onclick="openTutorialModal()" style="border-color: var(--primary); color: #fff;">Lihat Tutorial Lengkap 📖</button>
+          <button type="button" class="btn btn-primary" onclick="copyMasterPrompt()" style="box-shadow: 0 4px 15px rgba(255, 92, 32, 0.35);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            <span>Salin Master Prompt Sekarang</span>
+          </button>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin: 0;">
+          Kamu <strong>tidak perlu pusing memikirkan kapan harus kirim AGENTS.md atau memecah file</strong>. Master Prompt ini sudah merangkum seluruh spesifikasi PRD, arsitektur, dan protokol pengerjaan otomatis. Cukup buka AI Coding Agent kamu (Claude Code, Hermes Agent, Antigravity, Cursor, atau ChatGPT) di folder proyek kosong, lalu paste prompt ini — agent langsung paham dan langsung bikinin!
+        </p>
+      </div>
+
+      <!-- Execution Roadmap from Start to Finish -->
+      <div class="roadmap-timeline-card">
+        <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.75rem;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.1rem;">🗺️</span>
+            <h3 style="font-size: 1rem; font-weight: 800; margin: 0;">Arahan Pengerjaan Proyek: Langkah Awal Sampai Selesai</h3>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" onclick="openTutorialModal()" style="border-color: var(--primary); color: #fff;">Baca Penjelasan Detail 📖</button>
         </div>
 
-        <div class="agent-steps-grid">
-          <div class="agent-step-item">
-            <span class="step-badge-num">1</span>
-            <strong>Taruh di Root Folder</strong>
-            <p>Download <code>PRD.md</code>, <code>TASKS.md</code>, dan <code>AGENTS.md</code> lalu simpan di folder proyekmu.</p>
+        <div class="roadmap-timeline-steps">
+          <div class="timeline-step-col">
+            <span class="timeline-step-num">1</span>
+            <strong>Langkah Awal</strong>
+            <p>Bikin folder proyek baru di komputermu (misal <code>mkdir my-app && cd my-app</code>) dan buka AI Agent di terminal folder itu.</p>
           </div>
-          <div class="agent-step-item">
-            <span class="step-badge-num">2</span>
-            <strong>Handshake Awal</strong>
-            <p>Di prompt pertama, minta agent baca <code>PRD.md</code> & <code>AGENTS.md</code>. Dilarang ngoding dulu.</p>
+
+          <div class="timeline-step-col">
+            <span class="timeline-step-num">2</span>
+            <strong>Kirim Prompt</strong>
+            <p>Paste Master Prompt di atas ke AI Agent. Agent langsung memproses dan mulai membangun <strong>Fase 1 (Layout & Mockup UI)</strong>.</p>
           </div>
-          <div class="agent-step-item">
-            <span class="step-badge-num">3</span>
-            <strong>1 Task per Giliran</strong>
-            <p>Klik tombol <em>Copy Prompt Agent</em> pada task T-01, paste ke terminal. Selesaikan satu-satu.</p>
+
+          <div class="timeline-step-col">
+            <span class="timeline-step-num">3</span>
+            <strong>Cek di Browser</strong>
+            <p>Begitu Fase 1 beres, jalankan <code>npm run dev</code>. Buka browser, klik-klik tampilannya dulu. Pastikan kamu suka desainnya!</p>
           </div>
-          <div class="agent-step-item">
-            <span class="step-badge-num">4</span>
-            <strong>Verifikasi di Browser</strong>
-            <p>Setelah Fase 1 beres, uji klik UI di browser. Jangan biarkan agent nyelonong ke database!</p>
+
+          <div class="timeline-step-col">
+            <span class="timeline-step-num">4</span>
+            <strong>Lanjut Backend</strong>
+            <p>Jika UI sudah cocok, ketik di chat agent: <em>"Tampilan oke, lanjut ke database & API"</em>. Agent akan menyusun tabel & endpoints.</p>
+          </div>
+
+          <div class="timeline-step-col">
+            <span class="timeline-step-num">5</span>
+            <strong>Langkah Akhir</strong>
+            <p>Agent menjalankan audit build production tanpa error. Proyekmu beres 100% dan siap di-deploy ke hosting!</p>
           </div>
         </div>
       </div>
@@ -2252,6 +2348,39 @@ Aturan Eksekusi:
 
     
     // Modal Tutorial Helpers
+    
+    function copyMasterPrompt() {
+      if (!currentPlan) return;
+      const p = currentPlan;
+      const prompt = `Kamu adalah senior fullstack software engineer. Kamu akan membangun aplikasi "${p.name}" dari nol sampai selesai berdasarkan Product Requirement Document (PRD) berikut.
+
+IDENTITAS & SPESIFIKASI PROYEK:
+- Nama Proyek: ${p.name}
+- Kategori: ${p.categoryTitle}
+- Target Pengguna: ${p.target}
+- Tech Stack: ${p.stack.toUpperCase()}
+- Sistem Autentikasi: ${p.auth.toUpperCase()}
+
+DESKRIPSI IDE & FITUR YANG DIINGINKAN:
+"${p.idea}"
+
+SPESIFIKASI MODUL UTAMA:
+${p.features.map(f => `- ${f.id} (${f.name}): ${f.desc}`).join('\n')}
+
+PROTOKOL PENGERJAAN OTOMATIS (FRONTEND MOCK FIRST):
+1. FASE 1 (Fondasi & Layout Shell): Inisialisasi repo, setup Tailwind CSS tokens, dan bangun tampilan antarmuka lengkap menggunakan data mock/stub statis terlebih dahulu. DILARANG membuat tabel database atau server functions rumit sebelum seluruh layar UI dapat diklik di browser.
+2. Selesaikan komponen halaman utama, katalog, detail item, dan form modal interaktif dengan validasi client-side.
+3. Setelah Fase 1 selesai, instruksikan saya untuk membuka browser (npm run dev) dan memverifikasi tampilan UI.
+4. Setelah saya konfirmasi "Lanjut", barulah masuk ke FASE 2 & FASE 3: membuat skema database PostgreSQL DDL resmi, migrasi, dan controller RESTful API.
+5. FASE 4 (Integrasi & Polish): Sambungkan frontend ke database asli, lakukan audit keamanan sanitasi input XSS, pasang SEO metadata, dan pastikan perintah "npm run build" lolos 100% tanpa error type.
+6. Tulis kode seminimal mungkin yang bekerja dengan benar (Ponytail principle), zero-slop tanpa komentar boilerplate berlebih.
+
+Sekarang, konfirmasi bahwa kamu memahami arsitektur ini dan LANGSUNG MULAI kerjakan FASE 1 (Setup Repository, Layout Shell responsif, dan Komponen UI Mockup)!`;
+
+      navigator.clipboard.writeText(prompt);
+      showToast("Master Prompt disalin ke clipboard! Tempelkan ke AI Agent kamu 🚀");
+    }
+
     function openTutorialModal() {
       const m = document.getElementById('tutorialModal');
       if (m) m.classList.add('show');

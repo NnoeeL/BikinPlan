@@ -134,17 +134,61 @@
   <!-- ======================== -->
   <!-- LANGKAH 3: RESULT PRD    -->
   <!-- ======================== -->
-  <div id="wStep3" style="display: none; flex-direction: column; gap: 10px;">
+  <div id="wStep3" style="display: none; flex-direction: column; gap: 12px;">
+    <!-- Master Prompt Card -->
+    <div style="background: linear-gradient(180deg, rgba(255, 92, 32, 0.12) 0%, var(--card) 100%); border: 1px solid rgba(255, 92, 32, 0.35); border-radius: 8px; padding: 12px;">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px;">
+        <div>
+          <span style="font-size: 0.65rem; background: #FF5C20; color: #fff; font-weight: 700; padding: 1px 5px; border-radius: 3px;">CARA INSTAN (1x PASTE)</span>
+          <div style="font-size: 0.85rem; font-weight: 800; margin-top: 2px;">Master Prompt — Langsung Jadi Tanpa Ribet</div>
+        </div>
+        <button type="button" onclick="wCopyMasterPrompt()" style="background: #FF5C20; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; white-space: nowrap;">
+          📋 Salin Master Prompt
+        </button>
+      </div>
+      <p style="font-size: 0.75rem; color: var(--muted-foreground); margin: 0; line-height: 1.4;">
+        Tidak perlu repot kirim banyak file terpisah! Cukup copy Master Prompt ini, buka AI Agent (Claude Code, Hermes, Cursor, ChatGPT) di folder proyekmu, lalu paste. Agent akan langsung memandu pengerjaan dari awal sampai selesai.
+      </p>
+    </div>
+
+    <!-- 5-Step Roadmap Timeline -->
+    <div style="background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px;">
+      <span style="font-size: 0.785rem; font-weight: 700; color: #FF5C20;">🗺️ Arahan Pengerjaan (Dari Awal Sampai Selesai):</span>
+      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 8px;">
+        <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 6px; font-size: 0.68rem;">
+          <div style="font-weight: 700; color: #FF5C20;">1. Awal</div>
+          <div style="color: var(--muted-foreground); margin-top: 2px;">Bikin folder baru & buka AI agent.</div>
+        </div>
+        <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 6px; font-size: 0.68rem;">
+          <div style="font-weight: 700; color: #FF5C20;">2. Kirim</div>
+          <div style="color: var(--muted-foreground); margin-top: 2px;">Paste Master Prompt ke agent.</div>
+        </div>
+        <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 6px; font-size: 0.68rem;">
+          <div style="font-weight: 700; color: #FF5C20;">3. Cek UI</div>
+          <div style="color: var(--muted-foreground); margin-top: 2px;">Tes klik di browser (localhost:3000).</div>
+        </div>
+        <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 6px; font-size: 0.68rem;">
+          <div style="font-weight: 700; color: #FF5C20;">4. Backend</div>
+          <div style="color: var(--muted-foreground); margin-top: 2px;">Ketik "Lanjut" bikin DB & API.</div>
+        </div>
+        <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 6px; font-size: 0.68rem;">
+          <div style="font-weight: 700; color: #FF5C20;">5. Selesai</div>
+          <div style="color: var(--muted-foreground); margin-top: 2px;">Build lolos & siap deploy!</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task List Preview Header -->
     <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 10px; background: var(--card); border: 1px solid var(--border); border-radius: 6px;">
-      <span id="wResultTitle" style="font-weight: 700; font-size: 0.875rem;">KosHunt — 24 Task Siap Eksekusi</span>
+      <span id="wResultTitle" style="font-weight: 700; font-size: 0.8rem;">24 Micro-Tasks Rinci:</span>
       <div style="display: flex; gap: 6px;">
         <button type="button" onclick="wGoToStep1()" style="background: transparent; border: 1px solid var(--border); color: var(--foreground); padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; cursor: pointer;">Ulangi</button>
-        <button type="button" onclick="wCopyAll()" style="background: #FF5C20; color: #fff; border: none; padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; font-weight: 700; cursor: pointer;">Salin PRD.md</button>
+        <button type="button" onclick="wCopyAll()" style="background: transparent; border: 1px solid var(--border); color: var(--foreground); padding: 3px 8px; border-radius: 4px; font-size: 0.72rem; cursor: pointer;">Salin Ringkasan PRD</button>
       </div>
     </div>
 
     <!-- Task List Preview -->
-    <div id="wTaskList" style="display: flex; flex-direction: column; gap: 6px; max-height: 280px; overflow-y: auto; padding-right: 4px;"></div>
+    <div id="wTaskList" style="display: flex; flex-direction: column; gap: 6px; max-height: 240px; overflow-y: auto; padding-right: 4px;"></div>
   </div>
 </div>
 
@@ -342,6 +386,32 @@ Petunjuk Eksekusi:
 
     navigator.clipboard.writeText(prompt);
     alert(`Prompt untuk task ${t.ref} disalin ke clipboard! Siap dipaste ke AI coding agent.`);
+  }
+
+  
+  function wCopyMasterPrompt() {
+    const prompt = `Kamu adalah senior fullstack software engineer. Kamu akan membangun aplikasi "${wPlanName}" dari nol sampai selesai berdasarkan Product Requirement Document (PRD) berikut.
+
+IDENTITAS & SPESIFIKASI PROYEK:
+- Nama Proyek: ${wPlanName}
+- Tech Stack: ${wStack.toUpperCase()}
+- Sistem Autentikasi: ${wAuth.toUpperCase()}
+
+DESKRIPSI IDE & FITUR:
+"${document.getElementById('wIdea').value}"
+
+PROTOKOL PENGERJAAN OTOMATIS (FRONTEND MOCK FIRST):
+1. FASE 1: Inisialisasi project, setup Tailwind CSS tokens, dan bangun tampilan antarmuka lengkap dengan data mock/stub statis terlebih dahulu. DILARANG membuat database sebelum seluruh layar UI dapat diklik di browser.
+2. Selesaikan komponen halaman utama, katalog/showcase, detail item, dan form interaktif.
+3. Setelah Fase 1 selesai, instruksikan saya untuk membuka browser (npm run dev) dan memverifikasi tampilan.
+4. Setelah saya konfirmasi "Lanjut", barulah masuk ke FASE 2 & FASE 3: membuat skema database PostgreSQL DDL resmi, migrasi, dan controller RESTful API.
+5. FASE 4: Sambungkan frontend ke database asli, lakukan audit keamanan sanitasi input XSS, pasang SEO metadata, dan pastikan perintah "npm run build" lolos 100% tanpa error.
+6. Tulis kode seminimal mungkin yang bekerja dengan benar (Ponytail principle).
+
+Sekarang, konfirmasi bahwa kamu memahami arsitektur ini dan LANGSUNG MULAI kerjakan FASE 1 (Setup Repository, Layout Shell responsif, dan Komponen UI Mockup)!`;
+
+    navigator.clipboard.writeText(prompt);
+    alert("Master Prompt disalin ke clipboard! Buka AI Agent kamu di folder proyek kosong, lalu paste prompt ini untuk langsung dibikinin.");
   }
 
   function wCopyAll() {
