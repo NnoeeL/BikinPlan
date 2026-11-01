@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Release-v1.1.0-FF5C20?style=flat&logo=github" alt="Release">
+  <img src="https://img.shields.io/badge/Release-v1.1.2-FF5C20?style=flat&logo=github" alt="Release">
   <img src="https://img.shields.io/badge/Python-3.8+-3776AB?style=flat&logo=python&logoColor=white" alt="Python">
   <img src="https://img.shields.io/badge/Stack-Pure_HTML5_%2B_Tailwind-FF5C20?style=flat" alt="Stack">
   <img src="https://img.shields.io/badge/Target-Claude_Code_|_Hermes_|_Cursor-10B981?style=flat" alt="Target Agent">
