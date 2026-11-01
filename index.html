@@ -983,6 +983,71 @@
       margin: 0;
     }
 
+  
+    /* Platform Specific Tabs in Modal */
+    .platform-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .platform-tab-btn {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 0.45rem 0.9rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s ease;
+    }
+    .platform-tab-btn:hover { color: var(--text); border-color: var(--text-dim); }
+    .platform-tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    .platform-content-panel {
+      display: none;
+      background: var(--card-muted);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 1.25rem;
+      animation: fadeIn 0.2s ease;
+    }
+    .platform-content-panel.active { display: block; }
+    .platform-content-panel h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .platform-content-panel ol {
+      margin-left: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-size: 0.825rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .platform-badge-tag {
+      font-size: 0.65rem;
+      background: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
   </style>
 </head>
 <body>
@@ -2381,6 +2446,16 @@ Sekarang, konfirmasi bahwa kamu memahami arsitektur ini dan LANGSUNG MULAI kerja
       showToast("Master Prompt disalin ke clipboard! Tempelkan ke AI Agent kamu 🚀");
     }
 
+    
+    function switchPlatformTab(pName) {
+      document.querySelectorAll('.platform-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.platform-content-panel').forEach(p => p.classList.remove('active'));
+
+      event.currentTarget.classList.add('active');
+      const targetPanel = document.getElementById(`p-tab-${pName}`);
+      if (targetPanel) targetPanel.classList.add('active');
+    }
+
     function openTutorialModal() {
       const m = document.getElementById('tutorialModal');
       if (m) m.classList.add('show');
@@ -2487,6 +2562,80 @@ Apakah kamu sudah membaca dan paham arsitekturnya?</pre>
         </div>
 
       </div>
+      
+        <!-- Platform Specific Tutorials -->
+        <div class="guide-card-block">
+          <h3>
+            <span class="step-badge-num">5</span>
+            <span>Panduan Khusus per Aplikasi / Platform AI Agent</span>
+          </h3>
+          <p>Pilih aplikasi AI Agent yang sedang kamu gunakan untuk melihat panduan langkah demi langkah yang disesuaikan:</p>
+          
+          <div class="platform-tabs">
+            <button type="button" class="platform-tab-btn active" onclick="switchPlatformTab('hermes')">
+              <span>🚀 Hermes Agent Desktop</span>
+              <span class="platform-badge-tag">Paling Cepat</span>
+            </button>
+            <button type="button" class="platform-tab-btn" onclick="switchPlatformTab('claude')">
+              <span>🟣 Claude Code</span>
+            </button>
+            <button type="button" class="platform-tab-btn" onclick="switchPlatformTab('cursor')">
+              <span>⚡ Cursor / Antigravity</span>
+            </button>
+            <button type="button" class="platform-tab-btn" onclick="switchPlatformTab('chatgpt')">
+              <span>💬 ChatGPT / Web AI</span>
+            </button>
+          </div>
+
+          <!-- Hermes Desktop Tab -->
+          <div id="p-tab-hermes" class="platform-content-panel active">
+            <h4>
+              <span>🚀 Hermes Agent (Desktop App & CLI)</span>
+              <span class="platform-badge-tag">Full Auto-Pilot</span>
+            </h4>
+            <ol>
+              <li><strong>Buka Hermes Desktop App:</strong> Kamu bisa langsung menggunakan chat Hermes yang sedang aktif.</li>
+              <li><strong>Salin & Paste Master Prompt:</strong> Klik tombol <em>"Salin Master Prompt"</em> di NgodingYuk, lalu paste ke chatbox Hermes.</li>
+              <li><strong>Hermes Bekerja Otomatis:</strong> Karena Hermes memiliki built-in autonomous tools (<code>write_file</code>, <code>terminal</code>, <code>browser_exec</code>, <code>execute_code</code>), Hermes akan langsung membuat folder, menulis seluruh file kode, menginstall dependensi, dan menyalakan dev server tanpa kamu perlu buka terminal terpisah!</li>
+              <li><strong>Lihat Preview Langsung:</strong> Kamu bisa melihat hasil UI aplikasimu langsung di panel preview Hermes Desktop di samping chat.</li>
+            </ol>
+          </div>
+
+          <!-- Claude Code Tab -->
+          <div id="p-tab-claude" class="platform-content-panel">
+            <h4><span>🟣 Claude Code CLI (Anthropic)</span></h4>
+            <ol>
+              <li><strong>Siapkan Folder Proyek:</strong> Buka terminal di komputermu, buat folder baru, lalu masuk: <code>mkdir my-app && cd my-app</code>.</li>
+              <li><strong>Nyalakan Claude Code:</strong> Ketik perintah <code>claude</code> di terminal.</li>
+              <li><strong>Paste Master Prompt:</strong> Tempelkan Master Prompt dari NgodingYuk pada percakapan pertama.</li>
+              <li><strong>Biarkan Claude Bekerja:</strong> Claude Code akan membuat repository, setup Tailwind CSS, dan menyusun mockup UI Fase 1 secara terstruktur.</li>
+              <li><strong>Verifikasi:</strong> Setelah Fase 1 selesai, buka browser (<code>npm run dev</code>). Jika sudah puas dengan UI-nya, ketik <em>"Lanjut ke backend & database"</em>.</li>
+            </ol>
+          </div>
+
+          <!-- Cursor / Antigravity Tab -->
+          <div id="p-tab-cursor" class="platform-content-panel">
+            <h4><span>⚡ Cursor / Antigravity IDE</span></h4>
+            <ol>
+              <li><strong>Buka Folder Proyek:</strong> Buat folder proyek baru dan buka folder tersebut di Cursor atau Antigravity.</li>
+              <li><strong>Buka Composer / Agent Mode:</strong> Tekan <code>Ctrl + I</code> (Windows) atau <code>Cmd + I</code> (Mac).</li>
+              <li><strong>Pastikan Mode "Agent" Aktif:</strong> Pilih mode <strong>Agent</strong> (bukan Chat biasa) agar AI memiliki izin membuat dan menyunting file di proyekmu.</li>
+              <li><strong>Paste Master Prompt:</strong> Tempelkan Master Prompt dan tekan Enter. Klik <em>"Accept All"</em> untuk setiap file yang digenerate oleh AI.</li>
+            </ol>
+          </div>
+
+          <!-- ChatGPT / Web LLM Tab -->
+          <div id="p-tab-chatgpt" class="platform-content-panel">
+            <h4><span>💬 ChatGPT / Claude.ai (Web Browser)</span></h4>
+            <ol>
+              <li><strong>Buka Editor Kode:</strong> Buka VS Code di folder proyek kosong.</li>
+              <li><strong>Kirim Master Prompt:</strong> Buka ChatGPT atau Claude.ai, lalu paste Master Prompt.</li>
+              <li><strong>Pengerjaan Interaktif:</strong> Minta AI memberikan isi kode file per file (dimulai dari <code>package.json</code>, layout, dan komponen UI mock).</li>
+              <li><strong>Salin Berkas:</strong> Buat file di VS Code sesuai instruksi AI hingga Fase 1 selesai.</li>
+            </ol>
+          </div>
+        </div>
+
       <div style="padding: 1rem 1.5rem; border-top: 1px solid var(--border); display: flex; justify-content: flex-end;">
         <button type="button" class="btn btn-primary btn-sm" onclick="closeTutorialModal()">Paham, Tutup Panduan</button>
       </div>

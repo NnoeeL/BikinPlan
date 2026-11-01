@@ -168,6 +168,59 @@ Sesuai formula *Frontend Mock First*, Fase 1 (T-01 s/d T-06) sengaja menggunakan
 3. **Jika tampilan sudah disetujui**, barulah perintahkan agent untuk lanjut ke Fase 2 (state) dan Fase 3 (database).
 4. **Keuntungan:** Kamu tidak membuang kuota/token untuk backend yang salah arah, dan tampilan UI sudah terbukti berfungsi sejak awal!
 
+### 5. Cara Instan: Master Prompt (Sekali Paste Langsung Jadi!)
+Jika kamu **tidak ingin repot mengirim file AGENTS.md atau memecah file terpisah**, NgodingYuk menyediakan **Master Prompt**:
+1. Setelah dokumen selesai digenerate, klik tombol **"Salin Master Prompt Sekarang"**.
+2. Buka AI Coding Agent kamu di folder proyek baru.
+3. Tempelkan Master Prompt tersebut. Agent akan langsung memahami konteks arsitektur dan langsung mengeksekusi langkah awal secara mandiri!
+
+---
+
+## 🤖 Panduan Khusus per Platform AI Agent
+
+### 1. 🚀 Hermes Agent (Desktop App & CLI)
+> **Paling Cepat & Full Auto-Pilot!**
+
+- **Di Hermes Desktop App:**
+  1. Klik tombol **"Salin Master Prompt"** di NgodingYuk.
+  2. Tempelkan langsung ke chat Hermes Desktop.
+  3. Hermes memiliki built-in autonomous tools (`write_file`, `terminal`, `browser_exec`, `patch`), sehingga Hermes akan langsung membuat folder, menulis seluruh file kode, menginstall dependensi (`npm install`), dan menjalankan dev server secara otomatis tanpa kamu perlu membuka terminal terpisah!
+  4. Kamu bisa melihat hasilnya langsung lewat panel preview di sebelah chat.
+- **Di Hermes CLI:**
+  Jalankan `hermes` di terminal, lalu paste Master Prompt.
+
+---
+
+### 2. 🟣 Claude Code (Anthropic CLI)
+1. Buka terminal di komputermu, buat folder baru, lalu masuk:
+   ```bash
+   mkdir toko-online && cd toko-online
+   ```
+2. Jalankan perintah:
+   ```bash
+   claude
+   ```
+3. Paste **Master Prompt** pada percakapan pertama. Claude Code akan membuat repository, setup Tailwind CSS, dan menyusun mockup UI Fase 1 secara bertahap.
+4. Setelah Fase 1 selesai, jalankan `npm run dev` untuk mengecek tampilan di browser.
+5. Jika sudah puas, ketik konfirmasi: *"Tampilan sudah oke, lanjut ke backend & database"*.
+
+---
+
+### 3. ⚡ Cursor / Antigravity / Windsurf IDE
+1. Buat folder proyek baru dan buka folder tersebut di Cursor atau Antigravity.
+2. Buka panel **Composer / Agent Mode** dengan menekan `Ctrl + I` (Windows) atau `Cmd + I` (Mac).
+3. **Penting:** Pastikan mode diset ke **"Agent"** (bukan Chat biasa) agar AI memiliki izin menulis dan menyunting file di proyekmu.
+4. Paste **Master Prompt** ke Composer, tekan Enter, dan klik tombol **"Accept All"** saat agen membuat file-file kode.
+
+---
+
+### 4. 💬 ChatGPT / Claude.ai / Web LLM (Manual Assistant)
+Jika kamu menggunakan ChatGPT (GPT-4o) atau Claude.ai di browser tanpa terminal agent:
+1. Buka VS Code di folder proyek kosong.
+2. Paste **Master Prompt** ke ChatGPT / Claude.
+3. Minta AI memberikan isi kode file per file (dimulai dari `package.json`, layout, dan komponen UI mock).
+4. Buat file di VS Code sesuai instruksi AI hingga Fase 1 selesai.
+
 ---
 
 ## 📂 Struktur Direktori Repository
