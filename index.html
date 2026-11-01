@@ -2334,6 +2334,47 @@ Aturan Eksekusi:
       showToast("AGENTS.md disalin ke clipboard! 🤖");
     }
 
+    function generateTasksMarkdown(p) {
+      if (!p || !p.tasks) return "";
+      let output = `# Task Backlog: ${p.name}\n\n`;
+      output += `> **Total Task:** ${p.tasks.length} Micro-Tasks Terstruktur  \n`;
+      output += `> **Metodologi:** 4 Fase Pengerjaan (Fase 1 Mockup UI -> Fase 2 State Interaktif -> Fase 3 Database & API -> Fase 4 Integrasi & Polish)\n\n`;
+      output += `Panduan AI Coding Agent: Kerjakan task secara berurutan. Berhenti di checkpoint akhir setiap fase untuk konfirmasi pengguna.\n\n---\n\n`;
+
+      let currentPhase = 0;
+      const phaseHeaders = {
+        1: "## FASE 1 — FONDASI, LAYOUT, & MOCKUP UI STATIS (Layer: Frontend)\n*Tujuan: Membangun seluruh tampilan visual dengan data tiruan agar dapat langsung diklik-klik di browser.*\n",
+        2: "## FASE 2 — STATE MANAGEMENT & INTERAKSI KLIEN (Layer: Frontend)\n*Tujuan: Menyambungkan form input, validasi Zod, dan manipulasi data di memori/localStorage.*\n",
+        3: "## FASE 3 — SKEMA DATABASE, AUTENTIKASI, & API BACKEND (Layer: Database & Backend)\n*Tujuan: Membuat skema tabel DDL, migrasi DB, autentikasi session, dan endpoint RESTful API.*\n",
+        4: "## FASE 4 — INTEGRASI END-TO-END, HARDENING, & POLISH (Layer: Integration & Polish)\n*Tujuan: Mengganti mock data dengan API nyata, audit keamanan, pengujian SEO, dan verifikasi production build.*\n"
+      };
+
+      p.tasks.forEach(t => {
+        if (t.phase !== currentPhase) {
+          currentPhase = t.phase;
+          output += "\n" + (phaseHeaders[currentPhase] || `## FASE ${currentPhase}\n\n`);
+        }
+        const checklistStr = t.checklist.map(c => `  - [ ] ${c}`).join("\n");
+        output += `### [${t.ref}] ${t.title}\n`;
+        output += `- **Layer:** \`${t.layer}\` | **Fase:** \`${t.phase}\`\n`;
+        output += `- **Objektif:** ${t.desc}\n`;
+        output += `- **Checklist Eksekusi:**\n${checklistStr}\n`;
+        output += `- **Verifikasi Penerimaan:** ${t.acceptance}\n\n`;
+        output += "```markdown\n";
+        output += `# Prompt Agent untuk Task Ini:\n`;
+        output += `Kamu akan mengerjakan task ${t.ref} (${t.title}) untuk proyek ${p.name}.\n`;
+        output += `Layer: ${t.layer} | Fase: ${t.phase}\n\n`;
+        output += `Objektif:\n${t.desc}\n\n`;
+        output += `Checklist Pengerjaan:\n${t.checklist.map(c => `- ${c}`).join("\n")}\n\n`;
+        output += `Kriteria Pengujian:\n${t.acceptance}\n\n`;
+        output += `Aturan: Selesaikan HANYA task ini dan lakukan verifikasi sebelum melapor selesai.\n`;
+        output += "```\n\n---\n\n";
+      });
+
+      return output;
+    }
+
+
     // Pure Client-side Zero-Dependency Standard ZIP Generator
     function createZip(files) {
       const textEncoder = new TextEncoder();
@@ -2442,30 +2483,47 @@ Aturan Eksekusi:
     }
 
     function downloadZipBundle() {
-      if (!currentPlan) return;
-      const p = currentPlan;
-      const prdText = generatePrdMarkdown(p);
-      const agentsText = generateAgentsMarkdown(p);
-      const tasksText = generateTasksMarkdown(p);
-      const planJsonText = JSON.stringify(p, null, 2);
+      if (!currentPlan) {
+        alert("Belum ada spesifikasi yang dibuat. Silakan lengkapi langkah 1 & 2 terlebih dahulu!");
+        return;
+      }
+      try {
+        const p = currentPlan;
+        const prdText = generatePrdMarkdown(p);
+        const agentsText = generateAgentsMarkdown(p);
+        const tasksText = typeof generateTasksMarkdown === 'function' ? generateTasksMarkdown(p) : "";
+        const planJsonText = JSON.stringify(p, null, 2);
 
-      const files = [
-        { name: "PRD.md", content: prdText },
-        { name: "AGENTS.md", content: agentsText },
-        { name: "TASKS.md", content: tasksText },
-        { name: "plan.json", content: planJsonText }
-      ];
+        const files = [
+          { name: "PRD.md", content: prdText },
+          { name: "AGENTS.md", content: agentsText },
+          { name: "TASKS.md", content: tasksText },
+          { name: "plan.json", content: planJsonText }
+        ];
 
-      const zipBytes = createZip(files);
-      const blob = new Blob([zipBytes], { type: "application/zip" });
-      const link = document.createElement("a");
-      const cleanSlug = (p.name || "proyek").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-      const zipFileName = `${cleanSlug}-spec.zip`;
+        const zipBytes = createZip(files);
+        const blob = new Blob([zipBytes], { type: "application/zip" });
+        const cleanSlug = (p.name || "proyek").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+        const zipFileName = `${cleanSlug || 'proyek'}-specs.zip`;
 
-      link.href = URL.createObjectURL(blob);
-      link.download = zipFileName;
-      link.click();
-      showToast(`File ${zipFileName} berhasil diunduh (berisi PRD.md & AGENTS.md)! 📦`);
+        const blobUrl = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = blobUrl;
+        link.download = zipFileName;
+        link.style.display = "none";
+        document.body.appendChild(link);
+        link.click();
+
+        setTimeout(() => {
+          if (link.parentNode) link.parentNode.removeChild(link);
+          URL.revokeObjectURL(blobUrl);
+        }, 1500);
+
+        showToast(`File ${zipFileName} berhasil diunduh (berisi PRD.md & AGENTS.md)! 📦`);
+      } catch (err) {
+        console.error("Gagal men-download ZIP:", err);
+        alert("Terjadi kesalahan saat membuat file ZIP: " + err.message);
+      }
     }
 
     const downloadAllMarkdown = downloadZipBundle;

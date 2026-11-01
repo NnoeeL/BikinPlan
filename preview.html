@@ -490,21 +490,33 @@ Sekarang, konfirmasi bahwa kamu memahami arsitektur ini dan LANGSUNG MULAI kerja
   }
 
   function wDownloadZip() {
-    const prdMd = `# Product Requirement Document (PRD)\n## ${wPlanName}\n\n> Stack: ${wStack.toUpperCase()} | Auth: ${wAuth.toUpperCase()}\n\nIde & Fitur:\n"${document.getElementById('wIdea').value}"\n\n## Task Backlog:\n` + wCurrentTasks.map(t => `- [${t.ref}] [Fase ${t.phase}] [${t.layer}] ${t.title}: ${t.desc}`).join('\n');
-    const agentsMd = `# AGENTS.md — Instruksi Kerja AI Coding Agent\nProyek: ${wPlanName}\n\n1. Selesaikan Fase 1 (Frontend Mockup) terlebih dahulu sebelum membuat database.\n2. Jalankan acceptance test di setiap task sebelum melapor selesai.\n3. Tulis kode sesedikit mungkin yang bekerja dengan benar (Ponytail principle).`;
+    try {
+      const prdMd = `# Product Requirement Document (PRD)\n## ${wPlanName}\n\n> Stack: ${wStack.toUpperCase()} | Auth: ${wAuth.toUpperCase()}\n\nIde & Fitur:\n"${document.getElementById('wIdea').value}"\n\n## Task Backlog:\n` + wCurrentTasks.map(t => `- [${t.ref}] [Fase ${t.phase}] [${t.layer}] ${t.title}: ${t.desc}`).join('\n');
+      const agentsMd = `# AGENTS.md — Instruksi Kerja AI Coding Agent\nProyek: ${wPlanName}\n\n1. Selesaikan Fase 1 (Frontend Mockup) terlebih dahulu sebelum membuat database.\n2. Jalankan acceptance test di setiap task sebelum melapor selesai.\n3. Tulis kode sesedikit mungkin yang bekerja dengan benar (Ponytail principle).`;
 
-    const zipBytes = wCreateZip([
-      { name: "PRD.md", content: prdMd },
-      { name: "AGENTS.md", content: agentsMd }
-    ]);
+      const zipBytes = wCreateZip([
+        { name: "PRD.md", content: prdMd },
+        { name: "AGENTS.md", content: agentsMd }
+      ]);
 
-    const blob = new Blob([zipBytes], { type: "application/zip" });
-    const link = document.createElement("a");
-    const name = (wPlanName || "proyek").toLowerCase().replace(/[^a-z0-9]+/g, "-") + "-spec.zip";
-    link.href = URL.createObjectURL(blob);
-    link.download = name;
-    link.click();
-    alert(`File ${name} berhasil diunduh dalam format .zip (berisi PRD.md dan AGENTS.md)!`);
+      const blob = new Blob([zipBytes], { type: "application/zip" });
+      const cleanSlug = (wPlanName || "proyek").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const name = `${cleanSlug}-specs.zip`;
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = name;
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        if (link.parentNode) link.parentNode.removeChild(link);
+        URL.revokeObjectURL(blobUrl);
+      }, 1500);
+      alert(`File ${name} berhasil diunduh dalam format .zip (berisi PRD.md dan AGENTS.md)!`);
+    } catch (e) {
+      alert("Gagal mengunduh ZIP: " + e.message);
+    }
   }
 
   function wCopyAll() {
