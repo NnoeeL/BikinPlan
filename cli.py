@@ -227,7 +227,7 @@ CREATE INDEX idx_projects_category ON projects(category_id);
                             "summary": "Generator PRD & Task Backlog untuk AI coding agents",
                             "techStack": ["TanStack Start", "TypeScript", "Tailwind CSS", "PostgreSQL"],
                             "demoUrl": "https://bikinplan.com",
-                            "githubUrl": "https://github.com/NnoeeL/ngodingyuk"
+                            "githubUrl": "https://github.com/NnoeeL/BikinPlan"
                         }
                     ]
                 }

@@ -58,10 +58,10 @@ Clone repository ini ke komputer lokal:
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/NnoeeL/ngodingyuk.git
+git clone https://github.com/NnoeeL/BikinPlan.git
 
 # 2. Masuk ke direktori
-cd ngodingyuk
+cd BikinPlan
 ```
 
 ---
@@ -183,7 +183,7 @@ Jika kamu **tidak ingin repot mengirim file AGENTS.md atau memecah file terpisah
 ## 📂 Struktur Direktori Repository
 
 ```text
-ngodingyuk/
+BikinPlan/
 ├── index.html        # Aplikasi Web interaktif mandiri (UI generator & task board)
 ├── cli.py            # Generator CLI Python (Enterprise synthesis engine)
 ├── serve.py          # Server HTTP lokal otomatis membuka browser
