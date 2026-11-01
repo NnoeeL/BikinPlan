@@ -19,20 +19,18 @@
   <!-- ======================== -->
   <div id="wStep1" style="display: flex; flex-direction: column; gap: 10px;">
     <!-- Quick Presets -->
-    <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
-      <span style="font-size: 0.75rem; color: var(--muted-foreground); font-weight: 600;">Preset:</span>
-      <button type="button" onclick="pFill('kosan')" style="background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">🏠 Kosan UNSIL</button>
-      <button type="button" onclick="pFill('finance')" style="background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">💰 Catat Duit SaaS</button>
-      <button type="button" onclick="pFill('rental')" style="background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">🏕️ Rental Outdoor</button>
-      <button type="button" onclick="pFill('community')" style="background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 3px 8px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">🎓 Forum Mahasiswa</button>
+    <div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center;">
+      <span style="font-size: 0.75rem; color: var(--muted-foreground); font-weight: 600;">Pilihan Preset:</span>
+      <button type="button" onclick="pFill('toko')" style="background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">🛍️ Katalog Toko Online</button>
+      <button type="button" onclick="pFill('portfolio')" style="background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">💼 Portofolio Pribadi</button>
     </div>
 
     <div style="display: flex; gap: 8px;">
-      <input id="wName" type="text" placeholder="Nama Aplikasi / Proyek" value="KosHunt Tasik" style="flex: 1.2; background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 7px 10px; border-radius: 6px; font-size: 0.85rem; outline: none;">
-      <input id="wTarget" type="text" placeholder="Target Pengguna" value="Mahasiswa UNSIL & Perantau" style="flex: 1; background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 7px 10px; border-radius: 6px; font-size: 0.85rem; outline: none;">
+      <input id="wName" type="text" placeholder="Nama Aplikasi / Proyek" value="TokoOnline Store" style="flex: 1.2; background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 7px 10px; border-radius: 6px; font-size: 0.85rem; outline: none;">
+      <input id="wTarget" type="text" placeholder="Target Pengguna" value="Pelanggan & Pembeli Umum" style="flex: 1; background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 7px 10px; border-radius: 6px; font-size: 0.85rem; outline: none;">
     </div>
 
-    <textarea id="wIdea" rows="3" placeholder="Ceritakan ide & fitur aplikasi..." style="background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 8px 10px; border-radius: 6px; font-size: 0.85rem; outline: none; resize: vertical;">Aplikasi pencarian kosan mahasiswa dekat UNSIL dengan filter harga, radius 10km, dan kontak WhatsApp pemilik kos.</textarea>
+    <textarea id="wIdea" rows="3" placeholder="Ceritakan ide & fitur aplikasi..." style="background: var(--card); border: 1px solid var(--border); color: var(--foreground); padding: 8px 10px; border-radius: 6px; font-size: 0.85rem; outline: none; resize: vertical;">Website katalog toko online modern dan responsif untuk memamerkan produk, filter kategori & harga, pencarian barang cepat, rincian detail spesifikasi produk, status stok, dan tombol checkout pemesanan langsung terhubung ke WhatsApp penjual.</textarea>
 
     <div style="display: flex; justify-content: flex-end; align-items: center; margin-top: 4px;">
       <button type="button" onclick="wGoToStep2()" style="background: #FF5C20; color: #fff; border: none; padding: 7px 16px; border-radius: 6px; font-size: 0.825rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">
@@ -129,10 +127,16 @@
 
 <script>
   const wPresets = {
-    kosan: { name: "KosHunt Tasik", target: "Mahasiswa UNSIL & Perantau", idea: "Aplikasi pencarian kosan mahasiswa dekat UNSIL dengan filter harga, radius 10km, dan kontak WhatsApp pemilik kos." },
-    finance: { name: "DuitTrack SaaS", target: "Freelancer & Mahasiswa", idea: "SaaS pencatatan keuangan harian untuk freelancer dengan grafik bulanan dan ekspor PDF." },
-    rental: { name: "CampRent Outdoor", target: "Pecinta Alam & Mahasiswa", idea: "Platform rental peralatan outdoor camping dengan sistem booking tanggal dan pembayaran QRIS." },
-    community: { name: "RuangMahasiswa UNSIL", target: "Mahasiswa Semua Fakultas", idea: "Portal forum diskusi mahasiswa kampus dengan thread kategori mata kuliah dan tanya jawab." }
+    toko: {
+      name: "TokoOnline Store",
+      target: "Pelanggan & Pembeli Umum",
+      idea: "Website katalog toko online modern dan responsif untuk memamerkan produk, filter kategori & harga, pencarian barang cepat, rincian detail spesifikasi produk, status stok, dan tombol checkout pemesanan langsung terhubung ke WhatsApp penjual."
+    },
+    portfolio: {
+      name: "Portofolio Profesional",
+      target: "Klien, Recruiter & Kolaborator",
+      idea: "Website portofolio pribadi modern dan interaktif untuk menampilkan profil diri, showcase proyek unggulan dengan filter tech stack, rincian keahlian teknis (skills), sertifikasi, formulir kontak pesan langsung, dan tautan sosial media."
+    }
   };
 
   function pFill(k) {

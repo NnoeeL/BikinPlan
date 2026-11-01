@@ -17,14 +17,16 @@ def synthesize_plan(name: str, idea: str, stack: str = "tanstack", target_audien
     slug = re.sub(r'[^a-z0-9]+', '-', clean_name.lower()).strip('-')
     
     idea_lower = (idea + " " + clean_name).lower()
-    is_ecommerce = any(w in idea_lower for w in ["toko", "jual", "beli", "store", "commerce", "produk", "sewa", "rent", "kos", "kosan"])
+    is_portfolio = any(w in idea_lower for w in ["portofolio", "portfolio", "profil", "resume", "cv", "showcase", "personal", "tentang saya", "bio"])
+    is_ecommerce = any(w in idea_lower for w in ["toko", "jual", "beli", "store", "commerce", "produk", "sewa", "rent", "kos", "kosan", "katalog", "shop", "barang"])
     is_community = any(w in idea_lower for w in ["komunitas", "forum", "sosial", "chat", "diskusi", "mahasiswa", "kampus", "unsil"])
     is_saas = any(w in idea_lower for w in ["saas", "dashboard", "analisis", "keuangan", "tracking", "catat", "manajemen", "finance", "duit"])
-    
-    cat_key = "saas" if is_saas else ("ecommerce" if is_ecommerce else ("community" if is_community else "general"))
+
+    cat_key = "portfolio" if is_portfolio else ("ecommerce" if is_ecommerce else ("saas" if is_saas else ("community" if is_community else "general")))
     cat_title = {
+        "portfolio": "Personal Portfolio & Showcase Website",
+        "ecommerce": "Katalog Toko Online & E-Commerce",
         "saas": "SaaS, Financial & Productivity Platform",
-        "ecommerce": "Marketplace, Rental & Booking Engine",
         "community": "Campus Community & Collaborative Network",
         "general": "Modern Cloud Web Application"
     }[cat_key]
@@ -85,7 +87,170 @@ def synthesize_plan(name: str, idea: str, stack: str = "tanstack", target_audien
         }
     ]
 
-    if cat_key == "ecommerce":
+    if cat_key == "portfolio":
+        features = [
+            {
+                "id": "F-01",
+                "name": "Hero Section Interaktif & Profil Profesional",
+                "desc": "Header profil personal dengan foto beranimasi halus, headline keahlian, status ketersediaan kerja (Open to Work), tombol Download CV (PDF), dan tautan sosial media (GitHub, LinkedIn, Instagram).",
+                "user_story": f"Sebagai {target_audience}, saya ingin melihat ringkasan identitas, bio profesional, dan kontak agar dapat segera menilai kesesuaian profil kandidat.",
+                "acceptance": [
+                    "Animasi typing effect pada headline peran spesialisasi.",
+                    "Tombol Download CV otomatis mengunduh resume PDF.",
+                    "Tautan sosial media membuka tab baru dengan rel='noreferrer'."
+                ],
+                "error_cases": [
+                    "File CV belum diunggah: tampilkan modal informasi kontak alternatif."
+                ]
+            },
+            {
+                "id": "F-02",
+                "name": "Showcase Galeri Proyek & Filter Tech Stack",
+                "desc": "Grid kartu portofolio proyek dengan filter tag kategori (Semua, Web, Mobile, AI/Backend), lightbox preview gambar, daftar badge teknologi, serta tautan Live Demo dan Source Code GitHub.",
+                "user_story": f"Sebagai {target_audience}, saya ingin memfilter dan menginspeksi hasil karya nyata beserta teknologi yang digunakan.",
+                "acceptance": [
+                    "Filter instan kategori tanpa reload halaman.",
+                    "Kartu proyek menampilkan thumbnail WebP responsif dan badge tech stack.",
+                    "Tombol tautan 'Live Demo' dan 'GitHub' responsif dan valid."
+                ],
+                "error_cases": [
+                    "Demo link tidak tersedia: nonaktifkan tombol dengan tooltip 'Private/NDA Proyek'."
+                ]
+            },
+            {
+                "id": "F-03",
+                "name": "Matriks Keahlian Teknis (Skills) & Timeline Pengalaman",
+                "desc": "Visualisasi tingkat penguasaan bahasa pemrograman / tools dengan persentase/level, daftar sertifikasi terverifikasi, dan garis waktu pengalaman kerja atau organisasi.",
+                "user_story": f"Sebagai {target_audience}, saya ingin melihat kompetensi teknis dan rekam jejak pengalaman dalam format timeline yang mudah dipindai.",
+                "acceptance": [
+                    "Bar progress skill dengan animasi interaktif saat di-scroll ke viewport.",
+                    "Timeline terstruktur urut kronologis terbalik (terbaru di posisi atas)."
+                ],
+                "error_cases": [
+                    "Sertifikasi kadaluwarsa: tampilkan penanda status verifikasi kredensial."
+                ]
+            },
+            {
+                "id": "F-04",
+                "name": "Formulir Kontak Pesan Cepat & Integrasi Notifikasi",
+                "desc": "Formulir kirim pesan instan dengan validasi Zod (nama, email, subjek, pesan), notifikasi feedback toast, dan proteksi spam honeypot/rate limit.",
+                "user_story": f"Sebagai {target_audience}, saya ingin mengirim pesan tawaran kerja atau kolaborasi langsung melalui website secara cepat.",
+                "acceptance": [
+                    "Validasi email dan panjang pesan minimal 10 karakter.",
+                    "Feedback toast sukses instan dan form otomatis ter-reset.",
+                    "Dukungan tombol direct WhatsApp sebagai alternatif cepat."
+                ],
+                "error_cases": [
+                    "Pengiriman spam cepat: blokir submit dengan proteksi in-memory rate limit."
+                ]
+            }
+        ]
+
+        sql_ddl = """-- =====================================================================
+-- DDL POSTGRESQL SCHEMA: PERSONAL PORTFOLIO & SHOWCASE PLATFORM
+-- =====================================================================
+
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+CREATE TABLE profile (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    full_name VARCHAR(120) NOT NULL,
+    headline VARCHAR(200) NOT NULL,
+    bio TEXT NOT NULL,
+    avatar_url TEXT,
+    resume_url TEXT,
+    location VARCHAR(100),
+    is_available_for_hire BOOLEAN DEFAULT TRUE NOT NULL,
+    social_links JSONB DEFAULT '{}' NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE project_categories (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(80) UNIQUE NOT NULL,
+    slug VARCHAR(100) UNIQUE NOT NULL
+);
+
+CREATE TABLE projects (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    category_id UUID REFERENCES project_categories(id) ON DELETE SET NULL,
+    title VARCHAR(200) NOT NULL,
+    slug VARCHAR(250) UNIQUE NOT NULL,
+    summary VARCHAR(300) NOT NULL,
+    description TEXT NOT NULL,
+    thumbnail_url TEXT NOT NULL,
+    screenshots TEXT[] DEFAULT '{}' NOT NULL,
+    tech_stack TEXT[] DEFAULT '{}' NOT NULL,
+    demo_url TEXT,
+    github_url TEXT,
+    is_featured BOOLEAN DEFAULT FALSE NOT NULL,
+    sort_order INT DEFAULT 0 NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE TABLE skills (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(80) NOT NULL,
+    category VARCHAR(60) NOT NULL,
+    proficiency_level INT CHECK (proficiency_level BETWEEN 1 AND 100),
+    icon_name VARCHAR(50)
+);
+
+CREATE TABLE contact_messages (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    sender_name VARCHAR(120) NOT NULL,
+    sender_email VARCHAR(255) NOT NULL,
+    subject VARCHAR(200),
+    message TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP NOT NULL
+);
+
+CREATE INDEX idx_projects_featured ON projects(is_featured);
+CREATE INDEX idx_projects_category ON projects(category_id);
+"""
+
+        api_contracts = [
+            {
+                "method": "GET",
+                "path": "/api/v1/projects",
+                "auth": "Public",
+                "desc": "Mengambil daftar portofolio proyek dengan filter kategori dan status featured.",
+                "params": "category=web&featured=true",
+                "response_200": {
+                    "success": True,
+                    "data": [
+                        {
+                            "id": "proj-1234-5678-90ab",
+                            "title": "NgodingYuk Platform",
+                            "slug": "ngodingyuk-platform",
+                            "summary": "Generator PRD & Task Backlog untuk AI coding agents",
+                            "techStack": ["TanStack Start", "TypeScript", "Tailwind CSS", "PostgreSQL"],
+                            "demoUrl": "https://ngodingyuk.com",
+                            "githubUrl": "https://github.com/NnoeeL/ngodingyuk"
+                        }
+                    ]
+                }
+            },
+            {
+                "method": "POST",
+                "path": "/api/v1/contact",
+                "auth": "Public (Rate-Limited)",
+                "desc": "Mengirimkan formulir pesan kontak dari calon klien/recruiter.",
+                "request_body": {
+                    "senderName": "Sarah Jenkins",
+                    "senderEmail": "sarah@techcorp.com",
+                    "subject": "Invitation for Senior Frontend Opportunity",
+                    "message": "Halo Farrel, kami terkesan dengan portofolio Anda dan ingin mendiskusikan peluang kolaborasi..."
+                },
+                "response_200": {
+                    "success": True,
+                    "message": "Pesan berhasil terkirim. Terima kasih!"
+                }
+            }
+        ]
+
+    elif cat_key == "ecommerce":
         features = [
             {
                 "id": "F-01",
