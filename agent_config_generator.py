@@ -182,3 +182,42 @@ alwaysApply: true
 - Adhere strictly to the **Ponytail principle** (minimal code, zero-slop).
 - Follow schemas in `PRD.md` and active task in `TASKS.md`.
 """
+
+def generate_one_prompt(plan: Dict[str, Any]) -> str:
+    """Menghasilkan Autonomous Master Prompt v2 (One-Prompt All-Done Loop Protocol)."""
+    p = plan
+    return f"""Kamu adalah Principal Fullstack Engineer yang bertindak sebagai Autonomous Implementation Agent. Kamu ditugaskan membangun aplikasi "{p['name']}" dari awal sampai selesai berdasarkan berkas spesifikasi di folder ini:
+1. `PRD.md` — Spesifikasi produk, arsitektur, DDL PostgreSQL, kontrak API, dan blueprint struktur file.
+2. `TASKS.md` — 24 micro-tasks berfase dengan checklist eksekusi dan kriteria acceptance test.
+3. `AGENTS.md` & `CLAUDE.md` — Aturan main anti-slop, konvensi kode, dan prinsip Ponytail.
+
+PROTOKOL EKSEKUSI OTONOM MANDIRI (AUTONOMOUS EXECUTION LOOP):
+Lakukan pengerjaan secara mandiri dan berurutan mengikuti siklus loop berikut:
+
+1. BACA & INTERNALISASI:
+   Baca seluruh `PRD.md`, `TASKS.md`, dan `AGENTS.md`. Pahami pembagian 4 Fase:
+   - FASE 1: Fondasi, Layout Shell & Mockup UI Statis (Wajib menggunakan data tiruan mock-fixtures dari PRD.md).
+   - FASE 2: Client State, Validasi Zod & Form Interaktif.
+   - FASE 3: Database DDL PostgreSQL, Session Auth & RESTful API Endpoints.
+   - FASE 4: Integrasi End-to-End, Hardening Trust Boundary & Production Build.
+
+2. ATURAN EMAS "FRONTEND MOCK FIRST":
+   DILARANG KERAS membuat tabel database, migrasi ORM, atau server functions rumit pada Fase 1 dan Fase 2! Selesaikan seluruh layar antarmuka dengan data tiruan terlebih dahulu agar pengguna dapat menguji tampilan di browser.
+
+3. SIKLUS LOOP TASK (T-01 s/d T-24):
+   Kerjakan task satu per satu secara berurutan:
+   - Ambil task pertama yang belum selesai (belum bertanda `[x]`).
+   - Implementasikan HANYA checklist pada task tersebut sesuai file blueprint di PRD.md.
+   - Jalankan verifikasi penerimaan (misal `npm run type-check` atau verifikasi logika).
+   - Setelah lolos, ubah status checklist task tersebut di `TASKS.md` menjadi `[x]`.
+   - Lanjutkan otomatis ke task berikutnya tanpa berhenti meminta izin per task.
+
+4. CHECKPOINT VERIFIKASI FASE:
+   Ketika Fase 1 & 2 selesai, jalankan dev server (`npm run dev`) dan laporkan:
+   "✅ Fase 1 & 2 selesai. Seluruh layar antarmuka sudah dapat diklik di browser. Silakan inspeksi UI sebelum saya lanjut ke Fase 3 (Database & API)."
+
+5. PRINSIP PONYTAIL (KODE MINIMAL):
+   Tulis kode sesedikit mungkin yang bekerja dengan benar ("boring over clever"). Gunakan native Web API dan pustaka standar. Jangan menambahkan komentar basa-basi AI slop.
+
+Mulai sekarang: baca seluruh berkas spesifikasi di folder ini, konfirmasi pemahamanmu secara ringkas, dan LANGSUNG MULAI kerjakan Task T-01!"""
+

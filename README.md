@@ -123,14 +123,30 @@ python cli.py "KosHunt" \
 
 ---
 
-### Cara 3: Menjalankan Task Runner Otomatis (`bikinplan next`)
+### Cara 3: Menggunakan Fitur Cepat (One-Prompt Autonomous Mode) ⚡
 
-Tidak perlu lagi membuka web atau copy-paste manual dari markdown! Gunakan CLI Task Runner bawaan:
+Cara paling praktis: biarkan AI Agent membaca semua berkas dan mengeksekusi seluruh 24 task berfase secara mandiri dari awal sampai selesai:
+
+```bash
+# Otomatis salin One-Prompt Otonom ke clipboard:
+python cli.py prompt
+# atau:
+./bikinplan prompt
+```
+1. Buat folder proyek (`mkdir my-app && cd my-app`) dan pindahkan berkas bundle ZIP ke dalamnya.
+2. Buka Claude Code, Hermes Agent, Antigravity, atau Cursor di terminal folder tersebut.
+3. Tekan **Ctrl+V** untuk menempelkan One-Prompt Otonom. Agent akan langsung membaca `PRD.md`, `TASKS.md`, `AGENTS.md`, dan mengeksekusi project sampai tuntas!
+
+---
+
+### Cara 4: Menjalankan Task Runner Bertahap (`bikinplan next`)
+
+Gunakan jika kamu ingin mengevaluasi hasil pengerjaan agent satu per satu:
 
 ```bash
 # 1. Ambil task aktif berikutnya & otomatis salin prompt ke clipboard:
 python cli.py next
-# atau jika menggunakan shortcut:
+# atau:
 ./bikinplan next
 
 # 2. Cek ringkasan progres 24 task dan 4 fase:
@@ -142,7 +158,7 @@ python cli.py next
 
 ---
 
-### Cara 4: Menjalankan Instant API Mock Server (`bikinplan mock`)
+### Cara 5: Menjalankan Instant API Mock Server (`bikinplan mock`)
 
 Frontend Mock First: Jalankan mock server lokal tanpa perlu membuat tabel database atau server backend:
 
@@ -157,7 +173,7 @@ python serve.py
 
 ---
 
-### Cara 5: Ekspor Aturan Multi-Agent (`bikinplan export-rules`)
+### Cara 6: Ekspor Aturan Multi-Agent (`bikinplan export-rules`)
 
 Ekspor instan seluruh berkas konfigurasi agent ke proyek mana pun:
 

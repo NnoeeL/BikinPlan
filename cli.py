@@ -16,7 +16,8 @@ from agent_config_generator import (
     generate_mermaid_flowchart,
     generate_claude_markdown,
     generate_cursor_rules,
-    generate_cursor_mdc
+    generate_cursor_mdc,
+    generate_one_prompt
 )
 
 PRESETS = {
@@ -1200,6 +1201,13 @@ def generate_prd_markdown(plan: Dict[str, Any]) -> str:
 
     nfr_md = "\n".join([f"{idx}. {item}" for idx, item in enumerate(p["nfrList"], 1)])
 
+    # Extract mock fixtures from apiContracts
+    mock_fixtures = {}
+    for api in p["apiContracts"]:
+        if api.get("response_200"):
+            mock_fixtures[api["path"]] = api["response_200"]
+    mock_fixtures_json = json.dumps(mock_fixtures, indent=2, ensure_ascii=False)
+
     return f"""# Product Requirement Document (PRD)
 ## {p['name']} — Spesifikasi Rekayasa Sistem
 
@@ -1250,6 +1258,31 @@ Banyak pengguna dalam kategori **{p['targetAudience']}** menghadapi kendala alur
 | **Validasi Skema** | {s['validation']} | Validasi terpadu pada batas kepercayaan (*trust boundary*) baik di formulir UI maupun body API. |
 | **Testing Harness** | {s['testing']} | Pengujian unit dan integrasi otomatis untuk mencegah regresi logika. |
 
+### 3.3 Blueprint Struktur Direktori Proyek (Deterministic File Hierarchy)
+Struktur hierarki folder baku yang wajib diikuti oleh AI Coding Agent untuk menjaga konsistensi arsitektur:
+```text
+├── src/
+│   ├── app/                    # Routing halaman utama & sub-routes
+│   ├── components/             # Komponen antarmuka modular (< 200 baris per file)
+│   │   ├── layout/             # Shell layout: Navbar, Sidebar, Footer, ThemeToggle
+│   │   ├── ui/                 # Primitives: Modal, Toast, Button, Input, Skeleton
+│   │   └── domain/             # Komponen spesifik domain fitur aplikasi
+│   ├── data/                   # Data tiruan (fixtures) untuk pengujian Fase 1-2
+│   │   └── mock-fixtures.ts    # JSON data mock sesuai kontrak API di bawah
+│   ├── db/                     # Lapisan Database & Relasi (Fase 3)
+│   │   ├── schema.ts           # Definisi skema DDL Drizzle / Prisma resmi
+│   │   └── seed.ts             # Script seeding data awal development
+│   ├── hooks/                  # Custom state hooks & TanStack Query client hooks
+│   ├── routes/api/             # Controller endpoint RESTful API
+│   ├── schemas/                # Skema validasi runtime Zod (Trust boundary)
+│   └── styles/                 # Design tokens & Tailwind CSS globals
+├── AGENTS.md                   # Pedoman aturan agen & anti-slop
+├── CLAUDE.md                   # Panduan Anthropic Claude Code CLI
+├── .cursorrules                # Aturan pengerjaan Cursor IDE
+├── PRD.md                      # Dokumen spesifikasi rekayasa sistem ini
+└── TASKS.md                    # 24 Micro-tasks berfase
+```
+
 ---
 
 ## 4. Matriks State Komponen Antarmuka (UI State Matrix)
@@ -1280,9 +1313,16 @@ Berikut adalah DDL SQL PostgreSQL resmi yang mendefinisikan tabel, tipe enum, re
 
 ---
 
-## 7. Kontrak Spesifikasi API (RESTful Endpoints)
+## 7. Kontrak Spesifikasi API & Fixtures Mock
 
+### 7.1 RESTful Endpoints
 {api_md}
+
+### 7.2 Spesifikasi Mock Data Fixtures (Fase 1-2 UI Testing)
+Gunakan contoh data tiruan berikut pada `src/data/mock-fixtures.ts` selama Fase 1 dan Fase 2 agar seluruh layar frontend dapat diuji langsung di browser sebelum database dibuat:
+```json
+{mock_fixtures_json}
+```
 
 ---
 
@@ -1292,10 +1332,15 @@ Berikut adalah DDL SQL PostgreSQL resmi yang mendefinisikan tabel, tipe enum, re
 
 ---
 
-## 9. Aturan Emas Pengerjaan untuk AI Coding Agent
-1. **Frontend Mock First:** Wajib menyelesaikan Fase 1 & 2 dengan mock data statis terlebih dahulu sebelum membuat tabel database atau server functions, agar user dapat langsung memvalidasi UI di browser.
-2. **Single-Task Execution:** Kerjakan satu task per putaran prompt. Dilarang merombak modul di luar cakupan task yang sedang aktif.
-3. **Ponytail Principle:** Tulis kode sesedikit mungkin yang bekerja dengan benar ("boring over clever"). Manfaatkan fitur native web API dan pustaka standar.
+## 9. Protokol Eksekusi Otonom & Aturan AI Coding Agent
+
+### 9.1 Autonomous Execution Loop (Satu Prompt Semua Beres)
+Jika kamu menerima instruksi pengerjaan otonom, ikuti alur siklus berikut secara mandiri tanpa meminta konfirmasi kecil berulang:
+1. **Fase 1 (Frontend Mock First):** Gunakan mock fixtures di atas. Bangun seluruh tata letak dan interaksi UI hingga bisa diklik di browser. DILARANG membuat tabel DB atau API sebelum UI selesai.
+2. **Loop Task:** Buka `TASKS.md`, kerjakan task aktif berurutan (T-01 s/d T-24). Setelah task selesai dan lulus verifikasi, ubah tanda `- [ ]` menjadi `- [x]` di `TASKS.md`.
+3. **Quality Gates:** Jalankan `npm run type-check` (0 errors) dan `npm run build` sebelum melapor selesai.
+4. **Checkpoint Evaluasi Manusia:** Berhenti dan berikan jeda konfirmasi HANYA saat pergantian fase besar (setelah Fase 1 & 2 selesai) untuk memastikan tampilan di browser disetujui pengguna sebelum menyentuh database.
+5. **Prinsip Ponytail:** Tulis kode sesedikit mungkin yang bekerja dengan benar ("boring over clever"). Manfaatkan fitur native web API dan pustaka standar.
 """
 
 def generate_tasks_markdown(plan: Dict[str, Any]) -> str:
@@ -1486,6 +1531,32 @@ def main():
             print("=" * 74)
             sys.exit(0)
 
+        elif cmd in ["prompt", "one-prompt", "master-prompt"]:
+            from mock_server import find_plan_file
+            from task_runner import copy_to_clipboard
+            target_arg = sys.argv[2] if len(sys.argv) > 2 and not sys.argv[2].startswith("-") else None
+            actual_plan = find_plan_file(target_arg)
+            if not actual_plan:
+                print("❌ Berkas plan.json tidak ditemukan untuk generate One-Prompt.")
+                print("Jalankan di folder proyek atau tentukan path: python cli.py prompt ./path/to/plan.json")
+                sys.exit(1)
+            with open(actual_plan, "r", encoding="utf-8") as f:
+                p_data = json.load(f)
+            one_prompt = generate_one_prompt(p_data)
+            copied = copy_to_clipboard(one_prompt)
+            print("=" * 74)
+            print("⚡ BIKINPLAN ONE-PROMPT AUTONOMOUS RUNNER")
+            print("=" * 74)
+            if copied:
+                print("✨ [ONE-PROMPT BERHASIL DISALIN KE CLIPBOARD] ✨")
+                print("👉 Buka terminal Claude Code / Hermes / Cursor di folder proyek, lalu tekan Ctrl+V.")
+            else:
+                print("👉 Salin prompt di bawah ini ke terminal AI Agent kamu:")
+            print("-" * 74)
+            print(one_prompt)
+            print("=" * 74)
+            sys.exit(0)
+
         elif cmd in ["mock", "serve-mock"]:
             from mock_server import start_mock_server
             plan_path = None
@@ -1588,23 +1659,19 @@ def main():
     print("=" * 74)
     print("🧭 PANDUAN PENGGUNAAN KE AI AGENT (Claude Code / Hermes / Cursor):")
     print("=" * 74)
-    print("1. KAPAN MENGIRIM PRD & AGENTS.MD?")
-    print("   -> Kirim DI PERCAKAPAN PERTAMA KALI saat baru membuka AI Agent di folder ini.")
-    print("   -> Prompt Handshake Pembuka:")
-    print('      \"Baca PRD.md dan AGENTS.md di folder ini. Pahami arsitekturnya.')
-    print('       DILARANG menulis kode atau database sebelum saya beri task pertama.')
-    print('       Apakah kamu sudah paham arsitekturnya?\"')
+    print("⚡ CARA PALING CEPAT (ONE-PROMPT AUTONOMOUS RUNNER):")
+    print("   -> Cukup salin One-Prompt Otonom ini (otomatis masuk ke clipboard):")
+    print("      👉 python cli.py prompt")
+    print("   -> Buka terminal Claude Code / Hermes / Cursor di folder ini, lalu tekan Ctrl+V.")
+    print("   -> Agent langsung membaca PRD.md, TASKS.md, AGENTS.md, dan mengeksekusi")
+    print("      seluruh fase secara mandiri sampai tuntas!")
     print()
-    print("2. CARA MENJALANKAN TASK (SATU PER SATU DENGAN TASK RUNNER):")
-    print("   -> Ambil task pertama dan otomatis salin prompt ke clipboard:")
-    print("      👉 python cli.py next")
-    print("   -> Tempelkan (Ctrl+V) ke terminal AI Agent kamu.")
-    print("   -> Setelah agent menyelesaikan task ini, tandai selesai:")
-    print("      👉 python cli.py complete T-01")
+    print("📋 CARA BERTAHAP (STEP-BY-STEP DENGAN TASK RUNNER):")
+    print("   -> Ambil task pertama dan salin ke clipboard: 👉 python cli.py next")
+    print("   -> Setelah agent selesai, tandai selesai:     👉 python cli.py complete T-01")
     print()
-    print("3. JALANKAN INSTANT API MOCK SERVER (FRONTEND MOCK FIRST):")
-    print("   -> Jalankan mock API server lokal tanpa setup database:")
-    print("      👉 python cli.py mock")
+    print("🌐 JALANKAN INSTANT API MOCK SERVER (FRONTEND MOCK FIRST):")
+    print("   -> Jalankan mock API server lokal tanpa database: 👉 python cli.py mock")
     print("   -> Buka http://localhost:3333/__mock untuk dashboard interaktif.")
     print("=" * 74 + "\n")
 

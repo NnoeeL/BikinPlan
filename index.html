@@ -1449,7 +1449,11 @@
 
       <!-- Tabs Navigation -->
       <div class="tabs-nav">
-        <button class="tab-btn active" onclick="switchTab('roadmap')">
+        <button class="tab-btn active" onclick="switchTab('quick')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+          ⚡ Fitur Cepat (One-Prompt)
+        </button>
+        <button class="tab-btn" onclick="switchTab('roadmap')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
           Roadmap & Task Board (24 Tasks)
         </button>
@@ -1475,8 +1479,63 @@
         </button>
       </div>
 
+      <!-- Tab 0: Fitur Cepat (One-Prompt Autonomous Mode) -->
+      <div id="tab-quick" class="tab-panel active">
+        <div class="doc-container" style="border: 1px solid rgba(255, 92, 32, 0.4); background: linear-gradient(180deg, rgba(255, 92, 32, 0.08) 0%, rgba(18, 18, 21, 0.95) 100%);">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                <span class="badge badge-primary">⚡ ONE-PROMPT ALL-DONE PROTOCOL</span>
+                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Satu Prompt Semua Beres</span>
+              </div>
+              <h2 style="font-size: 1.3rem; font-weight: 800; color: #fff; margin: 0;">Autonomous Master Prompt</h2>
+              <p style="font-size: 0.825rem; color: var(--text-muted); margin-top: 4px; line-height: 1.5;">
+                Instruksikan AI Agent (Claude Code, Hermes Agent, Antigravity, atau Cursor) untuk membaca <code>PRD.md</code>, <code>TASKS.md</code>, dan <code>AGENTS.md</code> lalu mengeksekusi seluruh 24 task berfase secara berurutan dan mandiri!
+              </p>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+              <button type="button" class="btn btn-primary" onclick="copyMasterPrompt()" style="box-shadow: 0 4px 18px rgba(255, 92, 32, 0.4); font-weight: 700;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <span>Salin One-Prompt Otonom</span>
+              </button>
+              <button type="button" class="btn btn-outline" onclick="downloadZipBundle()" style="border-color: var(--primary); color: #fff;">
+                <span>📦 Unduh Bundle .ZIP</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 3 Langkah Eksekusi Super Simpel -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 1.25rem 0;">
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 10px; padding: 1rem;">
+              <div style="font-size: 0.75rem; font-weight: 700; color: var(--primary); margin-bottom: 4px;">LANGKAH 1</div>
+              <strong style="font-size: 0.9rem; color: #fff; display: block; margin-bottom: 6px;">Siapkan Folder Proyek</strong>
+              <p style="font-size: 0.775rem; color: var(--text-muted); line-height: 1.45; margin: 0;">Unduh bundle ZIP dan ekstrak file (<code>PRD.md</code>, <code>TASKS.md</code>, <code>AGENTS.md</code>, <code>CLAUDE.md</code>) ke folder proyekmu.</p>
+            </div>
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 10px; padding: 1rem;">
+              <div style="font-size: 0.75rem; font-weight: 700; color: #3b82f6; margin-bottom: 4px;">LANGKAH 2</div>
+              <strong style="font-size: 0.9rem; color: #fff; display: block; margin-bottom: 6px;">Buka Terminal AI Agent</strong>
+              <p style="font-size: 0.775rem; color: var(--text-muted); line-height: 1.45; margin: 0;">Buka Claude Code, Hermes Agent, Antigravity, atau Cursor Composer langsung di folder proyek tersebut.</p>
+            </div>
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 10px; padding: 1rem;">
+              <div style="font-size: 0.75rem; font-weight: 700; color: #10b981; margin-bottom: 4px;">LANGKAH 3</div>
+              <strong style="font-size: 0.9rem; color: #fff; display: block; margin-bottom: 6px;">Paste Prompt & Duduk Manis</strong>
+              <p style="font-size: 0.775rem; color: var(--text-muted); line-height: 1.45; margin: 0;">Tempel prompt ini. Agent otomatis membaca spesifikasi dan mengeksekusi 24 task secara mandiri sampai tuntas!</p>
+            </div>
+          </div>
+
+          <!-- Preview Isi Prompt Otonom -->
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <span style="font-size: 0.8rem; font-weight: 700; color: var(--text);">Teks One-Prompt Autonomous Loop (Siap Kirim):</span>
+              <span style="font-size: 0.75rem; color: var(--text-dim);">Telah disesuaikan otomatis dengan arsitektur & modul proyekmu</span>
+            </div>
+            <pre id="onePromptPreview" class="doc-pre" style="max-height: 340px; font-size: 0.8rem; line-height: 1.5; border: 1px solid var(--border); background: #0a0d14; padding: 1.25rem;"></pre>
+          </div>
+        </div>
+      </div>
+
       <!-- Tab 1: Roadmap & Task Board -->
-      <div id="tab-roadmap" class="tab-panel active">
+      <div id="tab-roadmap" class="tab-panel">
         <div class="task-controls">
           <div class="filter-group">
             <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-muted);">Filter Layer:</span>
@@ -2541,6 +2600,12 @@ CREATE TABLE transactions (
 
       // Render Visual Diagram
       renderDiagramView();
+
+      // Render One-Prompt Autonomous Loop Preview
+      const onePromptEl = document.getElementById('onePromptPreview');
+      if (onePromptEl) {
+        onePromptEl.innerText = generateOnePrompt(plan);
+      }
     }
 
     function renderTaskBoard(tasks) {
@@ -2674,7 +2739,106 @@ Aturan Eksekusi:
       const personasMd = p.personas.map((per, idx) => `#### Persona ${idx+1}: ${per.role}\n- Tujuan: ${per.goal}\n- Kendala: ${per.pain.join("; ")}`).join("\n\n");
       const featuresMd = p.features.map(f => `### [${f.id}] ${f.name}\n- Deskripsi: ${f.desc}\n- User Story: ${f.story}\n- Acceptance Criteria:\n${f.acceptance.map(a => "  - [ ] " + a).join("\n")}`).join("\n\n");
 
-      return `# Product Requirement Document (PRD)\n## ${p.name} — Spesifikasi Rekayasa Sistem\n\n> Versi: 1.2.0 (Production Enriched)\n> Target Pengguna: ${p.target}\n> Kategori: ${p.categoryTitle}\n> Tech Stack: ${p.stack.toUpperCase()}\n\n---\n\n## 1. Ringkasan Eksekutif & Problem Statement\n"${p.idea}"\n\n### Tujuan Utama:\n1. First Contentful Paint < 1.2 detik dan alur kerja utama selesai dalam < 3 klik.\n2. Zero Data Loss: Validasi form Zod batas ganda dan proteksi draf lokal.\n3. Modularitas irit token untuk coding agent (Claude Code, Hermes, Cursor).\n\n---\n\n## 2. Profil Pengguna & Personas\n\n${personasMd}\n\n---\n\n## 3. Spesifikasi Rinci Modul & Fitur\n\n${featuresMd}\n\n---\n\n## 4. Skema Database DDL PostgreSQL\n\`\`\`sql\n${p.sqlDdl}\n\`\`\`\n\n---\n\n## 5. Aturan Pengerjaan AI Coding Agent\n1. Selesaikan Fase 1 & 2 dengan mock data terlebih dahulu.\n2. Kerjakan satu task per putaran prompt.\n3. Ponytail principle: Tulis kode seminimal mungkin yang bekerja dengan benar.`;
+      // Extract mock fixtures from apiContracts
+      const mockFixtures = {};
+      (p.apiContracts || []).forEach(api => {
+        if (api.res) mockFixtures[api.path] = api.res;
+      });
+      const mockJsonStr = JSON.stringify(mockFixtures, null, 2);
+
+      return `# Product Requirement Document (PRD)
+## ${p.name} — Spesifikasi Rekayasa Sistem
+
+> **Versi:** 1.2.0 (Production-Grade Enriched)  
+> **Status Dokumen:** Approved for Autonomous Agent Implementation  
+> **Target Pengguna:** ${p.target}  
+> **Kategori:** ${p.categoryTitle}  
+> **Tech Stack:** ${p.stack.toUpperCase()}  
+
+---
+
+## 1. Ringkasan Eksekutif & Problem Statement
+"${p.idea}"
+
+### Tujuan Utama (KPI):
+1. **Kecepatan Akses:** First Contentful Paint < 1.2 detik dan penyelesaian alur dalam < 3 klik.
+2. **Keandalan & Zero Data Loss:** Validasi form Zod batas ganda dan proteksi draf lokal di browser.
+3. **Modularitas Irit Token:** Struktur kode modular & Ponytail principle untuk AI Coding Agent (Claude Code, Hermes, Cursor).
+
+---
+
+## 2. Profil Pengguna & Personas
+
+${personasMd}
+
+---
+
+## 3. Arsitektur Teknis & Tech Stack
+
+### 3.1 Alur Kerja 4-Fase Sistem (Architecture Flowchart)
+\`\`\`mermaid
+${generateMermaidFlowchart(p)}
+\`\`\`
+
+### 3.2 Blueprint Struktur Direktori Proyek (Deterministic File Hierarchy)
+Struktur hierarki folder baku yang wajib diikuti oleh AI Coding Agent untuk menjaga konsistensi kode:
+\`\`\`text
+├── src/
+│   ├── app/                    # Routing halaman utama & sub-routes
+│   ├── components/             # Komponen antarmuka modular (< 200 baris per file)
+│   │   ├── layout/             # Shell layout: Navbar, Sidebar, Footer, ThemeToggle
+│   │   ├── ui/                 # Primitives: Modal, Toast, Button, Input, Skeleton
+│   │   └── domain/             # Komponen spesifik domain fitur aplikasi
+│   ├── data/                   # Data tiruan (fixtures) untuk pengujian Fase 1-2
+│   │   └── mock-fixtures.ts    # JSON data mock sesuai kontrak API di bawah
+│   ├── db/                     # Lapisan Database & Relasi (Fase 3)
+│   │   ├── schema.ts           # Definisi skema DDL Drizzle / Prisma resmi
+│   │   └── seed.ts             # Script seeding data awal development
+│   ├── hooks/                  # Custom state hooks & TanStack Query client hooks
+│   ├── routes/api/             # Controller endpoint RESTful API
+│   ├── schemas/                # Skema validasi runtime Zod (Trust boundary)
+│   └── styles/                 # Design tokens & Tailwind CSS globals
+├── AGENTS.md                   # Pedoman aturan agen & anti-slop
+├── CLAUDE.md                   # Panduan Anthropic Claude Code CLI
+├── .cursorrules                # Aturan pengerjaan Cursor IDE
+├── PRD.md                      # Dokumen spesifikasi rekayasa sistem ini
+└── TASKS.md                    # 24 Micro-tasks berfase
+\`\`\`
+
+---
+
+## 4. Spesifikasi Rinci Modul & Fitur
+
+${featuresMd}
+
+---
+
+## 5. Skema Database DDL PostgreSQL
+
+### 5.1 Entity Relationship Diagram (Visual ERD)
+\`\`\`mermaid
+${parseDdlToMermaid(p.sqlDdl)}
+\`\`\`
+
+### 5.2 PostgreSQL 16 DDL Script
+\`\`\`sql
+${p.sqlDdl}
+\`\`\`
+
+---
+
+## 6. Spesifikasi Mock Data Fixtures (Fase 1-2 UI Testing)
+Gunakan contoh data tiruan berikut pada \`src/data/mock-fixtures.ts\` selama Fase 1 dan Fase 2 agar seluruh layar frontend dapat diuji langsung di browser sebelum database dibuat:
+\`\`\`json
+${mockJsonStr}
+\`\`\`
+
+---
+
+## 7. Protokol Eksekusi Otonom & Aturan AI Coding Agent
+1. **Fase 1 (Frontend Mock First):** Wajib menyelesaikan seluruh layar UI dengan mock data terlebih dahulu sebelum membuat tabel database.
+2. **Autonomous Execution Loop:** Kerjakan task berurutan dari TASKS.md (T-01 s/d T-24), jalankan pengujian verifikasi, dan ubah status menjadi [x].
+3. **Ponytail Principle:** Tulis kode sesedikit mungkin yang bekerja dengan benar ("boring over clever").`;
     }
 
     function generateAgentsMarkdown(p) {
@@ -3225,37 +3389,52 @@ alwaysApply: true
     
     // Modal Tutorial Helpers
     
+    function generateOnePrompt(p) {
+      if (!p) return "";
+      return `Kamu adalah Principal Fullstack Engineer yang bertindak sebagai Autonomous Implementation Agent. Kamu ditugaskan membangun aplikasi "${p.name}" dari awal sampai selesai berdasarkan berkas spesifikasi di folder ini:
+1. \`PRD.md\` — Spesifikasi produk, arsitektur, DDL PostgreSQL, kontrak API, dan blueprint struktur file.
+2. \`TASKS.md\` — 24 micro-tasks berfase dengan checklist eksekusi dan kriteria acceptance test.
+3. \`AGENTS.md\` & \`CLAUDE.md\` — Aturan main anti-slop, konvensi kode, dan prinsip Ponytail.
+
+PROTOKOL EKSEKUSI OTONOM MANDIRI (AUTONOMOUS EXECUTION LOOP):
+Lakukan pengerjaan secara mandiri dan berurutan mengikuti siklus loop berikut:
+
+1. BACA & INTERNALISASI:
+   Baca seluruh \`PRD.md\`, \`TASKS.md\`, dan \`AGENTS.md\`. Pahami pembagian 4 Fase:
+   - FASE 1: Fondasi, Layout Shell & Mockup UI Statis (Wajib menggunakan data tiruan mock-fixtures dari PRD.md).
+   - FASE 2: Client State, Validasi Zod & Form Interaktif.
+   - FASE 3: Database DDL PostgreSQL, Session Auth & RESTful API Endpoints.
+   - FASE 4: Integrasi End-to-End, Hardening Trust Boundary & Production Build.
+
+2. ATURAN EMAS "FRONTEND MOCK FIRST":
+   DILARANG KERAS membuat tabel database, migrasi ORM, atau server functions rumit pada Fase 1 dan Fase 2! Selesaikan seluruh layar antarmuka dengan data tiruan terlebih dahulu agar pengguna dapat menguji tampilan di browser.
+
+3. SIKLUS LOOP TASK (T-01 s/d T-24):
+   Kerjakan task satu per satu secara berurutan:
+   - Ambil task pertama yang belum selesai (belum bertanda \`[x]\`).
+   - Implementasikan HANYA checklist pada task tersebut sesuai file blueprint di PRD.md.
+   - Jalankan verifikasi penerimaan (misal \`npm run type-check\` atau verifikasi logika).
+   - Setelah lolos, ubah status checklist task tersebut di \`TASKS.md\` menjadi \`[x]\`.
+   - Lanjutkan otomatis ke task berikutnya tanpa berhenti meminta izin per task.
+
+4. CHECKPOINT VERIFIKASI FASE:
+   Ketika Fase 1 & 2 selesai, jalankan dev server (\`npm run dev\`) dan laporkan:
+   "✅ Fase 1 & 2 selesai. Seluruh layar antarmuka sudah dapat diklik di browser. Silakan inspeksi UI sebelum saya lanjut ke Fase 3 (Database & API)."
+
+5. PRINSIP PONYTAIL (KODE MINIMAL):
+   Tulis kode sesedikit mungkin yang bekerja dengan benar ("boring over clever"). Gunakan native Web API dan pustaka standar. Jangan menambahkan komentar basa-basi AI slop.
+
+Mulai sekarang: baca seluruh berkas spesifikasi di folder ini, konfirmasi pemahamanmu secara ringkas, dan LANGSUNG MULAI kerjakan Task T-01!`;
+    }
+
     function copyMasterPrompt() {
       if (!currentPlan) return;
-      const p = currentPlan;
-      const prompt = `Kamu adalah senior fullstack software engineer. Kamu akan membangun aplikasi "${p.name}" dari nol sampai selesai berdasarkan Product Requirement Document (PRD) berikut.
-
-IDENTITAS & SPESIFIKASI PROYEK:
-- Nama Proyek: ${p.name}
-- Kategori: ${p.categoryTitle}
-- Target Pengguna: ${p.target}
-- Tech Stack: ${p.stack.toUpperCase()}
-- Sistem Autentikasi: ${p.auth.toUpperCase()}
-
-DESKRIPSI IDE & FITUR YANG DIINGINKAN:
-"${p.idea}"
-
-SPESIFIKASI MODUL UTAMA:
-${p.features.map(f => `- ${f.id} (${f.name}): ${f.desc}`).join('\n')}
-
-PROTOKOL PENGERJAAN OTOMATIS (FRONTEND MOCK FIRST):
-1. FASE 1 (Fondasi & Layout Shell): Inisialisasi repo, setup Tailwind CSS tokens, dan bangun tampilan antarmuka lengkap menggunakan data mock/stub statis terlebih dahulu. DILARANG membuat tabel database atau server functions rumit sebelum seluruh layar UI dapat diklik di browser.
-2. Selesaikan komponen halaman utama, katalog, detail item, dan form modal interaktif dengan validasi client-side.
-3. Setelah Fase 1 selesai, instruksikan saya untuk membuka browser (npm run dev) dan memverifikasi tampilan UI.
-4. Setelah saya konfirmasi "Lanjut", barulah masuk ke FASE 2 & FASE 3: membuat skema database PostgreSQL DDL resmi, migrasi, dan controller RESTful API.
-5. FASE 4 (Integrasi & Polish): Sambungkan frontend ke database asli, lakukan audit keamanan sanitasi input XSS, pasang SEO metadata, dan pastikan perintah "npm run build" lolos 100% tanpa error type.
-6. Tulis kode seminimal mungkin yang bekerja dengan benar (Ponytail principle), zero-slop tanpa komentar boilerplate berlebih.
-
-Sekarang, konfirmasi bahwa kamu memahami arsitektur ini dan LANGSUNG MULAI kerjakan FASE 1 (Setup Repository, Layout Shell responsif, dan Komponen UI Mockup)!`;
-
+      const prompt = generateOnePrompt(currentPlan);
       navigator.clipboard.writeText(prompt);
-      showToast("Master Prompt disalin ke clipboard! Tempelkan ke AI Agent kamu 🚀");
+      showToast("One-Prompt Autonomous disalin ke clipboard! Tempelkan ke AI Agent kamu 🚀");
     }
+
+    const copyOnePrompt = copyMasterPrompt;
 
     
     
@@ -3372,5 +3551,5 @@ Apakah kamu sudah membaca dan paham arsitekturnya?</pre>
       </div>
     </div>
   </div>
-</body></body></body>
+</body>
 </html>
