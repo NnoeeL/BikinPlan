@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <style>
     :root {
       --bg: #09090b;
@@ -1108,10 +1109,13 @@
         <p class="hero-subtitle">Mulai dari masalah nyata yang ingin kamu selesaikan. Tentukan nama proyek dan fitur utama — sistem cerdas BikinPlan akan menganalisis kebutuhan arsitektur dan merekomendasikan stack yang paling ideal di langkah berikutnya.</p>
 
         <!-- Template Presets -->
-        <div class="template-pills">
-          <span class="pill-label">Pilihan Preset:</span>
+        <div class="template-pills" style="display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-bottom: 1.5rem;">
+          <span class="pill-label" style="font-weight: 700; color: var(--text-dim); font-size: 0.8rem;">Pilihan Blueprint Preset:</span>
           <button class="pill" type="button" id="pill-toko" onclick="loadPreset('toko')">🛍️ Katalog Toko Online</button>
-          <button class="pill" type="button" id="pill-portfolio" onclick="loadPreset('portfolio')">💼 Website Portofolio Pribadi</button>
+          <button class="pill" type="button" id="pill-portfolio" onclick="loadPreset('portfolio')">💼 Website Portofolio</button>
+          <button class="pill" type="button" id="pill-campus" onclick="loadPreset('campus')">🎓 PWA Superapp Kampus</button>
+          <button class="pill" type="button" id="pill-saas" onclick="loadPreset('saas')">⚡ MicroSaaS & Digital Product</button>
+          <button class="pill" type="button" id="pill-dashboard" onclick="loadPreset('dashboard')">📊 Internal Admin Dashboard</button>
         </div>
 
         <form id="planFormStep1" onsubmit="goToStep2(event)">
@@ -1130,6 +1134,38 @@
           <div class="field-group" style="margin-top: 1.25rem;">
             <label class="field-label" for="appIdea">Ceritakan Ide / Fitur-Fitur yang Ingin Dibuat</label>
             <textarea id="appIdea" class="textarea" placeholder="Jelaskan alur aplikasi secara bebas, masalah apa yang ingin diatasi, apa saja fitur pentingnya, dan bagaimana pengguna memakainya..." required></textarea>
+          </div>
+
+          <!-- Section: AI Refine with AI / Edge Case Detector (BYOK Free Tier & Offline) -->
+          <div style="margin-top: 1.25rem; background: var(--card-muted); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem;">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.75rem;">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span style="font-size: 1.3rem;">⚡</span>
+                <div>
+                  <span style="font-size: 0.875rem; font-weight: 700; color: var(--text);">Pertajam Ide & Temukan Edge Cases dengan AI</span>
+                  <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">Mendeteksi skenario gagal, celah validasi, dan aturan bisnis tersembunyi</span>
+                </div>
+              </div>
+              <div style="display: flex; gap: 0.5rem;">
+                <button type="button" class="btn btn-outline btn-sm" onclick="toggleAiConfigModal()" style="font-size: 0.75rem;">
+                  ⚙️ Provider AI (BYOK)
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" id="btnRefineIdea" onclick="refineIdeaWithAi()" style="font-size: 0.75rem;">
+                  🚀 Analisis Sekarang
+                </button>
+              </div>
+            </div>
+
+            <!-- Container Hasil Analisis AI -->
+            <div id="aiAnalysisResult" style="display: none; margin-top: 1rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--primary);" id="aiAnalysisBadge">💡 Rekomendasi Edge Cases & Proteksi Arsitektur</span>
+                <button type="button" class="btn btn-outline btn-sm" onclick="applyAiRefinement()" style="font-size: 0.725rem; border-color: var(--primary); color: #fff;">
+                  ✨ Terapkan ke Form Ide (+Edge Cases)
+                </button>
+              </div>
+              <div id="aiAnalysisContent" style="font-size: 0.8rem; color: var(--text); line-height: 1.5; background: #0a0d14; border: 1px solid var(--border); border-radius: 8px; padding: 0.85rem; max-height: 250px; overflow-y: auto; white-space: pre-wrap;"></div>
+            </div>
           </div>
 
           <div style="margin-top: 1.75rem; display: flex; justify-content: flex-end;">
@@ -1421,6 +1457,10 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
           Dokumen PRD Enriched
         </button>
+        <button class="tab-btn" onclick="switchTab('diagram')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+          Visual Diagram & ERD
+        </button>
         <button class="tab-btn" onclick="switchTab('ddl')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
           Skema DDL Database
@@ -1431,7 +1471,7 @@
         </button>
         <button class="tab-btn" onclick="switchTab('agents')">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path></svg>
-          Petunjuk Agent (AGENTS.md)
+          Rules Multi-Agent
         </button>
       </div>
 
@@ -1461,6 +1501,40 @@
         </div>
       </div>
 
+      <!-- Tab: Visual Diagram & ERD -->
+      <div id="tab-diagram" class="tab-panel">
+        <div class="doc-container">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+            <div style="display: flex; gap: 0.5rem;">
+              <button id="btnDiagramErd" class="btn btn-primary btn-sm" onclick="switchDiagramView('erd')">
+                📊 ERD Database (Relasional)
+              </button>
+              <button id="btnDiagramFlow" class="btn btn-outline btn-sm" onclick="switchDiagramView('flowchart')">
+                🔄 Alur Arsitektur 4-Fase
+              </button>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+              <button class="btn btn-outline btn-sm" onclick="copyMermaidCode()">
+                📋 Salin Kode Mermaid
+              </button>
+            </div>
+          </div>
+
+          <div id="diagramSvgContainer" style="background: #0d1117; border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; min-height: 420px; display: flex; align-items: center; justify-content: center; overflow-x: auto;">
+            <div id="diagramOutput" style="width: 100%; text-align: center;"></div>
+          </div>
+
+          <div style="margin-top: 1.25rem;">
+            <details style="background: var(--card-muted); border: 1px solid var(--border); border-radius: 10px; padding: 0.75rem 1rem;">
+              <summary style="font-size: 0.825rem; font-weight: 600; color: var(--text-muted); cursor: pointer;">
+                Lihat Kode Sumber Mermaid (Siap di-paste ke GitHub Markdown / Notion / Eraser.io)
+              </summary>
+              <pre id="mermaidCodeBlock" class="doc-pre" style="margin-top: 0.75rem; font-size: 0.8rem;"></pre>
+            </details>
+          </div>
+        </div>
+      </div>
+
       <!-- Tab 3: Skema DDL Database -->
       <div id="tab-ddl" class="tab-panel">
         <div class="doc-container">
@@ -1477,11 +1551,27 @@
         <div id="apiListContainer"></div>
       </div>
 
-      <!-- Tab 5: Petunjuk Agent -->
+      <!-- Tab 5: Rules Multi-Agent -->
       <div id="tab-agents" class="tab-panel">
         <div class="doc-container">
-          <div style="display: flex; justify-content: flex-end; margin-bottom: 0.75rem;">
-            <button class="btn btn-outline btn-sm" onclick="copyAgentsMd()">Salin AGENTS.md</button>
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+              <button id="btnAgentTab-agents" class="btn btn-primary btn-sm" onclick="switchAgentRuleTab('agents')">
+                🤖 AGENTS.md (Hermes/General)
+              </button>
+              <button id="btnAgentTab-claude" class="btn btn-outline btn-sm" onclick="switchAgentRuleTab('claude')">
+                ⚡ CLAUDE.md (Claude Code)
+              </button>
+              <button id="btnAgentTab-cursor" class="btn btn-outline btn-sm" onclick="switchAgentRuleTab('cursor')">
+                🎯 .cursorrules (Cursor IDE)
+              </button>
+              <button id="btnAgentTab-mdc" class="btn btn-outline btn-sm" onclick="switchAgentRuleTab('mdc')">
+                📜 architecture.mdc (Cursor 2.0)
+              </button>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="copyCurrentAgentRule()">
+              📋 Salin Aturan Ini
+            </button>
           </div>
           <pre id="agentsContent" class="doc-pre"></pre>
         </div>
@@ -1492,6 +1582,47 @@
   <div id="toast" class="toast">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
     <span id="toastText">Prompt task disalin ke clipboard!</span>
+  </div>
+
+  <!-- Modal Konfigurasi Provider AI (BYOK) -->
+  <div id="aiConfigModal" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div style="background: var(--card); border: 1px solid var(--border); border-radius: 14px; max-width: 480px; width: 90%; padding: 1.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.5);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.2rem;">⚙️</span>
+          <h3 style="font-size: 1rem; font-weight: 700; color: var(--text);">Konfigurasi AI Provider (BYOK)</h3>
+        </div>
+        <button type="button" onclick="toggleAiConfigModal()" style="background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+
+      <p style="font-size: 0.775rem; color: var(--text-muted); margin-bottom: 1rem; line-height: 1.45;">
+        Kunci API disimpan <strong>100% lokal di browser kamu (localStorage)</strong> dan dikirimkan langsung ke provider resmi. Kamu bisa menggunakan free tier gratis tanpa kartu kredit.
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+        <div>
+          <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-dim); display: block; margin-bottom: 4px;">Pilih Provider:</label>
+          <select id="aiProviderSelect" class="input-text" style="padding: 0.5rem; font-size: 0.8rem; width: 100%;" onchange="onAiProviderChange()">
+            <option value="gemini">Google AI Studio (Gemini 1.5 / 2.0 Flash) — 100% Gratis</option>
+            <option value="groq">Groq Cloud (Llama 3.3 70B Versatile) — Ultra Fast Free Tier</option>
+            <option value="offline">Built-in Rule-Based Engine (Offline / Tanpa API Key)</option>
+          </select>
+        </div>
+
+        <div id="aiKeyFieldGroup">
+          <label style="font-size: 0.75rem; font-weight: 600; color: var(--text-dim); display: block; margin-bottom: 4px;">API Key:</label>
+          <input type="password" id="aiApiKeyInput" class="input-text" placeholder="Masukkan API Key (AIza... atau gsk_...)" style="padding: 0.5rem; font-size: 0.8rem; width: 100%;">
+          <span id="aiKeyHint" style="font-size: 0.7rem; color: var(--text-dim); margin-top: 4px; display: block;">
+            Dapatkan API key gratis di <a href="https://aistudio.google.com/" target="_blank" rel="noreferrer" style="color: var(--primary);">Google AI Studio</a> (tanpa kartu kredit).
+          </span>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 1.25rem; border-top: 1px solid var(--border); padding-top: 1rem;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="clearAiConfig()">Hapus Kunci</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="saveAiConfig()">Simpan Pengaturan</button>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -1517,6 +1648,39 @@ Fitur Utama:
 2. Showcase Galeri Proyek: Kartu proyek dengan filter kategori tech stack, screenshot preview, tombol Live Demo, dan link Source Code GitHub.
 3. Matriks Keahlian (Skills) & Pengalaman: Visualisasi tingkat penguasaan tools/bahasa pemrograman dan timeline riwayat kerja/organisasi.
 4. Formulir Kontak Langsung: Form kirim pesan cepat dengan validasi email Zod dan notifikasi langsung.`
+      },
+      campus: {
+        name: "Sahabat Kampus PWA",
+        target: "Mahasiswa & Sivitas Akademika",
+        idea: `Superapp pendamping mahasiswa PWA offline-first dengan pencarian kosan akurat radius 10km GPS kampus, kalkulator target IPK & SKS offline IndexedDB, kalender deadline tugas kuliah, dan adapter mobile WebView.
+
+Fitur Utama:
+1. Pencarian Kosan & Fasilitas Sekitar Kampus: Filter radius GPS 10km acuan kampus, navigasi rute jalan kaki, dan kontak instan WhatsApp pengelola kos.
+2. Kalkulator Target IPK & Riwayat Semester: Simulasi konversi nilai, manajemen SKS kumulatif, dan penyimpanan offline lokal IndexedDB/localStorage.
+3. Kalender Akademik & Pelacak Deadline Tugas: Manajemen tugas kuliah dengan pengingat waktu tenggat, prioritas tagar mata kuliah, dan status selesai.
+4. PWA Offline-First & WebView Ready: Service worker background caching, manifest installable ke Android/Desktop, dan bebas popup dialog alert() native.`
+      },
+      saas: {
+        name: "MicroSaaS Hub",
+        target: "Indie Creator, Freelancer & Pelanggan",
+        idea: `Platform SaaS langganan digital mikro dengan sistem multi-tier billing, manajemen lisensi aset digital terenkripsi, webhook payment gateway Midtrans/Xendit, dan creator/subscriber RBAC.
+
+Fitur Utama:
+1. Katalog Produk Digital & Akses Member: Preview konten berbayar, paywall interaktif, dan lisensi download instan terenkripsi.
+2. Checkout & Webhook Payment Gateway: Integrasi Midtrans/Xendit/LemonSqueezy dengan verifikasi signature HMAC token dan pembaruan subscription otomatis.
+3. Dashboard Pelanggan & Portal Billing: Riwayat transaksi, unduh nota faktur invoice PDF, serta manajemen pause/cancel langganan.
+4. Sistem Peran Ganda (Creator & Subscriber RBAC): Middleware auth guard untuk proteksi route API serverless dan kuota unduhan.`
+      },
+      dashboard: {
+        name: "OmniDash Operations",
+        target: "Tim Operasional, Finance & Administrator Bisnis",
+        idea: `Portal dashboard operasional internal enterprise dengan analisis metrik keuangan, manajemen inventaris, audit logging ketat, dan role-based access control.
+
+Fitur Utama:
+1. Ringkasan Eksekutif & Chart Metrik: Visualisasi KPI harian/bulanan, tren pertumbuhan, dan widget statistik performa.
+2. Manajemen Data CRUD Tabel Lanjutan: Server-side pagination, debounce search, bulk actions (hapus/update status), dan export ke CSV/Excel.
+3. Audit Trail & Log Aktivitas Sistem: Pencatatan histori perubahan record sensitif (siapa, kapan, perubahan payload) dengan timestamp ISO.
+4. Role-Based Access Control (RBAC): Hierarki akses admin (Superadmin, Finance Editor, Viewer) dengan proteksi Session HttpOnly Cookie.`
       }
     };
 
@@ -1547,6 +1711,204 @@ Fitur Utama:
     let currentPlan = null;
     let completedTasks = new Set();
     let activeFilter = 'all';
+
+    // ==========================================
+    // AI REFINE & EDGE CASE SYNTHESIZER (BYOK & OFFLINE)
+    // ==========================================
+    let lastAiRefinement = "";
+
+    function toggleAiConfigModal() {
+      const modal = document.getElementById('aiConfigModal');
+      if (!modal) return;
+      const isVisible = modal.style.display === 'flex';
+      modal.style.display = isVisible ? 'none' : 'flex';
+      if (!isVisible) {
+        initAiConfig();
+      }
+    }
+
+    function initAiConfig() {
+      const provider = localStorage.getItem('bikinplan_ai_provider') || 'gemini';
+      const key = localStorage.getItem('bikinplan_ai_key') || '';
+      document.getElementById('aiProviderSelect').value = provider;
+      document.getElementById('aiApiKeyInput').value = key;
+      onAiProviderChange();
+    }
+
+    function onAiProviderChange() {
+      const provider = document.getElementById('aiProviderSelect').value;
+      const keyGroup = document.getElementById('aiKeyFieldGroup');
+      const hint = document.getElementById('aiKeyHint');
+
+      if (provider === 'offline') {
+        keyGroup.style.display = 'none';
+      } else {
+        keyGroup.style.display = 'block';
+        if (provider === 'gemini') {
+          hint.innerHTML = 'Dapatkan API key gratis di <a href="https://aistudio.google.com/" target="_blank" rel="noreferrer" style="color: var(--primary);">Google AI Studio</a> (bebas biaya, tanpa kartu kredit).';
+        } else if (provider === 'groq') {
+          hint.innerHTML = 'Dapatkan API key gratis di <a href="https://console.groq.com/keys" target="_blank" rel="noreferrer" style="color: var(--primary);">Groq Console</a> (kecepatan tinggi, tanpa kartu kredit).';
+        }
+      }
+    }
+
+    function saveAiConfig() {
+      const provider = document.getElementById('aiProviderSelect').value;
+      const key = document.getElementById('aiApiKeyInput').value.trim();
+      localStorage.setItem('bikinplan_ai_provider', provider);
+      if (key) {
+        localStorage.setItem('bikinplan_ai_key', key);
+      } else if (provider === 'offline') {
+        localStorage.removeItem('bikinplan_ai_key');
+      }
+      toggleAiConfigModal();
+      showToast(`Pengaturan AI (${provider.toUpperCase()}) berhasil disimpan! ⚙️`);
+    }
+
+    function clearAiConfig() {
+      localStorage.removeItem('bikinplan_ai_provider');
+      localStorage.removeItem('bikinplan_ai_key');
+      document.getElementById('aiApiKeyInput').value = '';
+      document.getElementById('aiProviderSelect').value = 'gemini';
+      onAiProviderChange();
+      toggleAiConfigModal();
+      showToast("Kunci API berhasil dihapus dari browser lokal.");
+    }
+
+    function analyzeIdeaOffline(name, idea) {
+      const text = (name + " " + idea).toLowerCase();
+      const edgeCases = [];
+
+      if (/kos|lokasi|gps|radius|peta|map|kampus|unsil/.test(text)) {
+        edgeCases.push("- **Geolokasi & Radius GPS:** Fallback ke titik default kampus jika izin lokasi GPS ditolak pengguna; kunci radius maksimal 10km.");
+      }
+      if (/bayar|checkout|payment|transaksi|qris|beli|sewa|saas|billing|midtrans|xendit/.test(text)) {
+        edgeCases.push("- **Integritas Pembayaran & Webhook:** Gunakan Idempotency Key pada checkout dan verifikasi HMAC signature token saat memproses webhook gateway.");
+      }
+      if (/offline|pwa|cache|indexeddb|webview|android|apk/.test(text)) {
+        edgeCases.push("- **Offline & Multi-Platform WebView:** Dilarang menggunakan alert()/prompt() bawaan browser; gunakan modal in-DOM dan fallback service worker cache.");
+      }
+      if (/upload|gambar|foto|file|cv|pdf|resume|dokumen/.test(text)) {
+        edgeCases.push("- **Validasi & Sanitasi File Upload:** Batasi ukuran max 2MB, kompresi WebP client-side, dan validasi tipe MIME di boundary server.");
+      }
+      if (/auth|login|user|role|admin|rbac|member|creator/.test(text)) {
+        edgeCases.push("- **Keamanan Akses (RBAC) & Session:** Proteksi session dengan HttpOnly SameSite cookie dan verifikasi kepemilikan data (owner_id).");
+      }
+      if (/tugas|nilai|ipk|catat|form|draft|jadwal/.test(text)) {
+        edgeCases.push("- **Proteksi Draf Lokal:** Auto-save draf formulir ke localStorage setiap 3 detik mencegah kehilangan progres input saat browser tertutup.");
+      }
+
+      if (edgeCases.length === 0) {
+        edgeCases.push("- **Validasi Skema Terpadu:** Gunakan Zod v3 pada form boundary dan payload API.");
+        edgeCases.push("- **Penanganan Jaringan & State:** Sediakan komponen empty state, skeleton loading, dan error boundary.");
+      }
+
+      return `### 🛡️ Edge Cases & Aturan Teknis Terdeteksi:\n` + edgeCases.join("\n") +
+             `\n\n### ⚡ Prinsip Arsitektur Produksi:\n` +
+             `- Adopsi formula Frontend Mock First: uji mockup layar di browser sebelum menyusun database.\n` +
+             `- Terapkan prinsip Ponytail (kode minimal & zero-slop).`;
+    }
+
+    async function refineIdeaWithAi() {
+      const name = document.getElementById('appName').value.trim() || "Aplikasi";
+      const idea = document.getElementById('appIdea').value.trim();
+
+      if (!idea) {
+        alert("Silakan tulis ide aplikasi terlebih dahulu sebelum menjalankan analisis!");
+        return;
+      }
+
+      const resultBox = document.getElementById('aiAnalysisResult');
+      const contentBox = document.getElementById('aiAnalysisContent');
+      const badgeBox = document.getElementById('aiAnalysisBadge');
+      const btnRefine = document.getElementById('btnRefineIdea');
+
+      resultBox.style.display = 'block';
+      contentBox.textContent = 'Memproses analisis arsitektur & edge cases... ⏳';
+      btnRefine.disabled = true;
+
+      const provider = localStorage.getItem('bikinplan_ai_provider') || 'gemini';
+      const key = localStorage.getItem('bikinplan_ai_key');
+
+      if (provider === 'offline' || !key) {
+        setTimeout(() => {
+          const analysis = analyzeIdeaOffline(name, idea);
+          lastAiRefinement = analysis;
+          badgeBox.innerText = "💡 Hasil Analisis (Built-in Rule-Based Engine)";
+          contentBox.textContent = analysis;
+          btnRefine.disabled = false;
+          showToast("Analisis arsitektur & edge cases selesai! 💡");
+        }, 350);
+        return;
+      }
+
+      const prompt = `Kamu adalah Principal Software Architect. Analisis ide aplikasi '${name}': "${idea}". Sebutkan 4-5 edge cases teknis, skenario gagal kritis (validasi input, race condition, network offline), dan aturan bisnis keamanan dalam format poin-poin jelas bahasa Indonesia.`;
+
+      try {
+        if (provider === 'gemini') {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+          });
+          const data = await res.json();
+          if (data.candidates && data.candidates[0]) {
+            const reply = data.candidates[0].content.parts[0].text;
+            lastAiRefinement = reply;
+            badgeBox.innerText = "🤖 Hasil Analisis (Google Gemini Flash)";
+            contentBox.textContent = reply;
+            showToast("Analisis AI Gemini selesai! 🚀");
+          } else {
+            throw new Error(data.error ? data.error.message : "Respon tidak terduga dari Gemini");
+          }
+        } else if (provider === 'groq') {
+          const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${key}`
+            },
+            body: JSON.stringify({
+              model: "llama-3.3-70b-versatile",
+              messages: [
+                { role: "system", content: "You are a software architect. Return concise technical edge cases in Indonesian." },
+                { role: "user", content: prompt }
+              ]
+            })
+          });
+          const data = await res.json();
+          if (data.choices && data.choices[0]) {
+            const reply = data.choices[0].message.content;
+            lastAiRefinement = reply;
+            badgeBox.innerText = "⚡ Hasil Analisis (Groq Llama 3.3 70B)";
+            contentBox.textContent = reply;
+            showToast("Analisis AI Groq selesai! 🚀");
+          } else {
+            throw new Error(data.error ? data.error.message : "Respon tidak terduga dari Groq");
+          }
+        }
+      } catch (err) {
+        console.warn("AI API request failed, falling back to offline engine:", err);
+        const fallback = analyzeIdeaOffline(name, idea);
+        lastAiRefinement = fallback;
+        badgeBox.innerText = "💡 Hasil Analisis (Fallback Rule-Based Engine)";
+        contentBox.textContent = `[Catatan: Permintaan API gagal (${err.message}). Menggunakan analisis bawaan BikinPlan]\n\n${fallback}`;
+        showToast("Menggunakan analisis offline bawaan.");
+      } finally {
+        btnRefine.disabled = false;
+      }
+    }
+
+    function applyAiRefinement() {
+      if (!lastAiRefinement) return;
+      const ideaTextarea = document.getElementById('appIdea');
+      if (ideaTextarea) {
+        ideaTextarea.value = ideaTextarea.value.trim() + "\n\n" + lastAiRefinement;
+        showToast("Saran & edge cases berhasil ditambahkan ke form ide! ✨");
+        ideaTextarea.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
 
     function showToast(msg) {
       const t = document.getElementById('toast');
@@ -2174,8 +2536,11 @@ CREATE TABLE transactions (
         apiContainer.appendChild(card);
       });
 
-      // Render AGENTS.md
-      document.getElementById('agentsContent').innerText = generateAgentsMarkdown(plan);
+      // Render AGENTS.md & Multi-Agent Rules
+      switchAgentRuleTab(currentAgentRuleTab);
+
+      // Render Visual Diagram
+      renderDiagramView();
     }
 
     function renderTaskBoard(tasks) {
@@ -2309,11 +2674,264 @@ Aturan Eksekusi:
       const personasMd = p.personas.map((per, idx) => `#### Persona ${idx+1}: ${per.role}\n- Tujuan: ${per.goal}\n- Kendala: ${per.pain.join("; ")}`).join("\n\n");
       const featuresMd = p.features.map(f => `### [${f.id}] ${f.name}\n- Deskripsi: ${f.desc}\n- User Story: ${f.story}\n- Acceptance Criteria:\n${f.acceptance.map(a => "  - [ ] " + a).join("\n")}`).join("\n\n");
 
-      return `# Product Requirement Document (PRD)\n## ${p.name} — Spesifikasi Rekayasa Sistem\n\n> Versi: 1.1.2 (Production Enriched)\n> Target Pengguna: ${p.target}\n> Kategori: ${p.categoryTitle}\n> Tech Stack: ${p.stack.toUpperCase()}\n\n---\n\n## 1. Ringkasan Eksekutif & Problem Statement\n"${p.idea}"\n\n### Tujuan Utama:\n1. First Contentful Paint < 1.2 detik dan alur kerja utama selesai dalam < 3 klik.\n2. Zero Data Loss: Validasi form Zod batas ganda dan proteksi draf lokal.\n3. Modularitas irit token untuk coding agent (Claude Code, Hermes, Cursor).\n\n---\n\n## 2. Profil Pengguna & Personas\n\n${personasMd}\n\n---\n\n## 3. Spesifikasi Rinci Modul & Fitur\n\n${featuresMd}\n\n---\n\n## 4. Skema Database DDL PostgreSQL\n\`\`\`sql\n${p.sqlDdl}\n\`\`\`\n\n---\n\n## 5. Aturan Pengerjaan AI Coding Agent\n1. Selesaikan Fase 1 & 2 dengan mock data terlebih dahulu.\n2. Kerjakan satu task per putaran prompt.\n3. Ponytail principle: Tulis kode seminimal mungkin yang bekerja dengan benar.`;
+      return `# Product Requirement Document (PRD)\n## ${p.name} — Spesifikasi Rekayasa Sistem\n\n> Versi: 1.2.0 (Production Enriched)\n> Target Pengguna: ${p.target}\n> Kategori: ${p.categoryTitle}\n> Tech Stack: ${p.stack.toUpperCase()}\n\n---\n\n## 1. Ringkasan Eksekutif & Problem Statement\n"${p.idea}"\n\n### Tujuan Utama:\n1. First Contentful Paint < 1.2 detik dan alur kerja utama selesai dalam < 3 klik.\n2. Zero Data Loss: Validasi form Zod batas ganda dan proteksi draf lokal.\n3. Modularitas irit token untuk coding agent (Claude Code, Hermes, Cursor).\n\n---\n\n## 2. Profil Pengguna & Personas\n\n${personasMd}\n\n---\n\n## 3. Spesifikasi Rinci Modul & Fitur\n\n${featuresMd}\n\n---\n\n## 4. Skema Database DDL PostgreSQL\n\`\`\`sql\n${p.sqlDdl}\n\`\`\`\n\n---\n\n## 5. Aturan Pengerjaan AI Coding Agent\n1. Selesaikan Fase 1 & 2 dengan mock data terlebih dahulu.\n2. Kerjakan satu task per putaran prompt.\n3. Ponytail principle: Tulis kode seminimal mungkin yang bekerja dengan benar.`;
     }
 
     function generateAgentsMarkdown(p) {
       return `# AGENTS.md — Instruksi Kerja AI Coding Agent\nProyek: ${p.name}\nKategori: ${p.categoryTitle}\n\n## Aturan Emas Pengerjaan:\n1. Kerjakan SATU task pada satu waktu dari TASKS.md.\n2. Selesaikan lapisan UI (Fase 1) dengan data tiruan terlebih dahulu sebelum membuat database.\n3. Berhenti dan lapor ke user tiap kali berganti fase atau layer.\n4. Tulis kode sesedikit mungkin yang bekerja dengan benar (Ponytail principle).`;
+    }
+
+    function generateClaudeMarkdown(p) {
+      return `# CLAUDE.md — Panduan Kerja Claude Code CLI\n\nPanduan resmi Claude Code CLI untuk proyek **${p.name}** (${p.categoryTitle}).\n\n## 🛠️ Perintah Utama Proyek\n- **Dev Server:** \`npm run dev\`\n- **Lint & Format:** \`npm run lint\` && \`npm run format\`\n- **Type Check:** \`npm run type-check\` (atau \`npx tsc --noEmit\`)\n- **Production Build:** \`npm run build\`\n- **Task Runner BikinPlan:** \`python cli.py next\` (atau \`bikinplan next\`)\n- **Tandai Task Selesai:** \`python cli.py complete <TASK_REF>\`\n- **Mock API Server:** \`python cli.py mock\` (atau \`python serve.py\`)\n\n## ⚡ Prinsip Ponytail (Minimal Code & Anti-Slop)\n1. **Kode Minimal:** Tulis kode sesedikit mungkin yang bekerja dengan benar ("boring over clever").\n2. **Standard Library & Native First:** Utamakan Web API native browser dan library yang sudah ada. Jangan menambah package baru jika tidak diminta eksplisit.\n3. **No AI Slop:** Dilarang menambahkan komentar basa-basi seperti \`// handle user click\`. Tulis kode yang self-explanatory.\n4. **Verifikasi Mandiri:** Wajib menyertakan minimal 1 uji verifikasi sebelum melaporkan task selesai.\n\n## 🧭 Metodologi 4-Fase (Frontend Mock First)\n1. **Fase 1 (Frontend Mockup):** Gunakan data tiruan (mock fixture). DILARANG membuat tabel DB atau API sebelum UI disetujui di browser!\n2. **Fase 2 (Client State):** Validasi Zod dan manipulasi state lokal di browser.\n3. **Fase 3 (Database & API):** Skema DDL PostgreSQL, autentikasi session, dan RESTful endpoints.\n4. **Fase 4 (Integrasi & Polish):** Sambungkan frontend ke API nyata dan uji build produksi.\n\n## 📋 Eksekusi Task\nBuka \`TASKS.md\` atau jalankan \`python cli.py next\`. Kerjakan HANYA satu task aktif per putaran prompt.`;
+    }
+
+    function generateCursorRules(p) {
+      return `# .cursorrules — Aturan Kerja Cursor IDE\n\nYou are an expert full-stack engineer working on ${p.name}.\nCategory: ${p.categoryTitle} | Stack: ${p.stack.toUpperCase()}\n\n## Golden Rules\n1. **Follow TASKS.md Step-by-Step:**\n   Always inspect TASKS.md. Work strictly on the current active task. Do not jump ahead to future tasks.\n\n2. **Frontend Mock First Rule:**\n   Do NOT generate database tables, ORM migrations, or backend API routes during Phase 1 and 2. Use mock fixture data until the user approves the UI in the browser.\n\n3. **Ponytail Principle (Minimalist Code):**\n   - The best code is no code. Write the minimal clean implementation that solves the problem.\n   - Rely on native browser Web APIs and existing dependencies.\n   - No unnecessary abstraction layers, no premature optimizations, no AI boilerplate comments.\n\n4. **Strict Type Safety:**\n   - Always validate inputs at trust boundaries using Zod.\n   - Keep TypeScript strict without using 'any'.`;
+    }
+
+    function generateCursorMdc(p) {
+      return `---
+description: Architecture rules, phase checkpoints, and minimal-code standards for ${p.name}
+globs: src/**/*.{ts,tsx,js,jsx}, db/**/*, routes/**/*
+alwaysApply: true
+---
+
+# Architecture & Engineering Guidelines: ${p.name}
+
+## Project Context
+- **Name:** ${p.name}
+- **Category:** ${p.categoryTitle}
+- **Target Audience:** ${p.target}
+- **Stack:** ${p.stack.toUpperCase()}
+
+## Mandatory Phased Checkpoints
+1. **Phase 1 (Frontend Stubs):** Mock data only. User must verify layout in browser before Phase 2.
+2. **Phase 2 (Client State):** Forms, Zod schemas, URL search params.
+3. **Phase 3 (DB & API):** PostgreSQL DDL, Better-Auth / JWT sessions, REST contracts.
+4. **Phase 4 (End-to-End):** Wiring TanStack Query to real endpoints, security audit, production build.
+
+## Code Standards
+- Adhere strictly to the **Ponytail principle** (minimal code, zero-slop).
+- Follow schemas in \`PRD.md\` and active task in \`TASKS.md\`.`;
+    }
+
+    function parseDdlToMermaid(sql) {
+      if (!sql) return "erDiagram";
+      const lines = sql.split("\n");
+      const tables = {};
+      const relations = [];
+      let currentTable = null;
+
+      const tableRe = /CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?([a-zA-Z0-9_]+)/i;
+      const refRe = /REFERENCES\s+([a-zA-Z0-9_]+)\s*\(([a-zA-Z0-9_]+)\)/i;
+      const pkRe = /\bPRIMARY\s+KEY\b/i;
+
+      for (let line of lines) {
+        const tMatch = line.match(tableRe);
+        if (tMatch) {
+          currentTable = tMatch[1].toLowerCase();
+          tables[currentTable] = [];
+          continue;
+        }
+
+        if (currentTable) {
+          const clean = line.trim().replace(/,$/, '');
+          if (clean.startsWith(')') || clean.startsWith(');')) {
+            currentTable = null;
+            continue;
+          }
+          if (clean.startsWith('--') || !clean) continue;
+
+          const refMatch = clean.match(refRe);
+          if (refMatch) {
+            const parent = refMatch[1].toLowerCase();
+            relations.push(`    ${parent} ||--o{ ${currentTable} : "relates_to"`);
+          }
+
+          const parts = clean.split(/\s+/);
+          if (parts.length >= 2) {
+            const colName = parts[0].replace(/["`]/g, '');
+            if (['CONSTRAINT', 'UNIQUE', 'CHECK', 'FOREIGN', 'PRIMARY'].includes(colName.toUpperCase())) continue;
+            const colType = parts[1].split('(')[0].toLowerCase();
+            const isPk = pkRe.test(clean);
+            const tag = isPk ? ' PK' : (refMatch ? ' FK' : '');
+            tables[currentTable].push({ colType, colName, tag });
+          }
+        }
+      }
+
+      const res = ['erDiagram'];
+      const uniqueRels = Array.from(new Set(relations));
+      uniqueRels.forEach(r => res.push(r));
+
+      for (let [tName, cols] of Object.entries(tables)) {
+        res.push(`    ${tName} {`);
+        cols.slice(0, 12).forEach(c => {
+          res.push(`        ${c.colType} ${c.colName}${c.tag}`);
+        });
+        res.push('    }');
+      }
+      return res.join('\n');
+    }
+
+    function generateMermaidFlowchart(p) {
+      return `flowchart TD
+    subgraph F1 [Fase 1: Frontend Mockup & Stubs]
+        F1_A[Inisialisasi Project & Design Tokens] --> F1_B[Layout Shell: Navbar & Dark Mode]
+        F1_B --> F1_C[UI Components & Data Mock Tiruan]
+        F1_C --> F1_Check{"Checkpoint: Validasi Tampilan di Browser"}
+    end
+
+    subgraph F2 [Fase 2: Client State & Validation]
+        F1_Check -->|UI Disetujui| F2_A[Formulir Interaktif & Modal Dialog]
+        F2_A --> F2_B[Validasi Skema Zod Input]
+        F2_B --> F2_C[State URL Query & Local Storage Cache]
+        F2_C --> F2_Check{"Checkpoint: Validasi Interaksi Form"}
+    end
+
+    subgraph F3 [Fase 3: Database DDL & Backend API]
+        F2_Check -->|Interaksi Disetujui| F3_A[Skema Database DDL PostgreSQL]
+        F3_A --> F3_B[Autentikasi Session & Role Guard]
+        F3_B --> F3_C[Kontrak Endpoint RESTful API]
+        F3_C --> F3_Check{"Checkpoint: Uji Endpoint Mock/Real API"}
+    end
+
+    subgraph F4 [Fase 4: Integrasi End-to-End & Polish]
+        F3_Check -->|API Disetujui| F4_A[Wiring Frontend ke API Riil]
+        F4_A --> F4_B[Audit Keamanan & Sanitasi Input]
+        F4_B --> F4_C[Optimasi SEO, PWA & Production Build]
+    end
+
+    style F1 fill:#121722,stroke:#3b82f6,stroke-width:2px,color:#fff
+    style F2 fill:#121722,stroke:#10b981,stroke-width:2px,color:#fff
+    style F3 fill:#121722,stroke:#f59e0b,stroke-width:2px,color:#fff
+    style F4 fill:#121722,stroke:#ec4899,stroke-width:2px,color:#fff`;
+    }
+
+    let currentDiagramView = 'erd';
+    function switchDiagramView(view) {
+      currentDiagramView = view;
+      const btnErd = document.getElementById('btnDiagramErd');
+      const btnFlow = document.getElementById('btnDiagramFlow');
+      if (btnErd && btnFlow) {
+        btnErd.className = (view === 'erd') ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm';
+        btnFlow.className = (view === 'flowchart') ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm';
+      }
+      renderDiagramView();
+    }
+
+    function renderDiagramView() {
+      if (!currentPlan) return;
+      const outputEl = document.getElementById('diagramOutput');
+      const rawCodeEl = document.getElementById('mermaidCodeBlock');
+      if (!outputEl) return;
+
+      const code = (currentDiagramView === 'erd') ? parseDdlToMermaid(currentPlan.sqlDdl) : generateMermaidFlowchart(currentPlan);
+      if (rawCodeEl) rawCodeEl.textContent = code;
+
+      outputEl.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; padding: 2rem;">⚡ Merender diagram...</div>';
+
+      if (typeof mermaid !== 'undefined') {
+        try {
+          mermaid.initialize({
+            startOnLoad: false,
+            theme: 'dark',
+            themeVariables: {
+              darkMode: true,
+              background: '#0d1117',
+              primaryColor: '#ff5c20',
+              primaryTextColor: '#ffffff',
+              primaryBorderColor: '#334155',
+              lineColor: '#64748b',
+              secondaryColor: '#161b22',
+              tertiaryColor: '#21262d'
+            }
+          });
+          const renderId = 'mermaid-render-' + Math.floor(Math.random() * 100000);
+          mermaid.render(renderId, code).then(result => {
+            outputEl.innerHTML = result.svg;
+          }).catch(err => {
+            console.warn("Mermaid SVG render failed, fallback to structured view:", err);
+            renderDiagramFallback(outputEl, currentPlan, currentDiagramView);
+          });
+          return;
+        } catch (e) {
+          console.warn("Mermaid exception:", e);
+        }
+      }
+      renderDiagramFallback(outputEl, currentPlan, currentDiagramView);
+    }
+
+    function renderDiagramFallback(container, plan, view) {
+      if (view === 'flowchart') {
+        container.innerHTML = `
+          <div style="display: flex; flex-direction: column; gap: 0.75rem; max-width: 600px; margin: 0 auto; text-align: left;">
+            <div style="background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.3); border-radius: 8px; padding: 0.85rem;">
+              <div style="font-weight: 700; color: #60a5fa; font-size: 0.9rem;">Fase 1: Frontend Mockup & Stubs</div>
+              <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 4px;">Membangun layout & UI dengan data tiruan. Checkpoint: Uji tampilan di browser.</div>
+            </div>
+            <div style="text-align: center; color: var(--text-dim); font-size: 0.85rem;">⬇️</div>
+            <div style="background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3); border-radius: 8px; padding: 0.85rem;">
+              <div style="font-weight: 700; color: #34d399; font-size: 0.9rem;">Fase 2: Client State & Validation</div>
+              <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 4px;">Validasi form Zod, URL search params, dan local state browser.</div>
+            </div>
+            <div style="text-align: center; color: var(--text-dim); font-size: 0.85rem;">⬇️</div>
+            <div style="background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); border-radius: 8px; padding: 0.85rem;">
+              <div style="font-weight: 700; color: #fbbf24; font-size: 0.9rem;">Fase 3: Database & Backend API</div>
+              <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 4px;">PostgreSQL DDL, autentikasi session cookie/JWT, dan RESTful endpoints.</div>
+            </div>
+            <div style="text-align: center; color: var(--text-dim); font-size: 0.85rem;">⬇️</div>
+            <div style="background: rgba(236,72,153,0.12); border: 1px solid rgba(236,72,153,0.3); border-radius: 8px; padding: 0.85rem;">
+              <div style="font-weight: 700; color: #f472b6; font-size: 0.9rem;">Fase 4: Integrasi End-to-End & Polish</div>
+              <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 4px;">Wiring API nyata, audit keamanan trust boundary, SEO & production build.</div>
+            </div>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <div style="text-align: left; max-width: 650px; margin: 0 auto;">
+            <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.75rem;">Struktur Entitas Relasional (Mermaid ERD Code):</div>
+            <pre class="doc-pre" style="max-height: 380px;">${parseDdlToMermaid(plan.sqlDdl)}</pre>
+          </div>
+        `;
+      }
+    }
+
+    function copyMermaidCode() {
+      if (!currentPlan) return;
+      const code = (currentDiagramView === 'erd') ? parseDdlToMermaid(currentPlan.sqlDdl) : generateMermaidFlowchart(currentPlan);
+      navigator.clipboard.writeText(code);
+      showToast("Kode Mermaid disalin ke clipboard! 📊");
+    }
+
+    let currentAgentRuleTab = 'agents';
+    function switchAgentRuleTab(tab) {
+      currentAgentRuleTab = tab;
+      ['agents', 'claude', 'cursor', 'mdc'].forEach(t => {
+        const btn = document.getElementById(`btnAgentTab-${t}`);
+        if (btn) {
+          btn.className = (t === tab) ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm';
+        }
+      });
+      if (!currentPlan) return;
+      let content = "";
+      if (tab === 'agents') content = generateAgentsMarkdown(currentPlan);
+      else if (tab === 'claude') content = generateClaudeMarkdown(currentPlan);
+      else if (tab === 'cursor') content = generateCursorRules(currentPlan);
+      else if (tab === 'mdc') content = generateCursorMdc(currentPlan);
+      document.getElementById('agentsContent').innerText = content;
+    }
+
+    function copyCurrentAgentRule() {
+      if (!currentPlan) return;
+      let content = "";
+      let name = "";
+      if (currentAgentRuleTab === 'agents') { content = generateAgentsMarkdown(currentPlan); name = "AGENTS.md"; }
+      else if (currentAgentRuleTab === 'claude') { content = generateClaudeMarkdown(currentPlan); name = "CLAUDE.md"; }
+      else if (currentAgentRuleTab === 'cursor') { content = generateCursorRules(currentPlan); name = ".cursorrules"; }
+      else if (currentAgentRuleTab === 'mdc') { content = generateCursorMdc(currentPlan); name = "architecture.mdc"; }
+      navigator.clipboard.writeText(content);
+      showToast(`${name} disalin ke clipboard! 📋`);
     }
 
     function copyFullPrd() {
@@ -2491,12 +3109,18 @@ Aturan Eksekusi:
         const p = currentPlan;
         const prdText = generatePrdMarkdown(p);
         const agentsText = generateAgentsMarkdown(p);
+        const claudeText = generateClaudeMarkdown(p);
+        const cursorRulesText = generateCursorRules(p);
+        const cursorMdcText = generateCursorMdc(p);
         const tasksText = typeof generateTasksMarkdown === 'function' ? generateTasksMarkdown(p) : "";
         const planJsonText = JSON.stringify(p, null, 2);
 
         const files = [
           { name: "PRD.md", content: prdText },
           { name: "AGENTS.md", content: agentsText },
+          { name: "CLAUDE.md", content: claudeText },
+          { name: ".cursorrules", content: cursorRulesText },
+          { name: ".cursor/rules/architecture.mdc", content: cursorMdcText },
           { name: "TASKS.md", content: tasksText },
           { name: "plan.json", content: planJsonText }
         ];
@@ -2519,7 +3143,7 @@ Aturan Eksekusi:
           URL.revokeObjectURL(blobUrl);
         }, 1500);
 
-        showToast(`File ${zipFileName} berhasil diunduh (berisi PRD.md & AGENTS.md)! 📦`);
+        showToast(`Multi-Agent Bundle ${zipFileName} berhasil diunduh! 📦`);
       } catch (err) {
         console.error("Gagal men-download ZIP:", err);
         alert("Terjadi kesalahan saat membuat file ZIP: " + err.message);
@@ -2533,7 +3157,12 @@ Aturan Eksekusi:
       document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
 
       event.currentTarget.classList.add('active');
-      document.getElementById(`tab-${name}`).classList.add('active');
+      const panel = document.getElementById(`tab-${name}`);
+      if (panel) panel.classList.add('active');
+
+      if (name === 'diagram') {
+        renderDiagramView();
+      }
     }
 
     // Trigger Final Generation

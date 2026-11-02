@@ -1,32 +1,40 @@
 #!/usr/bin/env python3
-import http.server
-import socketserver
-import webbrowser
+"""
+BikinPlan Web & Instant Mock Server
+Melayani UI BikinPlan dan Mock API Server terintegrasi (Frontend Mock First).
+"""
+
 import os
 import sys
+import argparse
+from mock_server import start_mock_server, find_plan_file
 
 PORT = 3333
 DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 
-class Handler(http.server.SimpleHTTPRequestHandler):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, directory=DIRECTORY, **kwargs)
+def main():
+    parser = argparse.ArgumentParser(description="BikinPlan Web & Instant Mock API Server")
+    parser.add_argument("--port", type=int, default=PORT, help="Port server (default: 3333)")
+    parser.add_argument("--plan", default=None, help="Path ke berkas plan.json (opsional)")
+    parser.add_argument("--no-browser", action="store_true", help="Jangan otomatis membuka browser")
+    parser.add_argument("--mock-only", action="store_true", help="Jalankan khusus mock API server")
 
-def run():
-    os.chdir(DIRECTORY)
-    url = f"http://localhost:{PORT}/index.html"
-    print(f"\n🚀 BikinPlan Web Server berjalan di: {url}")
-    print("Tekan Ctrl+C untuk menghentikan server.\n")
-    
-    # Auto open browser
-    webbrowser.open(url)
-    
-    with socketserver.TCPServer(("", PORT), Handler) as httpd:
-        try:
-            httpd.serve_forever()
-        except KeyboardInterrupt:
-            print("\nServer dimatikan.")
-            sys.exit(0)
+    args = parser.parse_args()
+
+    # Cari file plan.json
+    plan_path = find_plan_file(args.plan)
+    if not plan_path:
+        # Jika belum ada plan di folder aktif, arahkan ke sample-enterprise/plan.json jika ada
+        sample_plan = os.path.join(DIRECTORY, "sample-enterprise", "plan.json")
+        if os.path.isfile(sample_plan):
+            plan_path = sample_plan
+
+    start_mock_server(
+        plan_path=plan_path,
+        port=args.port,
+        static_dir=DIRECTORY,
+        open_browser=not args.no_browser
+    )
 
 if __name__ == "__main__":
-    run()
+    main()

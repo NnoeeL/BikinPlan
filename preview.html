@@ -493,10 +493,18 @@ Sekarang, konfirmasi bahwa kamu memahami arsitektur ini dan LANGSUNG MULAI kerja
     try {
       const prdMd = `# Product Requirement Document (PRD)\n## ${wPlanName}\n\n> Stack: ${wStack.toUpperCase()} | Auth: ${wAuth.toUpperCase()}\n\nIde & Fitur:\n"${document.getElementById('wIdea').value}"\n\n## Task Backlog:\n` + wCurrentTasks.map(t => `- [${t.ref}] [Fase ${t.phase}] [${t.layer}] ${t.title}: ${t.desc}`).join('\n');
       const agentsMd = `# AGENTS.md — Instruksi Kerja AI Coding Agent\nProyek: ${wPlanName}\n\n1. Selesaikan Fase 1 (Frontend Mockup) terlebih dahulu sebelum membuat database.\n2. Jalankan acceptance test di setiap task sebelum melapor selesai.\n3. Tulis kode sesedikit mungkin yang bekerja dengan benar (Ponytail principle).`;
+      const claudeMd = `# CLAUDE.md — Panduan Kerja Claude Code CLI\nProyek: ${wPlanName}\n\n1. Selesaikan Fase 1 & 2 dengan mock data statis terlebih dahulu.\n2. Jalankan \`bikinplan next\` atau \`python cli.py next\` untuk alur task berurutan.\n3. Prinsip Ponytail: Tulis kode seminimal mungkin yang bekerja dengan benar.`;
+      const cursorRules = `# .cursorrules\nFollow TASKS.md step-by-step. Frontend mock first before database. Strict TypeScript and Ponytail minimal code.`;
+      const cursorMdc = `---\ndescription: Architecture rules for ${wPlanName}\nglobs: src/**/*\nalwaysApply: true\n---\n# Rules for ${wPlanName}\nFrontend mock first, Zod validation, Ponytail principle.`;
+      const tasksMd = `# Task Backlog: ${wPlanName}\n\n` + wCurrentTasks.map(t => `### [${t.ref}] ${t.title}\n- Layer: ${t.layer} | Fase: ${t.phase}\n- Objektif: ${t.desc}\n- Checklist: ${t.check}`).join('\n\n');
 
       const zipBytes = wCreateZip([
         { name: "PRD.md", content: prdMd },
-        { name: "AGENTS.md", content: agentsMd }
+        { name: "AGENTS.md", content: agentsMd },
+        { name: "CLAUDE.md", content: claudeMd },
+        { name: ".cursorrules", content: cursorRules },
+        { name: ".cursor/rules/architecture.mdc", content: cursorMdc },
+        { name: "TASKS.md", content: tasksMd }
       ]);
 
       const blob = new Blob([zipBytes], { type: "application/zip" });
@@ -513,7 +521,7 @@ Sekarang, konfirmasi bahwa kamu memahami arsitektur ini dan LANGSUNG MULAI kerja
         if (link.parentNode) link.parentNode.removeChild(link);
         URL.revokeObjectURL(blobUrl);
       }, 1500);
-      alert(`File ${name} berhasil diunduh dalam format .zip (berisi PRD.md dan AGENTS.md)!`);
+      alert(`File ${name} berhasil diunduh dalam format .zip (berisi PRD.md, AGENTS.md, CLAUDE.md, Cursor rules, dan TASKS.md)!`);
     } catch (e) {
       alert("Gagal mengunduh ZIP: " + e.message);
     }

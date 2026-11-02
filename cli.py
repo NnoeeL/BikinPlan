@@ -11,6 +11,108 @@ import json
 import argparse
 import re
 from typing import Dict, Any, List
+from agent_config_generator import (
+    parse_ddl_to_mermaid,
+    generate_mermaid_flowchart,
+    generate_claude_markdown,
+    generate_cursor_rules,
+    generate_cursor_mdc
+)
+
+PRESETS = {
+    "toko": {
+        "name": "TokoOnline Store",
+        "target": "Pelanggan & Pembeli Umum",
+        "stack": "tanstack",
+        "idea": "Website katalog toko online modern dan responsif untuk memamerkan produk dan memproses pesanan belanja dengan checkout WhatsApp, filter stok, dan varian."
+    },
+    "portfolio": {
+        "name": "Portofolio Profesional",
+        "target": "Klien, Recruiter & Kolaborator",
+        "stack": "tanstack",
+        "idea": "Website portofolio pribadi modern dan interaktif untuk personal branding, showcase galeri proyek tech stack, resume CV download, dan formulir kontak."
+    },
+    "campus": {
+        "name": "Sahabat Kampus PWA",
+        "target": "Mahasiswa & Sivitas Akademika",
+        "stack": "tanstack",
+        "idea": "Superapp pendamping mahasiswa PWA offline-first dengan pencarian kosan akurat radius 10km GPS kampus, kalkulator target IPK & SKS offline IndexedDB, kalender deadline tugas kuliah, dan adapter mobile WebView."
+    },
+    "saas": {
+        "name": "MicroSaaS Hub",
+        "target": "Indie Creator, Freelancer & Pelanggan",
+        "stack": "tanstack",
+        "idea": "Platform SaaS langganan digital mikro dengan sistem multi-tier billing, manajemen lisensi aset digital terenkripsi, webhook payment gateway Midtrans/Xendit, dan creator/subscriber RBAC."
+    },
+    "dashboard": {
+        "name": "OmniDash Operations",
+        "target": "Tim Operasional, Finance & Administrator Bisnis",
+        "stack": "tanstack",
+        "idea": "Portal dashboard operasional internal enterprise dengan analisis metrik keuangan, manajemen inventaris, audit logging ketat, dan role-based access control."
+    }
+}
+
+def refine_idea(name: str, idea: str) -> str:
+    """Menganalisis ide dan mengekstrak edge cases teknis secara cerdas (online via BYOK atau rule-based offline)."""
+    gemini_key = os.environ.get("GEMINI_API_KEY")
+    groq_key = os.environ.get("GROQ_API_KEY")
+
+    prompt = f"Analisis ide aplikasi '{name}': {idea}. Sebutkan 4-5 edge cases teknis, skenario gagal, dan aturan bisnis penting."
+
+    if groq_key:
+        try:
+            import urllib.request
+            req_data = json.dumps({
+                "model": "llama-3.3-70b-versatile",
+                "messages": [
+                    {"role": "system", "content": "You are a software architect. Return concise technical edge cases in Indonesian."},
+                    {"role": "user", "content": prompt}
+                ]
+            }).encode('utf-8')
+            req = urllib.request.Request("https://api.groq.com/openai/v1/chat/completions", data=req_data, headers={
+                "Authorization": f"Bearer {groq_key}",
+                "Content-Type": "application/json"
+            })
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                data = json.loads(resp.read().decode('utf-8'))
+                return data["choices"][0]["message"]["content"]
+        except Exception:
+            pass
+
+    if gemini_key:
+        try:
+            import urllib.request
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
+            req_data = json.dumps({
+                "contents": [{"parts": [{"text": prompt}]}]
+            }).encode('utf-8')
+            req = urllib.request.Request(url, data=req_data, headers={"Content-Type": "application/json"})
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                data = json.loads(resp.read().decode('utf-8'))
+                return data["candidates"][0]["content"]["parts"][0]["text"]
+        except Exception:
+            pass
+
+    text = (name + " " + idea).lower()
+    edge_cases = []
+    if any(k in text for k in ["kos", "lokasi", "gps", "radius", "peta", "map"]):
+        edge_cases.append("- **Geolokasi & Radius GPS:** Fallback ke koordinat default kampus jika izin lokasi ditolak; batasi radius pencarian max 10km.")
+    if any(k in text for k in ["bayar", "checkout", "payment", "transaksi", "qris", "beli", "sewa", "saas", "billing"]):
+        edge_cases.append("- **Integritas Pembayaran:** Gunakan Idempotency Key pada transaksi dan verifikasi signature token HMAC pada webhook gateway.")
+    if any(k in text for k in ["offline", "pwa", "cache", "indexeddb", "webview", "kampus"]):
+        edge_cases.append("- **Offline & Multi-Platform:** Hindari native alert()/prompt() di WebView; sediakan inline modal dan service worker cache fallback.")
+    if any(k in text for k in ["upload", "gambar", "foto", "file", "cv", "pdf"]):
+        edge_cases.append("- **File Upload Sanitasi:** Validasi tipe MIME di client & server; batasi ukuran file max 2MB dan kompres WebP di browser.")
+    if any(k in text for k in ["auth", "login", "user", "role", "admin", "rbac"]):
+        edge_cases.append("- **Keamanan Akses (RBAC):** Proteksi route dengan HttpOnly SameSite cookie dan verifikasi kepemilikan data (owner_id).")
+    if any(k in text for k in ["tugas", "nilai", "ipk", "catat", "form"]):
+        edge_cases.append("- **Proteksi Draf Lokal:** Auto-save draf formulir ke localStorage setiap 3 detik mencegah kehilangan input saat refresh.")
+
+    if not edge_cases:
+        edge_cases.append("- **Validasi Skema Terpadu:** Gunakan Zod v3 di boundary form input dan endpoint API.")
+        edge_cases.append("- **Penanganan State Jaringan:** Sediakan komponen empty state, skeleton loading, dan error boundary.")
+
+    return "\n".join(edge_cases)
 
 def synthesize_plan(name: str, idea: str, stack: str = "tanstack", target_audience: str = "Mahasiswa & Umum") -> Dict[str, Any]:
     clean_name = name.strip() or "Aplikasi Baru"
@@ -1101,7 +1203,7 @@ def generate_prd_markdown(plan: Dict[str, Any]) -> str:
     return f"""# Product Requirement Document (PRD)
 ## {p['name']} — Spesifikasi Rekayasa Sistem
 
-> **Versi:** 1.1.2 (Production-Grade Enriched)  
+> **Versi:** 1.2.0 (Production-Grade Enriched)  
 > **Status Dokumen:** Approved for Autonomous Agent Implementation  
 > **Kategori:** {p['categoryTitle']}  
 > **Target Pengguna:** {p['targetAudience']}  
@@ -1132,6 +1234,12 @@ Banyak pengguna dalam kategori **{p['targetAudience']}** menghadapi kendala alur
 
 ## 3. Arsitektur Teknis & Tech Stack
 
+### 3.1 Alur Kerja 4-Fase Sistem (Architecture Flowchart)
+```mermaid
+{generate_mermaid_flowchart(p)}
+```
+
+### 3.2 Matriks Komponen Teknologi
 | Lapisan Sistem | Teknologi Pilihan | Alasan Pemilihan & Manfaat Teknis |
 | :--- | :--- | :--- |
 | **Framework Utama** | {s['frontend']} | Rendering cepat berbasis SSR/Hydration, ekosistem standar industri, dan navigasi instan. |
@@ -1158,6 +1266,12 @@ Banyak pengguna dalam kategori **{p['targetAudience']}** menghadapi kendala alur
 
 ## 6. Skema Database Lengkap (Data Dictionary & DDL)
 
+### 6.1 Entity Relationship Diagram (Visual ERD)
+```mermaid
+{parse_ddl_to_mermaid(p['sqlDdl'])}
+```
+
+### 6.2 PostgreSQL 16 DDL Script
 Berikut adalah DDL SQL PostgreSQL resmi yang mendefinisikan tabel, tipe enum, relasi foreign key dengan aturan integritas referensial, serta indeks pencarian performa:
 
 ```sql
@@ -1289,15 +1403,129 @@ Tech Stack: **{p['stack']['name']}**
 """
 
 def main():
+    # Dispatch subcommands: next, complete, status, mock
+    if len(sys.argv) > 1:
+        cmd = sys.argv[1].lower()
+        if cmd in ["next", "step"]:
+            from task_runner import run_next_task
+            target_path = sys.argv[2] if len(sys.argv) > 2 and not sys.argv[2].startswith("-") else None
+            ok, msg = run_next_task(target_path)
+            print(msg)
+            sys.exit(0 if ok else 1)
+
+        elif cmd in ["complete", "done", "check"]:
+            if len(sys.argv) < 3 or sys.argv[2].startswith("-"):
+                print("❌ Masukkan nomor/ref task yang ingin ditandai selesai.")
+                print("Contoh: python cli.py complete T-01")
+                sys.exit(1)
+            from task_runner import run_complete_task
+            task_ref = sys.argv[2]
+            target_path = sys.argv[3] if len(sys.argv) > 3 and not sys.argv[3].startswith("-") else None
+            ok, msg = run_complete_task(task_ref, target_path)
+            print(msg)
+            sys.exit(0 if ok else 1)
+
+        elif cmd in ["status", "tasks", "list"]:
+            from task_runner import run_task_status
+            target_path = sys.argv[2] if len(sys.argv) > 2 and not sys.argv[2].startswith("-") else None
+            ok, msg = run_task_status(target_path)
+            print(msg)
+            sys.exit(0 if ok else 1)
+
+        elif cmd in ["export-rules", "rules"]:
+            from mock_server import find_plan_file
+            target_dir = sys.argv[2] if len(sys.argv) > 2 and not sys.argv[2].startswith("-") else "."
+            plan_arg = sys.argv[3] if len(sys.argv) > 3 and not sys.argv[3].startswith("-") else None
+            actual_plan = find_plan_file(plan_arg)
+            if not actual_plan:
+                print("❌ Berkas plan.json tidak ditemukan untuk ekspor rules.")
+                print("Jalankan di folder proyek atau tentukan path: python cli.py export-rules ./output ./path/to/plan.json")
+                sys.exit(1)
+            with open(actual_plan, "r", encoding="utf-8") as f:
+                plan_data = json.load(f)
+
+            os.makedirs(target_dir, exist_ok=True)
+            cursor_dir = os.path.join(target_dir, ".cursor", "rules")
+            os.makedirs(cursor_dir, exist_ok=True)
+
+            with open(os.path.join(target_dir, "AGENTS.md"), "w", encoding="utf-8") as f:
+                f.write(generate_agents_markdown(plan_data))
+            with open(os.path.join(target_dir, "CLAUDE.md"), "w", encoding="utf-8") as f:
+                f.write(generate_claude_markdown(plan_data))
+            with open(os.path.join(target_dir, ".cursorrules"), "w", encoding="utf-8") as f:
+                f.write(generate_cursor_rules(plan_data))
+            with open(os.path.join(cursor_dir, "architecture.mdc"), "w", encoding="utf-8") as f:
+                f.write(generate_cursor_mdc(plan_data))
+
+            print(f"✅ Berhasil mengekspor 4 konfigurasi Multi-Agent ke: {os.path.abspath(target_dir)}")
+            print("  🤖 AGENTS.md                  (Hermes Agent & Autonomous AI)")
+            print("  ⚡ CLAUDE.md                  (Anthropic Claude Code CLI)")
+            print("  🎯 .cursorrules               (Cursor IDE Composer)")
+            print("  📜 .cursor/rules/architecture.mdc (Cursor Rules 2.0 MDC)")
+            sys.exit(0)
+
+        elif cmd in ["refine", "analyze"]:
+            from mock_server import find_plan_file
+            target_arg = sys.argv[2] if len(sys.argv) > 2 and not sys.argv[2].startswith("-") else None
+            actual_plan = find_plan_file(target_arg)
+            if actual_plan:
+                with open(actual_plan, "r", encoding="utf-8") as f:
+                    p_data = json.load(f)
+                name = p_data.get("name", "Aplikasi")
+                idea = p_data.get("idea", "")
+            else:
+                name = target_arg or "Aplikasi Baru"
+                idea = " ".join([a for a in sys.argv[3:] if not a.startswith("-")]) or name
+
+            print("=" * 74)
+            print("⚡ BikinPlan AI Refine Engine (Edge Cases & Architecture Analysis)")
+            print("=" * 74)
+            analysis = refine_idea(name, idea)
+            print(f"🎯 Target: {name}\n")
+            print(analysis)
+            print("=" * 74)
+            sys.exit(0)
+
+        elif cmd in ["mock", "serve-mock"]:
+            from mock_server import start_mock_server
+            plan_path = None
+            port = 3333
+            no_browser = "--no-browser" in sys.argv
+            for idx, arg in enumerate(sys.argv[2:], start=2):
+                if arg == "--port" and idx + 1 < len(sys.argv):
+                    port = int(sys.argv[idx + 1])
+                elif not arg.startswith("-") and not plan_path:
+                    plan_path = arg
+            start_mock_server(plan_path=plan_path, port=port, open_browser=not no_browser)
+            sys.exit(0)
+
     parser = argparse.ArgumentParser(description="BikinPlan CLI - Enterprise PRD & Tasks Generator untuk AI Coding Agent")
     parser.add_argument("name", nargs="?", default="Aplikasi Web Keren", help="Nama proyek atau aplikasi")
     parser.add_argument("--idea", default="", help="Deskripsi lengkap ide aplikasi")
+    parser.add_argument("--preset", choices=["toko", "portfolio", "campus", "saas", "dashboard"], default=None, help="Pilih blueprint preset siap pakai")
+    parser.add_argument("--refine", action="store_true", help="Otomatis pertajam ide dengan analisis edge cases")
     parser.add_argument("--stack", default="tanstack", choices=["tanstack", "nextjs", "vite-spa"], help="Pilihan tech stack")
     parser.add_argument("--target", default="Mahasiswa & Pengguna Umum", help="Target audiens")
     parser.add_argument("--output", default=".", help="Folder output penyimpanan dokumen")
 
     args = parser.parse_args()
+
+    # Terapkan preset jika dipilih
+    if args.preset:
+        preset_info = PRESETS[args.preset]
+        if args.name == "Aplikasi Web Keren":
+            args.name = preset_info["name"]
+        if not args.idea:
+            args.idea = preset_info["idea"]
+        if args.target == "Mahasiswa & Pengguna Umum":
+            args.target = preset_info["target"]
+
     idea = args.idea or f"Platform digital inovatif untuk menjawab kebutuhan efisiensi pengguna {args.name}."
+
+    if args.refine:
+        print("⚡ Menganalisis & mempertajam ide dengan edge cases...")
+        edge_cases = refine_idea(args.name, idea)
+        idea += f"\n\nAturan Edge Cases & Proteksi Arsitektur:\n{edge_cases}"
 
     print(f"\n🚀 Menyusun PRD Enriched Enterprise untuk: {args.name}...")
     plan = synthesize_plan(args.name, idea, args.stack, args.target)
@@ -1305,13 +1533,21 @@ def main():
     prd_content = generate_prd_markdown(plan)
     tasks_content = generate_tasks_markdown(plan)
     agents_content = generate_agents_markdown(plan)
+    claude_content = generate_claude_markdown(plan)
+    cursor_rules_content = generate_cursor_rules(plan)
+    cursor_mdc_content = generate_cursor_mdc(plan)
 
     out_dir = os.path.abspath(args.output)
     os.makedirs(out_dir, exist_ok=True)
+    cursor_rules_dir = os.path.join(out_dir, ".cursor", "rules")
+    os.makedirs(cursor_rules_dir, exist_ok=True)
 
     prd_path = os.path.join(out_dir, "PRD.md")
     tasks_path = os.path.join(out_dir, "TASKS.md")
     agents_path = os.path.join(out_dir, "AGENTS.md")
+    claude_path = os.path.join(out_dir, "CLAUDE.md")
+    cursor_rules_path = os.path.join(out_dir, ".cursorrules")
+    cursor_mdc_path = os.path.join(cursor_rules_dir, "architecture.mdc")
     plan_json_path = os.path.join(out_dir, "plan.json")
 
     with open(prd_path, "w", encoding="utf-8") as f:
@@ -1320,6 +1556,12 @@ def main():
         f.write(tasks_content)
     with open(agents_path, "w", encoding="utf-8") as f:
         f.write(agents_content)
+    with open(claude_path, "w", encoding="utf-8") as f:
+        f.write(claude_content)
+    with open(cursor_rules_path, "w", encoding="utf-8") as f:
+        f.write(cursor_rules_content)
+    with open(cursor_mdc_path, "w", encoding="utf-8") as f:
+        f.write(cursor_mdc_content)
     with open(plan_json_path, "w", encoding="utf-8") as f:
         json.dump(plan, f, indent=2)
 
@@ -1329,14 +1571,19 @@ def main():
         zf.write(prd_path, arcname="PRD.md")
         zf.write(agents_path, arcname="AGENTS.md")
         zf.write(tasks_path, arcname="TASKS.md")
+        zf.write(claude_path, arcname="CLAUDE.md")
+        zf.write(cursor_rules_path, arcname=".cursorrules")
+        zf.write(cursor_mdc_path, arcname=".cursor/rules/architecture.mdc")
         zf.write(plan_json_path, arcname="plan.json")
 
     print(f"✅ Selesai! Dokumen komprehensif berhasil dibuat di {out_dir}:")
     print(f"  📄 {prd_path} ({len(prd_content.splitlines())} baris)")
     print(f"  📋 {tasks_path} ({len(tasks_content.splitlines())} baris - {len(plan['tasks'])} Tasks)")
-    print(f"  🤖 {agents_path}")
+    print(f"  🤖 {agents_path} (Pedoman Umum & Hermes)")
+    print(f"  ⚡ {claude_path} (Claude Code CLI)")
+    print(f"  🎯 {cursor_rules_path} & {cursor_mdc_path} (Cursor Rules 2.0)")
     print(f"  📦 {plan_json_path}")
-    print(f"  🗜️  {zip_path} (Bundle ZIP: PRD.md & AGENTS.md)\n")
+    print(f"  🗜️  {zip_path} (Multi-Agent Bundle ZIP: PRD, TASKS, CLAUDE, Cursor, AGENTS)\n")
 
     print("=" * 74)
     print("🧭 PANDUAN PENGGUNAAN KE AI AGENT (Claude Code / Hermes / Cursor):")
@@ -1348,13 +1595,17 @@ def main():
     print('       DILARANG menulis kode atau database sebelum saya beri task pertama.')
     print('       Apakah kamu sudah paham arsitekturnya?\"')
     print()
-    print("2. CARA MENJALANKAN TASK (SATU PER SATU):")
-    print("   -> Buka TASKS.md, salin prompt task T-01, lalu tempelkan ke terminal Agent.")
-    print("   -> Biarkan agent menyelesaikan HANYA task tersebut.")
+    print("2. CARA MENJALANKAN TASK (SATU PER SATU DENGAN TASK RUNNER):")
+    print("   -> Ambil task pertama dan otomatis salin prompt ke clipboard:")
+    print("      👉 python cli.py next")
+    print("   -> Tempelkan (Ctrl+V) ke terminal AI Agent kamu.")
+    print("   -> Setelah agent menyelesaikan task ini, tandai selesai:")
+    print("      👉 python cli.py complete T-01")
     print()
-    print("3. CHECKPOINT VERIFIKASI MANUSIA:")
-    print("   -> Setelah Fase 1 (Frontend Mockup) selesai, BUKA browser dan klik-klik UI dulu.")
-    print("   -> Pastikan tampilan sudah sesuai SEBELUM mengizinkan agent lanjut ke database!")
+    print("3. JALANKAN INSTANT API MOCK SERVER (FRONTEND MOCK FIRST):")
+    print("   -> Jalankan mock API server lokal tanpa setup database:")
+    print("      👉 python cli.py mock")
+    print("   -> Buka http://localhost:3333/__mock untuk dashboard interaktif.")
     print("=" * 74 + "\n")
 
 if __name__ == "__main__":

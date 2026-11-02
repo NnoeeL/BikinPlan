@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Release-v1.1.2-FF5C20?style=flat&logo=github" alt="Release">
+  <img src="https://img.shields.io/badge/Release-v1.2.0-FF5C20?style=flat&logo=github" alt="Release">
   <img src="https://img.shields.io/badge/Python-3.8+-3776AB?style=flat&logo=python&logoColor=white" alt="Python">
   <img src="https://img.shields.io/badge/Stack-Pure_HTML5_%2B_Tailwind-FF5C20?style=flat" alt="Stack">
   <img src="https://img.shields.io/badge/Target-Claude_Code_|_Hermes_|_Cursor-10B981?style=flat" alt="Target Agent">
@@ -33,13 +33,21 @@ AI coding agent (seperti **Claude Code**, **Hermes Agent**, **Antigravity**, ata
 ## ✨ Fitur Utama
 
 - 🚀 **Zero Dependency Hell:** Berjalan 100% menggunakan Python bawaan dan browser modern tanpa perlu `npm install` ratusan megabyte.
-- 🎨 **Web App Interaktif:** Antarmuka modern (Dark Theme, font Plus Jakarta Sans) dengan 5 tab spesifikasi:
+- ⚡ **Instant API Mock Server (Baru di v1.2):** Jalankan server mock RESTful lokal instan (`python cli.py mock` atau `python serve.py`) dengan dukungan CORS penuh (`Access-Control-Allow-Origin: *`) dan Dashboard Web Interaktif (`http://localhost:3333/__mock`). Frontend mock kamu bisa langsung memanggil `fetch('/api/...')` sebelum menyentuh database!
+- 🏃 **Live Task Runner CLI (Baru di v1.2):** Jalankan task pengerjaan berurutan langsung dari terminal dengan `bikinplan next`. Otomatis menyalin prompt task aktif ke clipboard sistem (Windows `clip.exe`, macOS `pbcopy`, Linux) dan tandai selesai dengan `bikinplan complete T-01`.
+- 📊 **Visual Diagram & ERD Client-Side (Baru di v1.2):** Tab khusus visualisasi ERD relasional tabel database dan flowchart arsitektur 4-fase berbasis Mermaid.js interaktif. Kode Mermaid siap disalin ke GitHub Markdown, Notion, atau Eraser.io.
+- 🤖 **Ekosistem Multi-Agent Lengkap (Baru di v1.2):** Hasilkan konfigurasi aturan kerja siap pakai untuk berbagai coding agent:
+  - `CLAUDE.md` — Khusus Anthropic Claude Code CLI.
+  - `.cursorrules` & `.cursor/rules/architecture.mdc` — Khusus Cursor IDE Composer & Cursor Rules 2.0.
+  - `AGENTS.md` — Untuk Hermes Agent, Antigravity, dan AI otonom lainnya.
+- 🎨 **Web App Interaktif:** Antarmuka modern (Dark Theme, font Plus Jakarta Sans) dengan 6 tab spesifikasi:
   - **Dokumen PRD Enriched:** Executive Summary, User Personas, Arsitektur 7 Lapisan, UI State Matrix, dan NFR.
+  - **Visual Diagram & ERD:** Diagram relasi entitas visual dan flowchart 4-fase.
   - **Skema Database & DDL:** Skema SQL PostgreSQL 16 lengkap dengan `UUID`, `ENUM`, `FOREIGN KEY ON DELETE CASCADE`, dan `INDEX`.
   - **Kontrak Spesifikasi API:** Tabel RESTful endpoints lengkap dengan query params, contoh JSON Request Body, dan Response 200 OK.
   - **Roadmap & Task Board:** 24 micro-tasks terstruktur dengan filter layer, penanda progres, dan tombol sekali klik **"Copy Prompt Agent"**.
-  - **Petunjuk Agent (`AGENTS.md`):** Pedoman otonom dan aturan emas *anti-slop* untuk coding agent.
-- 💻 **CLI Terminal Generator:** Perintah mandiri untuk menghasilkan file `PRD.md`, `TASKS.md`, `AGENTS.md`, dan `plan.json` ke folder proyek mana pun dalam 1 detik.
+  - **Rules Multi-Agent:** Tab konfigurasi multi-agent (`AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `architecture.mdc`).
+- 💻 **CLI Terminal Generator:** Perintah mandiri untuk menghasilkan seluruh berkas spesifikasi dan rules ke folder proyek mana pun dalam 1 detik.
 - ⚡ **Prinsip Ponytail (Minimal Code):** Menghasilkan panduan kode yang ringkas, mengutamakan native Web API dan pustaka standar (*boring over clever*).
 
 ---
@@ -78,10 +86,13 @@ python serve.py
 
 > **Tips:** Kamu juga bisa langsung membuka file `index.html` dengan klik ganda di File Explorer tanpa server.
 
-**Alur 2 Langkah Cerdas di Web App:**
-1. **Langkah 1 (Ide & Fitur):** Tulis nama proyek, target pengguna, dan deskripsi fitur bebas (tanpa pusing memilih stack/auth di awal). Kamu juga bisa memilih preset cepat. Klik *Lanjut: Analisis Stack & Rekomendasi*.
+**Alur Cerdas di Web App:**
+1. **Langkah 1 (Ide, Preset & AI Refine):**
+   - Pilih dari **5 Blueprint Presets:** 🛍️ *Katalog Toko*, 💼 *Portofolio*, 🎓 *PWA Kampus*, ⚡ *MicroSaaS*, atau 📊 *Admin Dashboard*.
+   - **Mode "Refine with AI":** Klik tombol *🚀 Analisis Sekarang* untuk mendeteksi potensi edge cases, validasi celah input, dan skenario gagal sebelum generate dokumen. Mendukung Google Gemini Flash, Groq Llama 3.3 (gratis tanpa kartu kredit), serta built-in offline rule engine.
+   - Klik *Lanjut: Analisis Stack & Rekomendasi*.
 2. **Langkah 2 (Rekomendasi Arsitektur):** Sistem otomatis menganalisis ide dan menampilkan rekomendasi **Tech Stack** & **Sistem Autentikasi** terbaik lengkap dengan kotak penjelasan teknis (*"Mengapa ini direkomendasikan untuk idemu?"*). Kamu dapat menyetujui rekomendasi atau memilih opsi alternatif.
-3. **Hasil (PRD & 24 Tasks Board):** Klik *Setuju & Generate* — seluruh dokumen siap disalin atau diunduh dalam format **Bundle .ZIP** (otomatis memuat `PRD.md`, `AGENTS.md`, `TASKS.md`, dan `plan.json`).
+3. **Hasil (PRD, ERD Diagram & 24 Tasks Board):** Klik *Setuju & Generate* — seluruh dokumen siap disalin atau diunduh dalam format **Bundle .ZIP** (otomatis memuat `PRD.md`, `TASKS.md`, `AGENTS.md`, `CLAUDE.md`, `.cursorrules`, `.cursor/rules/architecture.mdc`, dan `plan.json`).
 
 ---
 
@@ -90,28 +101,85 @@ python serve.py
 Kamu bisa membuat seluruh dokumen spesifikasi langsung ke folder proyek target mana pun:
 
 ```bash
-# Contoh untuk aplikasi pencarian kosan:
+# Contoh menggunakan blueprint preset kampus:
+python cli.py --preset campus --output ./docs
+
+# Atau dengan ide bebas + auto-refine edge cases:
 python cli.py "KosHunt" \
   --idea "Aplikasi pencarian kosan mahasiswa dekat kampus dengan filter radius 10km dan WhatsApp owner" \
+  --refine \
   --stack tanstack \
   --output ./docs
 ```
 
 **Pilihan Argumen CLI:**
 - `name`: Nama aplikasi atau proyek (contoh: `"KosHunt"`, `"DuitTrack"`).
+- `--preset`: Pilihan blueprint siap pakai (`toko`, `portfolio`, `campus`, `saas`, `dashboard`).
+- `--refine`: Otomatis menganalisis dan melampirkan aturan edge cases arsitektur.
 - `--idea`: Deskripsi masalah dan kebutuhan aplikasi.
 - `--stack`: Pilihan tech stack (`tanstack` [default], `nextjs`, `vite-spa`).
 - `--target`: Target audiens (default: `"Mahasiswa & Pengguna Umum"`).
 - `--output`: Direktori tujuan penyimpanan file dokumen (default: `.` direktori aktif).
 
-**File yang Dihasilkan:**
+---
+
+### Cara 3: Menjalankan Task Runner Otomatis (`bikinplan next`)
+
+Tidak perlu lagi membuka web atau copy-paste manual dari markdown! Gunakan CLI Task Runner bawaan:
+
+```bash
+# 1. Ambil task aktif berikutnya & otomatis salin prompt ke clipboard:
+python cli.py next
+# atau jika menggunakan shortcut:
+./bikinplan next
+
+# 2. Cek ringkasan progres 24 task dan 4 fase:
+./bikinplan status
+
+# 3. Tandai task selesai setelah agent lulus kriteria pengujian:
+./bikinplan complete T-01
+```
+
+---
+
+### Cara 4: Menjalankan Instant API Mock Server (`bikinplan mock`)
+
+Frontend Mock First: Jalankan mock server lokal tanpa perlu membuat tabel database atau server backend:
+
+```bash
+# Jalankan mock server membaca plan.json aktif:
+python cli.py mock
+# atau:
+python serve.py
+```
+- 🌐 **Dashboard Mock Interaktif:** Buka `http://localhost:3333/__mock` untuk melihat rute dan mencoba request API langsung dari browser.
+- 🔗 **CORS Siap Pakai:** Frontend kamu di `http://localhost:5173` (Vite) atau `http://localhost:3000` (Next.js) bisa langsung memanggil `fetch('http://localhost:3333/api/...')` tanpa kendala CORS.
+
+---
+
+### Cara 5: Ekspor Aturan Multi-Agent (`bikinplan export-rules`)
+
+Ekspor instan seluruh berkas konfigurasi agent ke proyek mana pun:
+
+```bash
+# Ekspor AGENTS.md, CLAUDE.md, .cursorrules, dan architecture.mdc:
+python cli.py export-rules ./my-project
+# atau:
+./bikinplan export-rules ./my-project
+```
+
+**File Lengkap yang Dihasilkan:**
 ```text
 output_dir/
-├── PRD.md         # Dokumen spesifikasi rekayasa sistem (~300 baris)
-├── TASKS.md       # 24 Micro-tasks berfase lengkap dengan prompt (~820 baris)
-├── AGENTS.md      # Pedoman instruksi kerja untuk AI coding agent
-├── plan.json      # Struktur skema data mentah JSON
-└── <proyek>-specs.zip # Bundle ZIP siap pakai berisi PRD.md & AGENTS.md
+├── PRD.md                       # Dokumen spesifikasi rekayasa sistem + Mermaid ERD
+├── TASKS.md                     # 24 Micro-tasks berfase lengkap dengan prompt (~820 baris)
+├── AGENTS.md                    # Pedoman instruksi kerja umum & Hermes Agent
+├── CLAUDE.md                    # Panduan kerja resmi Anthropic Claude Code CLI
+├── .cursorrules                 # Aturan kerja Cursor IDE Composer
+├── .cursor/rules/
+│   └── architecture.mdc         # Konfigurasi Cursor Rules 2.0 (MDC Engine)
+├── plan.json                    # Struktur skema data mentah JSON
+└── <proyek>-specs.zip           # Bundle ZIP multi-agent lengkap siap ekstrak
 ```
 
 ---
@@ -184,12 +252,17 @@ Jika kamu **tidak ingin repot mengirim file AGENTS.md atau memecah file terpisah
 
 ```text
 BikinPlan/
-├── index.html        # Aplikasi Web interaktif mandiri (UI generator & task board)
-├── cli.py            # Generator CLI Python (Enterprise synthesis engine)
-├── serve.py          # Server HTTP lokal otomatis membuka browser
-├── preview.html      # Widget preview interaktif untuk chat agent
-├── sample-enterprise # Contoh output dokumen PRD & TASKS lengkap
-└── README.md         # Dokumentasi panduan ini
+├── index.html               # Aplikasi Web interaktif mandiri (UI generator, ERD & task board)
+├── cli.py                   # Generator CLI & Task Runner (Enterprise synthesis engine)
+├── agent_config_generator.py# Multi-agent rules (Claude, Cursor, Hermes) & Mermaid ERD
+├── mock_server.py           # Zero-dependency Instant API Mock Server & Dashboard
+├── task_runner.py           # Live task tracker & auto clipboard engine
+├── serve.py                 # Server HTTP lokal dengan integrasi Web & Mock API
+├── bikinplan                # Bash executable shortcut untuk Unix/Mac/Git Bash
+├── bikinplan.bat            # Batch executable shortcut untuk Windows CMD/PowerShell
+├── preview.html             # Widget preview interaktif untuk chat agent
+├── sample-enterprise        # Contoh output dokumen PRD & TASKS lengkap
+└── README.md                # Dokumentasi panduan ini
 ```
 
 ---
